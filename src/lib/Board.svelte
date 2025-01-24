@@ -1,16 +1,36 @@
 <script lang="ts">
-  const rows = [
+  const rows = $state([
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
+  ]);
+
+  const col0 = $derived([rows[0][0], rows[1][0], rows[2][0], rows[3][0]])
+  const col1 = $derived([rows[0][1], rows[1][1], rows[2][1], rows[3][1]])
+  const col2 = $derived([rows[0][2], rows[1][2], rows[2][2], rows[3][2]])
+  const col3 = $derived([rows[0][3], rows[1][3], rows[2][3], rows[3][3]])
+
+  const cols = $derived([col0, col1, col2, col3]);
+
+  const rowConditions = [
+    {type: 'SumGreaterThan', amount: 11},
+    {type: 'OddOrSuit', suit: blue},
+    {type: 'EachSuit' },
+    {type: 'EachNumber' },
   ];
 
-  const rowConditions = [];
-  const colConditions = [];
+  const colConditions = [
+    {type: 'SumGreaterThan', amount: 11},
+    {type: 'EvenOrSuit', suit: red},
+    {type: 'EachSuit' },
+    {type: 'EachNumber' },
+  ];
+
 
   import { dragState } from './dragState.svelte.ts';
   import ConditionIcon from './ConditionIcon.svelte';
+  import Tile from './Tile.svelte';
   import { red, blue } from './suit.ts';
 
   const dropOnEmptySpace = (event, row, col) => {
@@ -30,12 +50,7 @@
   {#each rows as row, rowIndex}
     {#each row as space, colIndex}
       {#if space}
-        <div
-            on:dragover|preventDefault={undefined}
-            class='space'
-        >
-          {space.value}
-        </div>
+        <Tile value={space.value} suit={space.suit} />
       {:else}
         <div
             on:dragover|preventDefault={undefined}
@@ -45,13 +60,12 @@
         </div>
       {/if}
     {/each}
-    <div class='row-condition'></div>
+    <ConditionIcon tiles={row} condition={rowConditions[rowIndex]} />
   {/each}
 
-  <ConditionIcon condition={{type: 'SumGreaterThan', amount: 11}} />
-  <ConditionIcon condition={{type: 'EvenOrSuit', suit: red}} />
-  <ConditionIcon condition={{type: 'EachSuit' }} />
-  <ConditionIcon condition={{type: 'EachNumber' }} />
+  {#each colConditions as condition, index}
+    <ConditionIcon tiles={cols[index]} condition={condition} />
+  {/each}
 </div>
 
 <style>

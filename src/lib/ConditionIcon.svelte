@@ -1,12 +1,14 @@
 <script lang="ts">
-  export let tiles: Array<{
-    suit: Suit,
-    value: number,
-  }>;
-  export let condition: Condition;
+  let { tiles, condition }: {
+    tiles: Array<{suit: Suit, value: number}>,
+    condition: Condition
+  } = $props();
 
-  import type { Condition } from './types.ts';
+  import type { Condition } from './condition.ts';
+  import { evaluate } from './condition.ts';
   import type { Suit } from './suit.ts';
+
+  let status = $derived(evaluate(condition, tiles));
 </script>
 
 
@@ -26,6 +28,13 @@
   {:else if condition.type === 'EvenOrSuit'}
     Even OR {condition.suit}
   {/if}
+
+  {#if status}
+    <span class="status">🎉</span>
+  {:else if status === false}
+    <span class="status">❌</span>
+  {/if}
+
 </div>
 
 <style>
@@ -45,5 +54,12 @@
   div.tile:last-child {
     border-right-width: 0px;
     border-right-style: none;
+  }
+
+  .status {
+    position: absolute;
+    font-size: 24pt;
+    z-index: -1;
+    opacity: 0.75;
   }
 </style>

@@ -31,7 +31,10 @@
     draggable="true"
     class={tileClasses}
 >
+  <div class="background">{suit}</div>
+  <span class="tile-number">
   {value}
+  </span>
 </div>
 
 <style>
@@ -39,6 +42,7 @@
     display: flex;
     height: 50px;
     width: 50px;
+    color: black;
     border-color: white;
     border-width: 1px;
     border-style: solid;
@@ -47,19 +51,29 @@
     font-size: 36px;
   }
 
+  .tile-number {
+    z-index: 1;
+  }
+
+  .background {
+    position: absolute;
+  }
+
   .red {
-    background: red;
+    background: darkred;
   }
 
   .blue {
-    background: blue;
+    background: darkblue;
+    color: white;
   }
 
   .white {
-    background: gray;
+    color: white;
+    background: black;
   }
 
   .green {
-    background: brown;
+    background: lightgreen;
   }
 </style>
