@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { dragState } from './dragState.svelte.ts';
+  import { dragState } from './dragState.svelte';
   import ConditionIcon from './ConditionIcon.svelte';
   import TileToken from './TileToken.svelte';
-  import { red, blue } from './suit.ts';
+  import type { Tile } from './tile';
+  import type { Condition } from './condition';
+  import { red, blue } from './suit';
 
   const rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -19,21 +21,21 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const rowConditions = [
+  const rowConditions: Array<Condition> = [
     {type: 'SumGreaterThan', amount: 11},
     {type: 'OddOrSuit', suit: blue},
     {type: 'EachSuit' },
     {type: 'EachNumber' },
   ];
 
-  const colConditions = [
+  const colConditions: Array<Condition> = [
     {type: 'SumGreaterThan', amount: 11},
     {type: 'EvenOrSuit', suit: red},
     {type: 'EachSuit' },
     {type: 'EachNumber' },
   ];
 
-  const dropOnEmptySpace = (event, row, col) => {
+  const dropOnEmptySpace = (row: number, col: number) => {
     if (dragState.tile) {
       rows[row][col] = dragState.tile;
       dragState.droppedOnBoard = true;
@@ -42,7 +44,7 @@
 
   onMount(() => {
     const tileDroppedHandler = () => {
-      if (dragState.draggingFrom !== 'bag') {
+      if (dragState.draggingFrom && dragState.draggingFrom !== 'bag') {
         const {row, col} = dragState.draggingFrom;
         rows[row][col] = undefined;
       }
@@ -67,7 +69,7 @@
       {:else}
         <div
             on:dragover|preventDefault={undefined}
-            on:drop={(event) => dropOnEmptySpace(event, rowIndex, colIndex)}
+            on:drop={() => dropOnEmptySpace(rowIndex, colIndex)}
             class='space'
         >
         </div>

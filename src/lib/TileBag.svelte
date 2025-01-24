@@ -2,12 +2,13 @@
   import { onMount } from 'svelte';
   import TileToken from './TileToken.svelte';
   import type { Suit } from './suit.ts';
-  import { red, blue, white, green } from './suit.ts';
-  import { dragState } from './dragState.svelte.ts';
+  import type { Tile, TileValue } from './tile.ts';
+  import { red, blue, white, green } from './suit';
+  import { dragState } from './dragState.svelte';
 
-  const values = [1, 2, 3, 4];
+  const values: Array<TileValue> = [1, 2, 3, 4];
   const suits: Array<Suit> = [red, blue, white, green];
-  const tiles = $state([])
+  const tiles: Array<Tile> = $state([])
   for (const suit of suits) {
     for (const value of values) {
       tiles.push({suit, value});
@@ -22,7 +23,7 @@
           tiles.splice(tileIndex, 1);
         }
       }
-      else if (!dragState.droppedOnBoard && dragState.draggingFrom !== 'bag') {
+      else if (dragState.tile && !dragState.droppedOnBoard && dragState.draggingFrom !== 'bag') {
         tiles.push(dragState.tile);
       }
     };

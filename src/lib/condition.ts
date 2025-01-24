@@ -86,7 +86,7 @@ export function evaluate(
   throw new Error(`Programming Error: Condition "${condition.type}" did not match any evaluator`);
 }
 
-export function getTitle(condition: Condition, type: 'row' | 'col'): string {
+export function getTitle(condition: Condition, type: 'row' | 'column'): string {
   if (condition.type === 'SumGreaterThan') {
     return `Tiles in ${type} must add to more than ${condition.amount}`;
   }

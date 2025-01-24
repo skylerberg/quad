@@ -1,14 +1,14 @@
 <script lang="ts">
+  import type { Condition } from './condition.ts';
+  import { evaluate, getTitle } from './condition';
+  import type { Tile } from './tile.ts';
+
   let { tiles, condition, type, position }: {
-    tiles: Array<{suit: Suit, value: number}>,
+    tiles: Array<Tile | undefined>,
     condition: Condition,
     type: 'row' | 'column',
     position: number,
   } = $props();
-
-  import type { Condition } from './condition.ts';
-  import { evaluate, getTitle } from './condition.ts';
-  import type { Suit } from './suit.ts';
 
   let status = $derived(evaluate(condition, tiles));
 
