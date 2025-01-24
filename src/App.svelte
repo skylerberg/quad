@@ -3,15 +3,8 @@
   import TileBag from './lib/TileBag.svelte';
 </script>
 
+<h1>Unamed Tile Game</h1>
 <main>
-  <TileBag />
-  <br />
-
   <Board />
+  <TileBag />
 </main>
-
-<style>
-  .tiles {
-    display: flex
-  }
-</style>

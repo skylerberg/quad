@@ -73,11 +73,11 @@
         </div>
       {/if}
     {/each}
-    <ConditionIcon tiles={row} condition={rowConditions[rowIndex]} />
+    <ConditionIcon tiles={row} condition={rowConditions[rowIndex]} type='row' position={rowIndex} />
   {/each}
 
   {#each colConditions as condition, index}
-    <ConditionIcon tiles={cols[index]} condition={condition} />
+    <ConditionIcon tiles={cols[index]} condition={condition} type='column' position={index} />
   {/each}
 </div>
 
@@ -94,22 +94,9 @@
   }
 
   .space {
-    border-color: white;
-    border-width: 1px;
-    border-style: solid;
-  }
-
-  .row-condition {
-    border-color: white;
-    border-width: 1px;
-    border-style: solid;
-    border-right: none;
-  }
-
-  .column-condition {
-    border-color: white;
-    border-width: 1px;
-    border-style: solid;
-    border-bottom: none;
+    box-sizing: border-box;
+    border: 1px solid white;
+    height: 50px;
+    width: 50px;
   }
 </style>

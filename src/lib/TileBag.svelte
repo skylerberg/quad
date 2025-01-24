@@ -13,7 +13,6 @@
       tiles.push({suit, value});
     }
   }
-  let tilesDiv;
 
   onMount(() => {
     const tileDroppedHandler = () => {
@@ -37,8 +36,8 @@
 </script>
 
 <main>
-  <div bind:this={tilesDiv} class="tiles">
-    {#each tiles as tile}
+  <div class="tiles">
+    {#each tiles as tile (tile.suit + tile.value)}
       <TileToken tile={tile} location="bag" />
     {/each}
   </div>
@@ -51,5 +50,7 @@
     max-width: 90vw;
     margin-left: auto;
     margin-right:auto;
+    min-height: 50px;
+    margin-top: 25px;
   }
 </style>
