@@ -1,5 +1,11 @@
 <script lang="ts">
-  const rows = $state([
+  import { onMount } from 'svelte';
+  import { dragState } from './dragState.svelte.ts';
+  import ConditionIcon from './ConditionIcon.svelte';
+  import TileToken from './TileToken.svelte';
+  import { red, blue } from './suit.ts';
+
+  const rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
@@ -27,30 +33,37 @@
     {type: 'EachNumber' },
   ];
 
-
-  import { dragState } from './dragState.svelte.ts';
-  import ConditionIcon from './ConditionIcon.svelte';
-  import Tile from './Tile.svelte';
-  import { red, blue } from './suit.ts';
-
   const dropOnEmptySpace = (event, row, col) => {
     if (dragState.tile) {
-      dragState.tile.element.remove();
-      rows[row][col] = {
-        value: dragState.tile.value,
-        suit: dragState.tile.suit,
-        tile: dragState.tile,
-      }
+      rows[row][col] = dragState.tile;
+      dragState.droppedOnBoard = true;
     }
   }
+
+  onMount(() => {
+    const tileDroppedHandler = () => {
+      if (dragState.draggingFrom !== 'bag') {
+        const {row, col} = dragState.draggingFrom;
+        rows[row][col] = undefined;
+      }
+    };
+
+    window.addEventListener('tile-dropped', tileDroppedHandler);
+
+    return () => {
+      window.removeEventListener('tile-dropped', tileDroppedHandler);
+    };
+  });
 </script>
 
 
 <div class='board'>
   {#each rows as row, rowIndex}
-    {#each row as space, colIndex}
-      {#if space}
-        <Tile value={space.value} suit={space.suit} />
+    {#each row as tile, colIndex}
+      {#if tile}
+        <div class='space'>
+          <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
+        </div>
       {:else}
         <div
             on:dragover|preventDefault={undefined}
@@ -70,6 +83,8 @@
 
 <style>
   .board {
+    margin-left: auto;
+    margin-right: auto;
     display: grid;
     height: 250px;
     width: 250px;

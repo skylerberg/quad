@@ -1,39 +1,56 @@
 <script lang="ts">
   import type { Suit } from './suit.ts';
+  import type { Tile } from './tile.ts';
+  import type { Location } from './tile.ts';
   import { suitSymbolToName } from './suit.ts';
 
-  export let value: 1 | 2 | 3 | 4;
-  export let suit: Suit
+  export let tile: Tile;
+  export let location: Location;
   export let element;
 
   import { dragState } from './dragState.svelte.ts';
 
-  const tileClasses = `tile ${suitSymbolToName(suit)}`;
+  const tileClasses = `tile ${suitSymbolToName(tile.suit)}`;
 
-  const setDragging = () => {
-    dragState.tile = {
-      value,
-      suit,
-      element,
-    }
+  const dragStart = () => {
+    // Hide original element while dragging
+    element.style.opacity = 0;
+
+    dragState.tile = tile;
+    dragState.draggingFrom = location;
+
+    window.dispatchEvent(
+      new CustomEvent('tile-picked-up')
+    );
   }
 
-  const clearDragging = () => {
+  const dragEnd = () => {
+    // return to bag if it was not dropped on the board
+    window.dispatchEvent(
+      new CustomEvent('tile-dropped')
+    );
+
+    // Reset dragState
     dragState.tile = undefined;
+    dragState.droppedOnBoard = false;
+    dragState.draggingFrom = undefined;
+
+    // Stop hiding the element
+    element.style.opacity = 1;
   }
 </script>
 
 
 <div
     bind:this={element}
-    ondragstart={setDragging}
-    ondragend={clearDragging}
+    ondragstart={dragStart}
+    ondragend={dragEnd}
     draggable="true"
     class={tileClasses}
 >
-  <div class="background">{suit}</div>
+  <div class="background">{tile.suit}</div>
   <span class="tile-number">
-  {value}
+  {tile.value}
   </span>
 </div>
 

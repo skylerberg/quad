@@ -30,7 +30,7 @@
   {/if}
 
   {#if status}
-    <span class="status">🎉</span>
+    <span class="status">✅</span>
   {:else if status === false}
     <span class="status">❌</span>
   {/if}
