@@ -41,6 +41,18 @@
     1&nbsp;&nbsp;2
     <br />
     3&nbsp;&nbsp;4
+  {:else if condition.type === 'AllOfSuit'}
+    {condition.suit}&nbsp;{condition.suit}
+    <br />
+    {condition.suit}&nbsp;{condition.suit}
+  {:else if condition.type === 'MixOfSuits'}
+    {condition.suits[0]}&nbsp;{condition.suits[1]}
+    <br />
+    {condition.suits[2]}&nbsp;{condition.suits[3]}
+  {:else if condition.type === 'AllOfNumber'}
+    {condition.value}&nbsp;&nbsp;{condition.value}
+    <br />
+    {condition.value}&nbsp;&nbsp;{condition.value}
   {:else if condition.type === 'OddOrSuit'}
     Odd OR {condition.suit}
   {:else if condition.type === 'EvenOrSuit'}

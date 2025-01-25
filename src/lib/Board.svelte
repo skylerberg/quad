@@ -6,6 +6,7 @@
   import type { Tile } from './tile';
   import type { Condition } from './condition';
   import { red, blue } from './suit';
+  import { levels } from './level';
 
   const rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -21,19 +22,7 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const rowConditions: Array<Condition> = [
-    {type: 'SumGreaterThan', amount: 11},
-    {type: 'OddOrSuit', suit: blue},
-    {type: 'EachSuit' },
-    {type: 'EachNumber' },
-  ];
-
-  const colConditions: Array<Condition> = [
-    {type: 'SumGreaterThan', amount: 11},
-    {type: 'EvenOrSuit', suit: red},
-    {type: 'EachSuit' },
-    {type: 'EachNumber' },
-  ];
+  const level = levels[2];
 
   const dropOnEmptySpace = (row: number, col: number) => {
     if (dragState.tile) {
@@ -75,10 +64,10 @@
         </div>
       {/if}
     {/each}
-    <ConditionIcon tiles={row} condition={rowConditions[rowIndex]} type='row' position={rowIndex} />
+    <ConditionIcon tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
   {/each}
 
-  {#each colConditions as condition, index}
+  {#each level.colConditions as condition, index}
     <ConditionIcon tiles={cols[index]} condition={condition} type='column' position={index} />
   {/each}
 </div>

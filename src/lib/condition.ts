@@ -1,12 +1,18 @@
-import type { Tile } from './tile.ts';
+import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
 import { blue, green, white, red } from './suit';
 
-export type Condition = { type: 'SumGreaterThan', amount: number } |
+export type Condition = (
     { type: 'EachSuit', } |
     { type: 'EachNumber', } |
+    { type: 'AllOfSuit', suit: Suit } |
+    { type: 'AllOfNumber', value: TileValue } |
+    { type: 'MixOfSuits', suits: Array<Suit> } |
+    { type: 'SumGreaterThan', amount: number } |
     { type: 'OddOrSuit', suit: Suit } |
     { type: 'EvenOrSuit', suit: Suit }
+  ) & { title: string | undefined }
+
 
 
 export function evaluate(
@@ -35,34 +41,30 @@ export function evaluate(
     }
   }
 
+  if (condition.type === 'AllOfSuit') {
+    return containsSuits(
+      tiles,
+      [condition.suit, condition.suit, condition.suit, condition.suit],
+    );
+  }
+
   if (condition.type === 'EachSuit') {
-    const requiredSuits = [red, blue, white, green];
-    for (const tile of tiles) {
-      var index = requiredSuits.indexOf(tile.suit);
-      if (index === -1) {
-        return false;
-      }
-      requiredSuits.splice(index, 1);
-    }
-    if (!complete) {
-      return null;
-    }
-    return requiredSuits.length === 0;
+    return containsSuits(tiles, [red, blue, white, green]);
+  }
+
+  if (condition.type === 'MixOfSuits') {
+    return containsSuits(tiles, condition.suits);
+  }
+
+  if (condition.type === 'AllOfNumber') {
+    return containsNumbers(
+      tiles,
+      [ condition.value, condition.value, condition.value, condition.value],
+    );
   }
 
   if (condition.type === 'EachNumber') {
-    const requiredNumbers = [1, 2, 3, 4];
-    for (const tile of tiles) {
-      var index = requiredNumbers.indexOf(tile.value);
-      if (index === -1) {
-        return false;
-      }
-      requiredNumbers.splice(index, 1);
-    }
-    if (!complete) {
-      return null;
-    }
-    return requiredNumbers.length === 0;
+    return containsNumbers(tiles, [1, 2, 3, 4]);
   }
 
   if (condition.type === 'EvenOrSuit') {
@@ -86,13 +88,65 @@ export function evaluate(
   throw new Error(`Programming Error: Condition "${condition.type}" did not match any evaluator`);
 }
 
+export function containsSuits(
+  tiles: Array<Tile>,
+  requiredSuits: Array<Suit>,
+): boolean | null {
+  const suits = requiredSuits.slice();
+  const complete = tiles.length === 4;
+
+  for (const tile of tiles) {
+    var index = suits.indexOf(tile.suit);
+    if (index === -1) {
+      return false;
+    }
+    suits.splice(index, 1);
+  }
+  if (!complete) {
+    return null;
+  }
+  return suits.length === 0;
+}
+
+export function containsNumbers(
+  tiles: Array<Tile>,
+  requiredNumbers: Array<TileValue>,
+): boolean | null {
+  const numbers = requiredNumbers.slice();
+  const complete = tiles.length === 4;
+
+  for (const tile of tiles) {
+    var index = numbers.indexOf(tile.value);
+    if (index === -1) {
+      return false;
+    }
+    numbers.splice(index, 1);
+  }
+  if (!complete) {
+    return null;
+  }
+  return numbers.length === 0;
+}
+
 export function getTitle(condition: Condition, type: 'row' | 'column'): string {
   if (condition.type === 'SumGreaterThan') {
     return `Tiles in ${type} must add to more than ${condition.amount}`;
   }
 
+  if (condition.type === 'AllOfSuit') {
+    return `Each tile in ${type} must match the symbol shown`;
+  }
+
   if (condition.type === 'EachSuit') {
     return `Must have one tile of each symbol in ${type}`;
+  }
+
+  if (condition.type === 'MixOfSuits') {
+    return `Must have a matching tile in ${type} for each shown symbol`;
+  }
+
+  if (condition.type === 'AllOfNumber') {
+    return `Each tile in ${type} must be a ${condition.value}`;
   }
 
   if (condition.type === 'EachNumber') {
