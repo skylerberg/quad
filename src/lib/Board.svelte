@@ -68,8 +68,8 @@
         </div>
       {:else}
         <div
-            on:dragover|preventDefault={undefined}
-            on:drop={() => dropOnEmptySpace(rowIndex, colIndex)}
+            ondragover={(e) => e.preventDefault()}
+            ondrop={() => dropOnEmptySpace(rowIndex, colIndex)}
             class='space'
         >
         </div>

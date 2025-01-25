@@ -3,7 +3,7 @@
   import TileBag from './lib/TileBag.svelte';
 </script>
 
-<h1>Unamed Tile Game</h1>
+<h1>Tile Game</h1>
 <main>
   <Board />
   <TileBag />
