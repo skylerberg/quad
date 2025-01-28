@@ -1,5 +1,6 @@
 import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
+import type { Level } from './level.ts';
 import { blue, green, white, red } from './suit';
 
 export type Condition = (
@@ -162,4 +163,82 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
   }
 
   throw new Error(`Programming Error: Condition "${condition.type}" did not match any evaluator`);
+}
+
+export function solve(level: Level): Array<Array<Tile | undefined>> | undefined {
+  console.log('starting solver');
+  const rows: Array<Array<Tile | undefined>> = [
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+  ];
+  const values: Array<TileValue> = [1, 2, 3, 4];
+  const suits: Array<Suit> = [red, blue, white, green];
+  const tiles: Array<Tile> = [];
+  for (const suit of suits) {
+    for (const value of values) {
+      tiles.push({suit, value});
+    }
+  }
+  return solveInner(level, rows, tiles, 1);
+}
+
+function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: Array<Tile>, depth: number): Array<Array<Tile | undefined>> | undefined {
+  const currentStatus = checkPuzzle(level, board);
+  if (currentStatus === true) {
+    return board;
+  }
+  else if (currentStatus === false) {
+    return undefined;
+  }
+  outer_loop:
+  for (const [rowIndex, row] of board.entries()) {
+    for (const [colIndex, space] of row.entries()) {
+      if (space === undefined) {
+        for (let i = tiles.length - 1; i >= 0; i--) {
+          const tile = tiles.splice(i, 1)[0];
+          board[rowIndex][colIndex] = tile;
+          let solution = solveInner(level, board, tiles, depth + 1);
+          if (solution) {
+            return solution;
+          }
+          board[rowIndex][colIndex] = undefined;
+          tiles.push(tile);
+        }
+        break outer_loop;
+      }
+    }
+  }
+}
+
+function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>): boolean | null {
+  let result: boolean | null = true;
+  for (const [index, row] of board.entries()) {
+    const evaluation = evaluate(level.rowConditions[index], row);
+    if (evaluation === false) {
+      return false;
+    }
+    if (evaluation === null) {
+      result = null;
+    }
+  }
+
+  const columns = [
+    [board[0][0], board[1][0], board[2][0], board[3][0]],
+    [board[0][1], board[1][1], board[2][1], board[3][1]],
+    [board[0][2], board[1][2], board[2][2], board[3][2]],
+    [board[0][3], board[1][3], board[2][3], board[3][3]],
+  ];
+  for (const [index, column] of columns.entries()) {
+    const evaluation = evaluate(level.colConditions[index], column);
+    if (evaluation === false) {
+      return false;
+    }
+    if (evaluation === null) {
+      result = null;
+    }
+  }
+
+  return result;
 }

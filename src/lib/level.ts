@@ -1,7 +1,7 @@
 import type { Condition } from './condition';
 import { red, blue, green, white } from './suit';
 
-export type level = {
+export type Level = {
   rowConditions: Array<Condition>,
   colConditions: Array<Condition>,
 };
