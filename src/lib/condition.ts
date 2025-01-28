@@ -166,7 +166,6 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
 }
 
 export function solve(level: Level): Array<Array<Tile | undefined>> | undefined {
-  console.log('starting solver');
   const rows: Array<Array<Tile | undefined>> = [
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],

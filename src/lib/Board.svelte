@@ -8,7 +8,7 @@
   import { red, blue } from './suit';
   import { levels } from './level';
 
-  const rows: Array<Array<Tile | undefined>> = $state([
+  let rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
     [undefined, undefined, undefined, undefined],
@@ -32,37 +32,55 @@
   }
 
   onMount(() => {
-    const tileDroppedHandler = () => {
-      if (dragState.draggingFrom && dragState.draggingFrom !== 'bag') {
-        const {row, col} = dragState.draggingFrom;
-        rows[row][col] = undefined;
-      }
+
+    const placedOnBoard = (event) => {
+      const { row, col, tile } = event.detail;
+      rows[row][col] = tile;
+    };
+    const removedFromBoard = (event) => {
+      const { row, col } = event.detail;
+      rows[row][col] = undefined;
+    };
+    const swappedBoardSpaces = (event) => {
+      const { to, from } = event.detail;
+      const fromTile = rows[from.row][from.col];
+      rows[from.row][from.col] = rows[to.row][to.col];
+      rows[to.row][to.col] = fromTile;
     };
 
-    window.addEventListener('tile-dropped', tileDroppedHandler);
+    window.addEventListener('placed-on-board', placedOnBoard);
+    window.addEventListener('removed-from-board', removedFromBoard);
+    window.addEventListener('swapped-board-spaces', swappedBoardSpaces);
 
     return () => {
-      window.removeEventListener('tile-dropped', tileDroppedHandler);
+      window.removeEventListener('placed-on-board', placedOnBoard);
+      window.removeEventListener('removed-from-board', removedFromBoard);
+      window.removeEventListener('swapped-board-spaces', swappedBoardSpaces);
     };
   });
 </script>
 
-
 <div class='board'>
   {#each rows as row, rowIndex}
     {#each row as tile, colIndex}
+      {#key tile}
       {#if tile}
-        <div class='space'>
+        <div
+            class='space'
+            data-row={rowIndex}
+            data-col={colIndex}
+        >
           <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
         </div>
       {:else}
         <div
-            ondragover={(e) => e.preventDefault()}
-            ondrop={() => dropOnEmptySpace(rowIndex, colIndex)}
             class='space'
+            data-row={rowIndex}
+            data-col={colIndex}
         >
         </div>
       {/if}
+      {/key}
     {/each}
     <ConditionIcon tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
   {/each}
@@ -89,5 +107,6 @@
     border: 1px solid white;
     height: 50px;
     width: 50px;
+    touch-action: none;
   }
 </style>
