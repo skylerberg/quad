@@ -43,6 +43,8 @@
 
   .tile-number {
     z-index: 1;
+    color: white;
+    text-shadow: 1px 1px 2px black;
   }
 
   .background {
@@ -55,11 +57,9 @@
 
   .blue {
     background: darkblue;
-    color: white;
   }
 
   .white {
-    color: white;
     background: black;
   }
 
