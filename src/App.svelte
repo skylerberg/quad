@@ -5,6 +5,7 @@
   import { onMount } from 'svelte';
   let draggable = $state(undefined);
   let draggedOverSpace = undefined;
+  let tileInDraggedOverSpace = undefined;
 
   onMount(() => {
     const containers = document.querySelectorAll('.board, .tile-bag');
@@ -17,6 +18,7 @@
 
     draggable.on('drag:move', (event) => {
       draggedOverSpace = event.sensorEvent.target.closest('.space');
+      tileInDraggedOverSpace = event.sensorEvent.target.closest('.tile-token');
     });
 
     draggable.on('drag:stop', (event) => {
@@ -26,6 +28,13 @@
       const droppedOnSpace = draggedOverSpace;
 
       if (droppedOnSpace && draggingFrom === 'bag') {
+        if (tileInDraggedOverSpace) {
+          const existingTile = JSON.parse(tileInDraggedOverSpace.dataset.tile);
+          window.dispatchEvent(
+            new CustomEvent('added-to-bag', {detail: {tile: existingTile}})
+          );
+        }
+
         window.dispatchEvent(
           new CustomEvent('removed-from-bag', {detail: {tile}})
         );
@@ -58,6 +67,7 @@
       }
 
       draggedOverSpace = undefined;
+      tileInDraggedOverSpace = undefined;
     });
 
     return () => {
