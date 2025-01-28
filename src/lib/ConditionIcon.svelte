@@ -49,6 +49,10 @@
     {condition.suits[0]}&nbsp;{condition.suits[1]}
     <br />
     {condition.suits[2]}&nbsp;{condition.suits[3]}
+  {:else if condition.type === 'MixOfNumbers'}
+    {condition.numbers[0]}&nbsp;&nbsp;{condition.numbers[1]}
+    <br />
+    {condition.numbers[2]}&nbsp;&nbsp;{condition.numbers[3]}
   {:else if condition.type === 'AllOfNumber'}
     {condition.value}&nbsp;&nbsp;{condition.value}
     <br />

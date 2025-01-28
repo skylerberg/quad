@@ -7,6 +7,7 @@
   import type { Condition } from './condition';
   import { red, blue } from './suit';
   import { levels } from './level';
+  import { solve } from './condition';
 
   let rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -22,7 +23,8 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const level = levels[2];
+  const level = levels[3];
+  //console.log(solve(level));
 
   const dropOnEmptySpace = (row: number, col: number) => {
     if (dragState.tile) {

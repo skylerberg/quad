@@ -9,6 +9,7 @@ export type Condition = (
     { type: 'AllOfSuit', suit: Suit } |
     { type: 'AllOfNumber', value: TileValue } |
     { type: 'MixOfSuits', suits: Array<Suit> } |
+    { type: 'MixOfNumbers', numbers: Array<TileValue> } |
     { type: 'SumGreaterThan', amount: number } |
     { type: 'OddOrSuit', suit: Suit } |
     { type: 'EvenOrSuit', suit: Suit }
@@ -55,6 +56,10 @@ export function evaluate(
 
   if (condition.type === 'MixOfSuits') {
     return containsSuits(tiles, condition.suits);
+  }
+
+  if (condition.type === 'MixOfNumbers') {
+    return containsNumbers(tiles, condition.numbers);
   }
 
   if (condition.type === 'AllOfNumber') {
@@ -146,6 +151,10 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
     return `Must have a matching tile in ${type} for each shown symbol`;
   }
 
+  if (condition.type === 'MixOfNumbers') {
+    return `Must have a matching tile in ${type} for each number symbol`;
+  }
+
   if (condition.type === 'AllOfNumber') {
     return `Each tile in ${type} must be a ${condition.value}`;
   }
@@ -162,7 +171,7 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
     return `Each tile in ${type} must be odd or match the symbol shown`;
   }
 
-  throw new Error(`Programming Error: Condition "${condition.type}" did not match any evaluator`);
+  throw new Error(`Programming Error: Condition "${condition.type}" needs a title`);
 }
 
 export function solve(level: Level): Array<Array<Tile | undefined>> | undefined {

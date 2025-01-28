@@ -49,5 +49,33 @@ export const levels = [
       {type: 'EachNumber' },
     ]
   },
+  {
+    rowConditions: [
+      {type: 'MixOfNumbers', numbers: [1, 4, 4, 4 ]},
+      {type: 'MixOfNumbers', numbers: [1, 1, 2, 3 ]},
+      {type: 'MixOfSuits', suits: [white, white, white, blue ]},
+      {type: 'MixOfSuits', suits: [red, red, green, blue ]},
+    ],
+    colConditions: [
+      {type: 'MixOfNumbers', numbers: [1, 1, 1, 4 ]},
+      {type: 'MixOfNumbers', numbers: [2, 2, 3, 4 ]},
+      {type: 'MixOfSuits', suits: [blue, blue, blue, white ]},
+      {type: 'MixOfSuits', suits: [green, green, green, blue ]},
+    ]
+  },
+  {
+    rowConditions: [
+      {type: 'MixOfSuits', suits: [red, red, green, green ]},
+      {type: 'MixOfSuits', suits: [red, red, green, green ]},
+      {type: 'MixOfSuits', suits: [white, white, blue, blue ]},
+      {type: 'MixOfSuits', suits: [white, white, blue, blue ]},
+    ],
+    colConditions: [
+      {type: 'MixOfSuits', suits: [red, red, white, white ]},
+      {type: 'MixOfSuits', suits: [red, red, white, white ]},
+      {type: 'MixOfSuits', suits: [green, green, blue, blue ]},
+      {type: 'MixOfSuits', suits: [green, green, blue, blue ]},
+    ]
+  },
 ];
 
