@@ -11,6 +11,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  --border-color: #666;
+  --tile-border-radius: .25em;
+  --board-max-width: 500px;
 }
 
 body {
@@ -23,6 +27,5 @@ body {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }

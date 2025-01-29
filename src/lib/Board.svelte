@@ -6,8 +6,10 @@
   import type { Tile } from './tile';
   import type { Condition } from './condition';
   import { red, blue } from './suit';
-  import { levels } from './level';
+  import type { Level } from './level';
   import { solve } from './condition';
+
+  let { level }: { level: Level } = $props();
 
   let rows: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -23,15 +25,18 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const level = levels[3];
-  console.log(solve(level));
-
   const dropOnEmptySpace = (row: number, col: number) => {
     if (dragState.tile) {
       rows[row][col] = dragState.tile;
       dragState.droppedOnBoard = true;
     }
   }
+
+/*
+  window.dispatchEvent(
+    new CustomEvent('placed-on-board', {detail: {row, col, tile}})
+  );
+  */
 
   onMount(() => {
 
