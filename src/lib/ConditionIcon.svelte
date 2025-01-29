@@ -128,8 +128,8 @@
 
   .status {
     position: absolute;
-    font-size: 24pt;
     z-index: -1;
     opacity: 0.75;
+    font-size: min(15vmin, 58pt);
   }
 </style>

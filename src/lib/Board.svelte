@@ -24,7 +24,7 @@
   const cols = $derived([col0, col1, col2, col3]);
 
   const level = levels[3];
-  //console.log(solve(level));
+  console.log(solve(level));
 
   const dropOnEmptySpace = (row: number, col: number) => {
     if (dragState.tile) {
