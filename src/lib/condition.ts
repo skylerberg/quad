@@ -4,12 +4,8 @@ import type { Level } from './level.ts';
 import { blue, green, white, red } from './suit';
 
 export type Condition = (
-    { type: 'EachSuit', } |
-    { type: 'EachNumber', } |
-    { type: 'AllOfSuit', suit: Suit } |
-    { type: 'AllOfNumber', value: TileValue } |
-    { type: 'MixOfSuits', suits: Array<Suit> } |
-    { type: 'MixOfNumbers', numbers: Array<TileValue> } |
+    { type: 'ContainSuits', suits: Array<Suit> } |
+    { type: 'ContainNumbers', numbers: Array<TileValue> } |
     { type: 'SumGreaterThan', amount: number } |
     { type: 'OddOrSuit', suit: Suit } |
     { type: 'EvenOrSuit', suit: Suit }
@@ -43,34 +39,12 @@ export function evaluate(
     }
   }
 
-  if (condition.type === 'AllOfSuit') {
-    return containsSuits(
-      tiles,
-      [condition.suit, condition.suit, condition.suit, condition.suit],
-    );
-  }
-
-  if (condition.type === 'EachSuit') {
-    return containsSuits(tiles, [red, blue, white, green]);
-  }
-
-  if (condition.type === 'MixOfSuits') {
+  if (condition.type === 'ContainSuits') {
     return containsSuits(tiles, condition.suits);
   }
 
-  if (condition.type === 'MixOfNumbers') {
+  if (condition.type === 'ContainNumbers') {
     return containsNumbers(tiles, condition.numbers);
-  }
-
-  if (condition.type === 'AllOfNumber') {
-    return containsNumbers(
-      tiles,
-      [ condition.value, condition.value, condition.value, condition.value],
-    );
-  }
-
-  if (condition.type === 'EachNumber') {
-    return containsNumbers(tiles, [1, 2, 3, 4]);
   }
 
   if (condition.type === 'EvenOrSuit') {
@@ -139,28 +113,12 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
     return `Tiles in ${type} must add to more than ${condition.amount}`;
   }
 
-  if (condition.type === 'AllOfSuit') {
-    return `Each tile in ${type} must match the symbol shown`;
-  }
-
-  if (condition.type === 'EachSuit') {
-    return `Must have one tile of each symbol in ${type}`;
-  }
-
-  if (condition.type === 'MixOfSuits') {
+  if (condition.type === 'ContainSuits') {
     return `Must have a matching tile in ${type} for each shown symbol`;
   }
 
-  if (condition.type === 'MixOfNumbers') {
+  if (condition.type === 'ContainNumbers') {
     return `Must have a matching tile in ${type} for each number shown`;
-  }
-
-  if (condition.type === 'AllOfNumber') {
-    return `Each tile in ${type} must be a ${condition.value}`;
-  }
-
-  if (condition.type === 'EachNumber') {
-    return `Must have one tile of each number in ${type}`;
   }
 
   if (condition.type === 'EvenOrSuit') {

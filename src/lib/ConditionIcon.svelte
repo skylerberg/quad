@@ -34,13 +34,13 @@
 <div title={title} class={classes.join(' ')}>
   {#if condition.type === 'SumGreaterThan'}
     Σ &gt; {condition.amount}
-  {:else if condition.type === 'MixOfSuits'}
+  {:else if condition.type === 'ContainSuits'}
     <div class='two-by-two'>
       {#each condition.suits as suit}
         <img class='suit-requirement' src={getSuitIcon(suit)} alt='Requires {suitSymbolToName(suit)}' />
       {/each}
     </div>
-  {:else if condition.type === 'MixOfNumbers'}
+  {:else if condition.type === 'ContainNumbers'}
     <div class='two-by-two'>
       {#each condition.numbers as number}
         <div class='number-requirement'>{number}</div>
