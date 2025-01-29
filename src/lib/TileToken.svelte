@@ -1,13 +1,11 @@
 <script lang="ts">
   import type { Suit } from './suit';
   import type { Tile } from './tile';
-  import type { Location } from './tile';
-  import { suitSymbolToName } from './suit';
+  import { getSuitIcon, suitSymbolToName } from './suit';
   import { dragState } from './dragState.svelte';
 
-  let { tile, location  }: {
+  let { tile }: {
     tile: Tile,
-    location: Location,
   } = $props();
 
   let element: HTMLElement;
@@ -20,8 +18,8 @@
     class={tileClasses}
     role="button"
     data-tile={JSON.stringify(tile)}
+    style="background-image: url({getSuitIcon(tile.suit)});"
 >
-  <div class="background">{tile.suit}</div>
   <span class="tile-number">{tile.value}</span>
 </div>
 
@@ -29,41 +27,49 @@
   .tile-token {
     box-sizing: border-box;
     display: flex;
-    height: 50px;
-    width: 50px;
-    color: black;
-    border: 1px solid white;
+    width: min(18vmin, calc(500px / 5));
+    aspect-ratio: 1 / 1;
+    border: 2px solid var(--border-color);
+    border-radius: var(--tile-border-radius);
     justify-content: center;
     align-items: center;
-    font-size: 36px;
+    line-height: 1;
+    font-size: min(14vmin, 68px);
     cursor: grab;
     touch-action: none;
     user-select: none;
+    background-size: min(15vmin, 80px);
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .tile-number {
     z-index: 1;
     color: white;
-    text-shadow: 1px 1px 2px black;
+    text-shadow: 2px 2px 4px black;
   }
 
   .background {
     position: absolute;
   }
 
+  .background {
+    position: absolute;
+  }
+  
   .red {
-    background: darkred;
+    background-color: darkred;
   }
 
   .blue {
-    background: darkblue;
+    background-color: darkblue;
   }
 
   .white {
-    background: black;
+    background-color: black;
   }
 
   .green {
-    background: lightgreen;
+    background-color: darkgreen;
   }
 </style>

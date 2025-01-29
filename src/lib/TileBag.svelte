@@ -71,10 +71,12 @@
   .tile-bag {
     display: flex;
     flex-wrap: wrap;
-    max-width: 90vw;
+    max-width: min(92vw, 900px);
     margin-left: auto;
     margin-right:auto;
     min-height: 50px;
     margin-top: 25px;
+    gap: 10px;
+    justify-content: center;
   }
 </style>

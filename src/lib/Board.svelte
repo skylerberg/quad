@@ -66,22 +66,15 @@
   {#each rows as row, rowIndex}
     {#each row as tile, colIndex}
       {#key tile}
-      {#if tile}
         <div
-            class='space'
+            class="space {tile ? "" : "empty"}"
             data-row={rowIndex}
             data-col={colIndex}
         >
-          <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
+          {#if tile}
+            <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
+          {/if}
         </div>
-      {:else}
-        <div
-            class='space'
-            data-row={rowIndex}
-            data-col={colIndex}
-        >
-        </div>
-      {/if}
       {/key}
     {/each}
     <ConditionIcon tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
@@ -97,18 +90,23 @@
     margin-left: auto;
     margin-right: auto;
     display: grid;
-    height: 250px;
-    width: 250px;
     font-size: 36px;
+    width: 90vmin;
+    max-width: var(--board-max-width);
+    aspect-ratio: 1 / 1;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
   }
 
   .space {
     box-sizing: border-box;
-    border: 1px solid white;
-    height: 50px;
-    width: 50px;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--tile-border-radius);
     touch-action: none;
+    background-color: #242424;
+  }
+  
+  .empty {
+    border: 1px solid var(--border-color);
   }
 </style>

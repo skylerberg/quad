@@ -152,7 +152,7 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
   }
 
   if (condition.type === 'MixOfNumbers') {
-    return `Must have a matching tile in ${type} for each number symbol`;
+    return `Must have a matching tile in ${type} for each number shown`;
   }
 
   if (condition.type === 'AllOfNumber') {
