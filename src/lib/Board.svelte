@@ -7,7 +7,7 @@
   import type { Condition } from './condition';
   import { red, blue } from './suit';
   import type { Level } from './level';
-  import { solve } from './condition';
+  import { solve, tacticalSolver } from './condition';
 
   let { level }: { level: Level } = $props();
 
@@ -32,11 +32,10 @@
     }
   }
 
-/*
-  window.dispatchEvent(
-    new CustomEvent('placed-on-board', {detail: {row, col, tile}})
-  );
-  */
+  let solution = tacticalSolver(level); 
+  if (solution) {
+    rows = solution;
+  }
 
   onMount(() => {
 

@@ -2,6 +2,7 @@ import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
 import type { Level } from './level.ts';
 import { blue, green, white, red } from './suit';
+import { tilesAreEqual } from './tile';
 
 export type Condition = (
     { type: 'ContainSuits', suits: Array<Suit> } |
@@ -207,4 +208,146 @@ function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>): boole
   }
 
   return result;
+}
+
+
+export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | undefined {
+  const rows: Array<Array<Tile | undefined>> = [
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+  ];
+  const values: Array<TileValue> = [1, 2, 3, 4];
+  const suits: Array<Suit> = [red, blue, white, green];
+
+  const options: Array<Array<Array<Tile>>> = [
+    [[], [], [], []],
+    [[], [], [], []],
+    [[], [], [], []],
+    [[], [], [], []],
+  ];
+  for (let i = 0; i < rows.length; i++) {
+    for (let j = 0; j < rows[i].length; j++) {
+      for (const suit of suits) {
+        for (const value of values) {
+          options[i][j].push({suit, value});
+        }
+      }
+    }
+  }
+
+  const tiles: Array<Tile> = [];
+  for (const suit of suits) {
+    for (const value of values) {
+      tiles.push({suit, value});
+    }
+  }
+
+  const tactics: Array<(
+    level: Level,
+    board: Array<Array<Tile | undefined>>,
+    options: Array<Array<Array<Tile>>>,
+    tiles: Array<Tile>,
+  ) => boolean> = [
+    eleminateOptionsThatViolateACondition,
+    placeTileIfOnlyOneOptionRemains,
+    placeArbitraryPossibility,
+  ];
+
+  let madeProgress = true;
+  while(madeProgress && tiles.length > 0) {
+    madeProgress = false;
+
+    for (const tactic of tactics) {
+      if (tactic(level, rows, options, tiles)) {
+        madeProgress = true;
+        break;
+      }
+    }
+  }
+
+  return rows
+}
+
+function placeTileIfOnlyOneOptionRemains(
+  _: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === undefined && options[i][j].length === 1) {
+        placeTile(board, options, tiles, options[i][j][0], i, j)
+        console.log(i, j, 'placeTileIfOnlyOneIsPossible');
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function eleminateOptionsThatViolateACondition(
+  level: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  _: Array<Tile>,
+): boolean {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === undefined) {
+        for (const option of options[i][j]) {
+          board[i][j] = option;
+          let placementViolatesCondition = checkPuzzle(level, board) === false;
+          board[i][j] = undefined;
+          if (placementViolatesCondition) {
+            options[i][j] = options[i][j].filter((tile) => !tilesAreEqual(tile, option));
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function placeArbitraryPossibility(
+  _: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === undefined) {
+        placeTile(board, options, tiles, options[i][j][0], i, j)
+        console.log(i, j, 'Arbitrary placement', options[i][j]);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function placeTile(
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+  tile: Tile,
+  i: number,
+  j: number,
+) {
+  board[i][j] = tile;
+
+  // Remove placed tile from our available tiles
+  const tileIndex = tiles.findIndex((t) => tilesAreEqual(t, tile));
+  tiles.splice(tileIndex, 1);
+
+  // Remove placed tile from the list of options for each empty space
+  for (let x = 0; x < options.length; x++) {
+    for (let y = 0; y < options[x].length; y++) {
+      options[x][y] = options[x][y].filter((t) => !tilesAreEqual(t, tile));
+    }
+  }
 }

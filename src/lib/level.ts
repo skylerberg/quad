@@ -9,6 +9,21 @@ export type Level = {
 export const levels = [
   {
     rowConditions: [
+      {type: 'ContainNumbers', numbers: [4, 4, 4, 3]},
+      {type: 'ContainSuits', suits: [blue, white, green, white]},
+      {type: 'ContainSuits', suits: [blue, white, green, blue]},
+      {type: 'ContainSuits', suits: [red, red, red, red]},
+    ],
+    colConditions: [
+      {type: 'ContainSuits', suits: [green, green, green, red]},
+      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
+      {type: 'ContainNumbers', numbers: [1, 2, 3, 3]},
+      {type: 'ContainNumbers', numbers: [1, 2, 4, 4]},
+    ]
+  },
+
+  {
+    rowConditions: [
       {type: 'ContainSuits', suits: [red, red, green, green ]},
       {type: 'ContainSuits', suits: [red, red, green, green ]},
       {type: 'ContainSuits', suits: [white, white, blue, blue ]},
