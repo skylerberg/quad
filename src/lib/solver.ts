@@ -32,6 +32,16 @@ function conditionRequirementCountForCriteria(condition: Condition, criteria: Pa
   return 0;
 }
 
+function conditionRequirementCountThatCannotMatchCriteria(condition: Condition, criteria: Partial<Tile>): number {
+  if (condition.type === 'ContainSuits' && criteria.suit) {
+    return condition.suits.filter(suit => suit !== criteria.suit).length;
+  }
+  if (condition.type === 'ContainNumbers' && criteria.value) {
+    return condition.numbers.filter(number => number !== criteria.value).length;
+  }
+  return 0;
+}
+
 const allNumbers = [1, 2, 3, 4];
 const allCriteria: Array<Partial<Tile>> = allSuits.map(
   suit => ({suit} as Partial<Tile>)
@@ -158,21 +168,12 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     conditionBasedElimination,
     nakedSingle,
 
-    // TODO what do I name this concept?
+    singleGroupLockOut,
     singleGroupLockIn,
-    // TODO do the numbers version
+    singleGroupInnerLockOut,
 
-    // Single Condition Segregation
-    rowSuitSegregation,
-    colSuitSegregation,
-    rowNumberSegregation,
-    colNumberSegregation,
-
-    // Multiple Condition Segregation
-    multiRowSuitSegregation,
-    multiColSuitSegregation,
-    multiRowNumberSegregation,
-    multiColNumberSegregation,
+    multiRowLockOut,
+    multiColLockOut,
 
     // Row + Col Condition Segregation
     // NOTE: I currently only have these doing 1 row and 1 col at a time
@@ -211,7 +212,13 @@ function arbitraryGuess(
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
       if (board[i][j] === undefined) {
+        if (options[i][j].length === 0) {
+          return false; // Stop if we know we've made a mistake
+        }
+        console.log(options[i][j]);
+        console.log(options);
         console.log(i, j, 'Arbitrary Guess', options[i][j]);
+        return false;
         placeTile(board, options, tiles, options[i][j][0], i, j)
         return true;
       }
@@ -351,8 +358,8 @@ function singleGroupLockIn(
               const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => tileMatches(option, criteria)));
               if (oldOptions.length > spaceOptions.length) {
                 madeProgress = true;
+                console.log('Group Inner Lock In', groupDescription, criteria);
               }
-              console.log('Group Inner Lock In', groupDescription, criteria);
             }
           }
         }
@@ -362,44 +369,45 @@ function singleGroupLockIn(
   return madeProgress;
 }
 
-function rowSuitSegregation(
+function singleGroupInnerLockOut(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
+  _: Array<Tile>,
 ): boolean {
   let madeProgress = false;
-  suit_loop:
-  for (const suit of allSuits) {
-    const unplacedRemainingTilesOfSuit = tiles.filter(tile => tile.suit === suit).length;
-    for (const [rowIndex, row] of board.entries()) {
-      const condition = level.rowConditions[rowIndex];
+
+  for (const criteria of allCriteria) {
+    for (const [group, groupOptions, condition, groupDescription] of getGroups(level, board, options)) {
       if (condition.type === 'ContainSuits') {
-        const requiredTilesOfSuitInRow = condition.suits.filter(s => s === suit).length;
-        const tilesInRowOfSuit = row.filter(tile => tile && tile.suit === suit).length;
+        const requiredNonMatchingTiles = conditionRequirementCountThatCannotMatchCriteria(condition, criteria);
+        const spacesWithOnlyMatchingOptions = groupOptions.filter(
+          spaceOptions => spaceOptions.every(option => tileMatches(option, criteria))
+        ).length;
+        const existingNonMatchingTiles = group.filter(tile => tile && !tileMatches(tile, criteria)).length;
+        const remainingNonMatchinTilesNeeded = requiredNonMatchingTiles - existingNonMatchingTiles;
 
-        if (requiredTilesOfSuitInRow - tilesInRowOfSuit >= unplacedRemainingTilesOfSuit) {
-          for (const [rowOptionsIndex, _] of options.entries()) {
-            if (rowOptionsIndex !== rowIndex) {
-              for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-                options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.suit !== suit);
-                if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                  madeProgress = true;
-                  console.log('Row Suit Segregation Elimination', rowOptionsIndex, colOptionsIndex, suit, options[rowOptionsIndex][colOptionsIndex]);
-                }
+        const openSpaces = group.filter(tile => tile === undefined).length;
+
+        if (spacesWithOnlyMatchingOptions == openSpaces - remainingNonMatchinTilesNeeded) {
+          for (const spaceOptions of groupOptions) {
+            if (spaceOptions.some(option => !tileMatches(option, criteria))) {
+              // In place filter as mentioned here: https://stackoverflow.com/a/49587869/3908710
+              const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => !tileMatches(option, criteria)));
+              if (oldOptions.length > spaceOptions.length) {
+                madeProgress = true;
+                console.log('Group Inner Lock Out', groupDescription, criteria);
               }
             }
           }
-          continue suit_loop;
         }
-
       }
     }
   }
   return madeProgress;
 }
 
-function colSuitSegregation(
+function singleGroupLockOut(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
@@ -407,36 +415,31 @@ function colSuitSegregation(
 ): boolean {
   let madeProgress = false;
 
-  const columns = [
-    [board[0][0], board[1][0], board[2][0], board[3][0]],
-    [board[0][1], board[1][1], board[2][1], board[3][1]],
-    [board[0][2], board[1][2], board[2][2], board[3][2]],
-    [board[0][3], board[1][3], board[2][3], board[3][3]],
-  ];
+  criteria_loop:
+  for (const criteria of allCriteria) {
+    const unplacedMatchingTiles = tiles.filter(tile => tileMatches(tile, criteria)).length;
 
-  suit_loop:
-  for (const suit of allSuits) {
-    const unplacedRemainingTilesOfSuit = tiles.filter(tile => tile.suit === suit).length;
+    for (const [group, _, condition, groupDescription] of getGroups(level, board, options)) {
+      const requiredMatchingTiles = conditionRequirementCountForCriteria(condition, criteria);
+      const existingMatchingTiles = group.filter(tile => tileMatches(tile, criteria)).length;
 
-    for (const [colIndex, col] of columns.entries()) {
-      const condition = level.colConditions[colIndex];
-      if (condition.type === 'ContainSuits') {
-        const requiredTilesOfSuitInCol = condition.suits.filter(s => s === suit).length;
-        const tilesInColOfSuit = col.filter(tile => tile && tile.suit === suit).length;
-
-        if (requiredTilesOfSuitInCol - tilesInColOfSuit >= unplacedRemainingTilesOfSuit) {
-          for (const [rowOptionsIndex, _] of options.entries()) {
-            for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-              if (colOptionsIndex !== colIndex) {
-                options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.suit !== suit);
-                if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                  madeProgress = true;
-                  console.log('Col Suit Segregation Elimination', rowOptionsIndex, colOptionsIndex, suit, options[rowOptionsIndex][colOptionsIndex]);
-                }
+      if (requiredMatchingTiles - existingMatchingTiles >= unplacedMatchingTiles) {
+        for (const [rowOptionsIndex, _] of options.entries()) {
+          for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
+            if (rowOptionsIndex !== groupDescription.row && colOptionsIndex !== groupDescription.col) {
+              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => !tileMatches(tile, criteria));
+              if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
+                madeProgress = true;
+                console.log(
+                  'Single Group Lock Out',
+                  groupDescription,
+                  criteria,
+                  {lockedOutRow: rowOptionsIndex, lockedOutCol: colOptionsIndex},
+                );
               }
             }
           }
-          continue suit_loop;
+          continue criteria_loop;
         }
 
       }
@@ -445,91 +448,7 @@ function colSuitSegregation(
   return madeProgress;
 }
 
-function rowNumberSegregation(
-  level: Level,
-  board: Array<Array<Tile | undefined>>,
-  options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
-): boolean {
-  let madeProgress = false;
-
-  number_loop:
-  for (const number of [1, 2, 3, 4]) {
-    const unplacedRemainingTilesOfNumber = tiles.filter(tile => tile.value === number).length;
-    for (const [rowIndex, row] of board.entries()) {
-      const condition = level.rowConditions[rowIndex];
-      if (condition.type === 'ContainNumbers') {
-        const requiredTilesOfNumberInRow = condition.numbers.filter(s => s === number).length;
-        const tilesInRowOfNumber = row.filter(tile => tile && tile.value === number).length;
-
-        if (requiredTilesOfNumberInRow - tilesInRowOfNumber >= unplacedRemainingTilesOfNumber) {
-          for (const [rowOptionsIndex, _] of options.entries()) {
-            if (rowOptionsIndex !== rowIndex) {
-              for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-                options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.value !== number);
-                if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                  madeProgress = true;
-                  console.log('Row Number Segregation', rowOptionsIndex, colOptionsIndex, number, options[rowOptionsIndex][colOptionsIndex]);
-                }
-              }
-            }
-          }
-          continue number_loop;
-        }
-
-      }
-    }
-  }
-  return madeProgress;
-}
-
-function colNumberSegregation(
-  level: Level,
-  board: Array<Array<Tile | undefined>>,
-  options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
-): boolean {
-  let madeProgress = false;
-
-  const columns = [
-    [board[0][0], board[1][0], board[2][0], board[3][0]],
-    [board[0][1], board[1][1], board[2][1], board[3][1]],
-    [board[0][2], board[1][2], board[2][2], board[3][2]],
-    [board[0][3], board[1][3], board[2][3], board[3][3]],
-  ];
-
-  number_loop:
-  for (const number of [1, 2, 3, 4]) {
-    const unplacedRemainingTilesOfNumber = tiles.filter(tile => tile.value === number).length;
-
-    for (const [colIndex, col] of columns.entries()) {
-      const condition = level.colConditions[colIndex];
-      if (condition.type === 'ContainNumbers') {
-        const requiredTilesOfNumberInCol = condition.numbers.filter(s => s === number).length;
-        const tilesInColOfNumber = col.filter(tile => tile && tile.value === number).length;
-
-        if (requiredTilesOfNumberInCol - tilesInColOfNumber >= unplacedRemainingTilesOfNumber) {
-          for (const [rowOptionsIndex, _] of options.entries()) {
-            for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-              if (colOptionsIndex !== colIndex) {
-                options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.value !== number);
-                if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                  madeProgress = true;
-                  console.log('Col Number Segregation Elimination', rowOptionsIndex, colOptionsIndex, number, options[rowOptionsIndex][colOptionsIndex]);
-                }
-              }
-            }
-          }
-          continue number_loop;
-        }
-
-      }
-    }
-  }
-  return madeProgress;
-}
-
-function multiRowSuitSegregation(
+function multiRowLockOut(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
@@ -542,40 +461,41 @@ function multiRowSuitSegregation(
     [0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],
   ];
 
-  suit_loop:
-  for (const suit of allSuits) {
-    const unplacedRemainingTilesOfSuit = tiles.filter(tile => tile.suit === suit).length;
+  criteria_loop:
+  for (const criteria of allCriteria) {
+    const unplacedMatchingTiles = tiles.filter(tile => tileMatches(tile, criteria)).length;
 
     for (const rowIndexes of rowCombinations) {
-      const conditions = rowIndexes.map(i => level.rowConditions[i]).filter(condition => condition.type === 'ContainSuits');
+      const conditions = rowIndexes.map(i => level.rowConditions[i]);
       const rowCombo = rowIndexes.map(i => board[i]);
-      const requiredTilesOfSuitInRows = conditions.map(
-        condition => condition.suits.filter(s => s === suit).length
+
+      const requiredMatchingTiles = conditions.map(
+        condition => conditionRequirementCountForCriteria(condition, criteria)
       ).reduce((a, b) => a + b, 0);
-      const tilesInRowsOfSuit = rowCombo.map(
-        row => row.filter(tile => tile && tile.suit === suit).length
+      const existingMatchingTiles = rowCombo.map(
+        row => row.filter(tile => tileMatches(tile, criteria)).length
       ).reduce((a, b) => a + b);
 
-      if (requiredTilesOfSuitInRows - tilesInRowsOfSuit >= unplacedRemainingTilesOfSuit) {
+      if (requiredMatchingTiles - existingMatchingTiles >= unplacedMatchingTiles) {
         for (const [rowOptionsIndex, _] of options.entries()) {
           for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
             if (!rowIndexes.some(i => i === rowOptionsIndex)) {
-              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.suit !== suit);
+              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => !tileMatches(tile, criteria));
               if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
                 madeProgress = true;
-                console.log('Multi Row Suit Segregation Elimination', rowOptionsIndex, colOptionsIndex, suit, options[rowOptionsIndex][colOptionsIndex]);
+                console.log('Multi Row Lockout', criteria, rowOptionsIndex, colOptionsIndex);
               }
             }
           }
         }
-        continue suit_loop;
+        continue criteria_loop;
       }
     }
   }
   return madeProgress;
 }
 
-function multiColSuitSegregation(
+function multiColLockOut(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
@@ -595,132 +515,36 @@ function multiColSuitSegregation(
     [0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],
   ];
 
-  suit_loop:
-  for (const suit of allSuits) {
-    const unplacedRemainingTilesOfSuit = tiles.filter(tile => tile.suit === suit).length;
+  criteria_loop:
+  for (const criteria of allCriteria) {
+    const unplacedMatchingTiles = tiles.filter(tile => tileMatches(tile, criteria)).length;
 
-    for (const columnIndexes of columnCombinations) {
-      const conditions = columnIndexes.map(i => level.colConditions[i]).filter(condition => condition.type === 'ContainSuits');
-      const columnCombo = columnIndexes.map(i => columns[i]);
-      const requiredTilesOfSuitInCols = conditions.map(
-        condition => condition.suits.filter(s => s === suit).length
+    for (const colIndexes of columnCombinations) {
+      const conditions = colIndexes.map(i => level.colConditions[i]);
+      const colCombo = colIndexes.map(i => columns[i]);
+
+
+
+      const requiredMatchingTiles = conditions.map(
+        condition => conditionRequirementCountForCriteria(condition, criteria)
       ).reduce((a, b) => a + b, 0);
-      const tilesInColsOfSuit = columnCombo.map(
-        column => column.filter(tile => tile && tile.suit === suit).length
+      const existingMatchingTiles = colCombo.map(
+        column => column.filter(tile => tileMatches(tile, criteria)).length
       ).reduce((a, b) => a + b);
 
-      if (requiredTilesOfSuitInCols - tilesInColsOfSuit >= unplacedRemainingTilesOfSuit) {
+      if (requiredMatchingTiles - existingMatchingTiles >= unplacedMatchingTiles) {
         for (const [rowOptionsIndex, _] of options.entries()) {
           for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-            if (!columnIndexes.some(i => i === colOptionsIndex)) {
-              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.suit !== suit);
+            if (!colIndexes.some(i => i === colOptionsIndex)) {
+              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => !tileMatches(tile, criteria));
               if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
                 madeProgress = true;
-                console.log('Multi Col Suit Segregation Elimination', rowOptionsIndex, colOptionsIndex, suit, options[rowOptionsIndex][colOptionsIndex]);
+                console.log('Multi Col Lockout', criteria, rowOptionsIndex, colOptionsIndex);
               }
             }
           }
         }
-        continue suit_loop;
-      }
-    }
-  }
-  return madeProgress;
-}
-
-function multiRowNumberSegregation(
-  level: Level,
-  board: Array<Array<Tile | undefined>>,
-  options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
-): boolean {
-  let madeProgress = false;
-
-  const rowCombinations = [
-    [0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3],
-    [0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],
-  ];
-
-  number_loop:
-  for (const number of [1, 2, 3, 4]) {
-    const unplacedRemainingTilesOfNumber = tiles.filter(tile => tile.value === number).length;
-
-    for (const rowIndexes of rowCombinations) {
-      const conditions = rowIndexes.map(i => level.rowConditions[i]).filter(condition => condition.type === 'ContainNumbers');
-      const rowCombo = rowIndexes.map(i => board[i]);
-      const requiredTilesOfNumberInRows = conditions.map(
-        condition => condition.numbers.filter(n => n === number).length
-      ).reduce((a, b) => a + b, 0);
-      const tilesInRowsOfNumber = rowCombo.map(
-        row => row.filter(tile => tile && tile.value === number).length
-      ).reduce((a, b) => a + b);
-
-      if (requiredTilesOfNumberInRows - tilesInRowsOfNumber >= unplacedRemainingTilesOfNumber) {
-        for (const [rowOptionsIndex, _] of options.entries()) {
-          for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-            if (!rowIndexes.some(i => i === rowOptionsIndex)) {
-              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.value !== number);
-              if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                madeProgress = true;
-                console.log('Multi Row Number Segregation Elimination', rowOptionsIndex, colOptionsIndex, number, options[rowOptionsIndex][colOptionsIndex]);
-              }
-            }
-          }
-        }
-        continue number_loop;
-      }
-    }
-  }
-  return madeProgress;
-}
-
-function multiColNumberSegregation(
-  level: Level,
-  board: Array<Array<Tile | undefined>>,
-  options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
-): boolean {
-  let madeProgress = false;
-
-  const columns = [
-    [board[0][0], board[1][0], board[2][0], board[3][0]],
-    [board[0][1], board[1][1], board[2][1], board[3][1]],
-    [board[0][2], board[1][2], board[2][2], board[3][2]],
-    [board[0][3], board[1][3], board[2][3], board[3][3]],
-  ];
-
-  const columnCombinations = [
-    [0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3],
-    [0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3],
-  ];
-
-  number_loop:
-  for (const number of [1, 2, 3, 4]) {
-    const unplacedRemainingTilesOfNumber = tiles.filter(tile => tile.value === number).length;
-
-    for (const columnIndexes of columnCombinations) {
-      const conditions = columnIndexes.map(i => level.colConditions[i]).filter(condition => condition.type === 'ContainNumbers');
-      const columnCombo = columnIndexes.map(i => columns[i]);
-      const requiredTilesOfNumberInCols = conditions.map(
-        condition => condition.numbers.filter(n => n === number).length
-      ).reduce((a, b) => a + b, 0);
-      const tilesInColsOfNumber = columnCombo.map(
-        column => column.filter(tile => tile && tile.value === number).length
-      ).reduce((a, b) => a + b);
-
-      if (requiredTilesOfNumberInCols - tilesInColsOfNumber >= unplacedRemainingTilesOfNumber) {
-        for (const [rowOptionsIndex, _] of options.entries()) {
-          for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
-            if (!columnIndexes.some(i => i === colOptionsIndex)) {
-              options[rowOptionsIndex][colOptionsIndex] = spaceOptions.filter(tile => tile.value !== number);
-              if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
-                madeProgress = true;
-                console.log('Multi Col Number Segregation Elimination', rowOptionsIndex, colOptionsIndex, number, options[rowOptionsIndex][colOptionsIndex]);
-              }
-            }
-          }
-        }
-        continue number_loop;
+        continue criteria_loop;
       }
     }
   }
