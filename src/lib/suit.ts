@@ -5,6 +5,8 @@ export const blue: Suit = '🌊';
 export const white: Suit = '🌪️';
 export const green: Suit = '🌱';
 
+export const allSuits = [red, blue, white, green];
+
 export function suitSymbolToName(suit: Suit): string {
   if (suit === red) {
     return 'red';

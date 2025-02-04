@@ -7,7 +7,7 @@
   import type { Condition } from './condition';
   import { red, blue } from './suit';
   import type { Level } from './level';
-  import { solve, tacticalSolver } from './condition';
+  import { solve, tacticalSolver } from './solver';
 
   let { level }: { level: Level } = $props();
 
