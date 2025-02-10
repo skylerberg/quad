@@ -44,6 +44,7 @@
     };
 
     const addedToBag = (event) => {
+      console.log(event)
       tiles.push(event.detail.tile);
       sortTiles();
     };

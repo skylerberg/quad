@@ -27,7 +27,7 @@
   let solution = tacticalSolver(level); 
   //let solution = solve(level); 
   if (solution) {
-    rows = solution;
+    //rows = solution;
   }
 
   onMount(() => {

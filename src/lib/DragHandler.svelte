@@ -26,13 +26,20 @@
       const draggingFrom = event.sourceContainer.classList.contains('board') ? 'board' : 'bag';
       const droppedOnSpace = draggedOverSpace;
 
-      if (droppedOnSpace && draggingFrom === 'bag' && !tileInDraggedOverSpace) {
+      if (droppedOnSpace && draggingFrom === 'bag') {
+        const row = droppedOnSpace.dataset.row;
+        const col = droppedOnSpace.dataset.col;
+
+        if (tileInDraggedOverSpace) {
+          window.dispatchEvent(
+            new CustomEvent('added-to-bag', {detail: {tile: JSON.parse(tileInDraggedOverSpace.dataset.tile)}})
+          );
+        }
+
         window.dispatchEvent(
           new CustomEvent('removed-from-bag', {detail: {tile}})
         );
 
-        const row = droppedOnSpace.dataset.row;
-        const col = droppedOnSpace.dataset.col;
         window.dispatchEvent(
           new CustomEvent('placed-on-board', {detail: {row, col, tile}})
         );
