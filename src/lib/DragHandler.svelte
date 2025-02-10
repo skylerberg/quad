@@ -13,6 +13,7 @@
       delay: {
         touch: 0,
       },
+      ghostClass: '.being-dragged',
     });
 
     draggable.on('drag:move', (event) => {

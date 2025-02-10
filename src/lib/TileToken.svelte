@@ -43,7 +43,6 @@
   }
 
   .tile-number {
-    z-index: 1;
     color: white;
     text-shadow: 2px 2px 4px black;
   }

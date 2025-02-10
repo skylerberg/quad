@@ -29,3 +29,7 @@ body {
   margin: 0 auto;
   text-align: center;
 }
+
+.draggable-source--is-dragging {
+  opacity: .3;
+}
