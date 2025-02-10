@@ -7,63 +7,78 @@ export type Level = {
 };
 
 export const levels = [
-  {  // Demonstrate Single Group Lockout
+  {
     rowConditions: [
-      {type: 'ContainNumbers', numbers: [4, 4, 4, 3]},
-      {type: 'ContainSuits', suits: [blue, white, green, white]},
-      {type: 'ContainSuits', suits: [blue, white, green, blue]},
-      {type: 'ContainSuits', suits: [red, red, red, red]},
+      {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
+      {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
+      {type: 'Contain', suits: [green, white, green, white], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
     ],
     colConditions: [
-      {type: 'ContainSuits', suits: [green, green, green, red]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 3]},
-      {type: 'ContainNumbers', numbers: [1, 2, 4, 4]},
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
+      {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
+      {type: 'Contain', numbers: [], suits: [white, white, white, red]},
+    ]
+  },
+
+  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
+    rowConditions: [
+      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
+      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
+      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
+      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
+    ]
+  },
+
+  { // Condition Based Elimination
+    rowConditions: [
+      {type: 'Contain', suits: [red, red, green, green ], numbers: []},
+      {type: 'Contain', suits: [red, red, green, green ], numbers: []},
+      {type: 'Contain', suits: [white, white, blue, blue ], numbers: []},
+      {type: 'Contain', suits: [white, white, blue, blue ], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [red, red, white, white ], numbers: []},
+      {type: 'Contain', suits: [red, red, white, white ], numbers: []},
+      {type: 'Contain', suits: [green, green, blue, blue ], numbers: []},
+      {type: 'Contain', suits: [green, green, blue, blue ], numbers: []},
+    ]
+  },
+
+  { // Condition Based Elimination
+    rowConditions: [
+      {type: 'Contain', suits: [red, red, red, green ], numbers: []},
+      {type: 'Contain', suits: [red, green, green, green ], numbers: []},
+      {type: 'Contain', suits: [blue, blue, blue, white ], numbers: []},
+      {type: 'Contain', suits: [white, white, white, blue ], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue, blue, green, green ], numbers: []},
+      {type: 'Contain', suits: [blue, red, green, white ], numbers: []},
+      {type: 'Contain', suits: [red, green, white, white ], numbers: []},
+      {type: 'Contain', suits: [red, red, blue, white ], numbers: []},
     ]
   },
 
   {
     rowConditions: [
-      {type: 'ContainSuits', suits: [red, red, green, green ]},
-      {type: 'ContainSuits', suits: [red, red, green, green ]},
-      {type: 'ContainSuits', suits: [white, white, blue, blue ]},
-      {type: 'ContainSuits', suits: [white, white, blue, blue ]},
+      {type: 'Contain', numbers: [4, 4, 4, 4], suits: []},
+      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
     ],
     colConditions: [
-      {type: 'ContainSuits', suits: [red, red, white, white ]},
-      {type: 'ContainSuits', suits: [red, red, white, white ]},
-      {type: 'ContainSuits', suits: [green, green, blue, blue ]},
-      {type: 'ContainSuits', suits: [green, green, blue, blue ]},
-    ]
-  },
-
-  {
-    rowConditions: [
-      {type: 'ContainSuits', suits: [red, red, red, green ]},
-      {type: 'ContainSuits', suits: [red, green, green, green ]},
-      {type: 'ContainSuits', suits: [blue, blue, blue, white ]},
-      {type: 'ContainSuits', suits: [white, white, white, blue ]},
-    ],
-    colConditions: [
-      {type: 'ContainSuits', suits: [blue, blue, green, green ]},
-      {type: 'ContainSuits', suits: [blue, red, green, white ]},
-      {type: 'ContainSuits', suits: [red, green, white, white ]},
-      {type: 'ContainSuits', suits: [red, red, blue, white ]},
-    ]
-  },
-
-  {
-    rowConditions: [
-      {type: 'ContainNumbers', numbers: [4, 4, 4, 4]},
-      {type: 'ContainSuits', suits: [blue, white, green, red]},
-      {type: 'ContainSuits', suits: [blue, white, green, red]},
-      {type: 'ContainSuits', suits: [blue, white, green, red]},
-    ],
-    colConditions: [
-      {type: 'ContainSuits', suits: [green, green, green, green]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [green, green, green, green], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
     ]
   },
 
@@ -71,16 +86,16 @@ export const levels = [
 
   {
     rowConditions: [
-      {type: 'ContainNumbers', numbers: [1, 4, 4, 4 ]},
-      {type: 'ContainNumbers', numbers: [1, 1, 2, 3 ]},
-      {type: 'ContainSuits', suits: [white, white, white, blue ]},
-      {type: 'ContainSuits', suits: [red, red, green, blue ]},
+      {type: 'Contain', numbers: [1, 4, 4, 4 ], suits: []},
+      {type: 'Contain', numbers: [1, 1, 2, 3 ], suits: []},
+      {type: 'Contain', suits: [white, white, white, blue ], numbers: []},
+      {type: 'Contain', suits: [red, red, green, blue ], numbers: []},
     ],
     colConditions: [
-      {type: 'ContainNumbers', numbers: [1, 1, 1, 4 ]},
-      {type: 'ContainNumbers', numbers: [2, 2, 3, 4 ]},
-      {type: 'ContainSuits', suits: [blue, blue, blue, white ]},
-      {type: 'ContainSuits', suits: [green, green, green, blue ]},
+      {type: 'Contain', numbers: [1, 1, 1, 4 ], suits: []},
+      {type: 'Contain', numbers: [2, 2, 3, 4 ], suits: []},
+      {type: 'Contain', suits: [blue, blue, blue, white ], numbers: []},
+      {type: 'Contain', suits: [green, green, green, blue ], numbers: []},
     ]
   },
 
@@ -90,14 +105,14 @@ export const levels = [
     rowConditions: [
       {type: 'SumGreaterThan', amount: 11},
       {type: 'OddOrSuit', suit: blue},
-      {type: 'ContainSuits', suits: [blue, white, green, red]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
     ],
     colConditions: [
       {type: 'SumGreaterThan', amount: 11},
       {type: 'EvenOrSuit', suit: red},
-      {type: 'ContainSuits', suits: [blue, white, green, red]},
-      {type: 'ContainNumbers', numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
     ]
   },
 

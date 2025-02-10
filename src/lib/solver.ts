@@ -23,20 +23,20 @@ function tileMatches(tile: Tile | undefined, criteria: Partial<Tile>): boolean {
 }
 
 function conditionRequirementCountForCriteria(condition: Condition, criteria: Partial<Tile>): number {
-  if (condition.type === 'ContainSuits' && criteria.suit) {
+  if (condition.type === 'Contain' && criteria.suit) {
     return condition.suits.filter(suit => suit === criteria.suit).length;
   }
-  if (condition.type === 'ContainNumbers' && criteria.value) {
+  if (condition.type === 'Contain' && criteria.value) {
     return condition.numbers.filter(number => number === criteria.value).length;
   }
   return 0;
 }
 
 function conditionRequirementCountThatCannotMatchCriteria(condition: Condition, criteria: Partial<Tile>): number {
-  if (condition.type === 'ContainSuits' && criteria.suit) {
+  if (condition.type === 'Contain' && criteria.suit) {
     return condition.suits.filter(suit => suit !== criteria.suit).length;
   }
-  if (condition.type === 'ContainNumbers' && criteria.value) {
+  if (condition.type === 'Contain' && criteria.value) {
     return condition.numbers.filter(number => number !== criteria.value).length;
   }
   return 0;
@@ -168,15 +168,15 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     conditionBasedElimination,
     nakedSingle,
 
-    singleGroupLockOut,
-    singleGroupLockIn,
+    singleGroupOuterLockOut,
+    singleGroupInnerLockIn,
     singleGroupInnerLockOut,
 
     multiRowLockOut,
     multiColLockOut,
 
     // Row + Col Condition Segregation
-    // NOTE: I currently only have these doing 1 row and 1 col at a time
+    // NOTE: I currently only have these for up to 2x2 rows and columns
     multiRowAndColSuitSegregation,
     multiRowAndColNumberSegregation,
 
@@ -184,7 +184,6 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
 
     nakedPair,
 
-    // HiddenPair
     arbitraryGuess,
   ];
 
@@ -215,10 +214,35 @@ function arbitraryGuess(
         if (options[i][j].length === 0) {
           return false; // Stop if we know we've made a mistake
         }
-        console.log(options[i][j]);
-        console.log(options);
         console.log(i, j, 'Arbitrary Guess', options[i][j]);
-        return false;
+        placeTile(board, options, tiles, options[i][j][0], i, j)
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function educatedGuess(
+  _: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === undefined) {
+      }
+    }
+  }
+
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === undefined) {
+        if (options[i][j].length === 0) {
+          return false; // Stop if we know we've made a mistake
+        }
+        console.log(i, j, 'Educated Guess', options[i][j]);
         placeTile(board, options, tiles, options[i][j][0], i, j)
         return true;
       }
@@ -334,7 +358,7 @@ function getGroups(
   return groups;
 }
 
-function singleGroupLockIn(
+function singleGroupInnerLockIn(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
@@ -344,22 +368,20 @@ function singleGroupLockIn(
 
   for (const criteria of allCriteria) {
     for (const [group, groupOptions, condition, groupDescription] of getGroups(level, board, options)) {
-      if (condition.type === 'ContainSuits') {
-        const requiredMatchingTiles = conditionRequirementCountForCriteria(condition, criteria);
-        const existingMatchingTiles = group.filter(tile => tileMatches(tile, criteria)).length;
-        const openSpacesThatCanMatch = groupOptions.filter(
-          spaceOptions => spaceOptions.some(option => tileMatches(option, criteria))
-        ).length;
+      const requiredMatchingTiles = conditionRequirementCountForCriteria(condition, criteria);
+      const existingMatchingTiles = group.filter(tile => tileMatches(tile, criteria)).length;
+      const openSpacesThatCanMatch = groupOptions.filter(
+        spaceOptions => spaceOptions.some(option => tileMatches(option, criteria))
+      ).length;
 
-        if (openSpacesThatCanMatch == requiredMatchingTiles - existingMatchingTiles) {
-          for (const spaceOptions of groupOptions) {
-            if (spaceOptions.some(option => tileMatches(option, criteria))) {
-              // In place filter as mentioned here: https://stackoverflow.com/a/49587869/3908710
-              const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => tileMatches(option, criteria)));
-              if (oldOptions.length > spaceOptions.length) {
-                madeProgress = true;
-                console.log('Group Inner Lock In', groupDescription, criteria);
-              }
+      if (openSpacesThatCanMatch == requiredMatchingTiles - existingMatchingTiles) {
+        for (const spaceOptions of groupOptions) {
+          if (spaceOptions.some(option => tileMatches(option, criteria))) {
+            // In place filter as mentioned here: https://stackoverflow.com/a/49587869/3908710
+            const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => tileMatches(option, criteria)));
+            if (oldOptions.length > spaceOptions.length) {
+              madeProgress = true;
+              console.log('Group Inner Lock In', groupDescription, criteria);
             }
           }
         }
@@ -379,25 +401,23 @@ function singleGroupInnerLockOut(
 
   for (const criteria of allCriteria) {
     for (const [group, groupOptions, condition, groupDescription] of getGroups(level, board, options)) {
-      if (condition.type === 'ContainSuits') {
-        const requiredNonMatchingTiles = conditionRequirementCountThatCannotMatchCriteria(condition, criteria);
-        const spacesWithOnlyMatchingOptions = groupOptions.filter(
-          spaceOptions => spaceOptions.every(option => tileMatches(option, criteria))
-        ).length;
-        const existingNonMatchingTiles = group.filter(tile => tile && !tileMatches(tile, criteria)).length;
-        const remainingNonMatchinTilesNeeded = requiredNonMatchingTiles - existingNonMatchingTiles;
+      const requiredNonMatchingTiles = conditionRequirementCountThatCannotMatchCriteria(condition, criteria);
+      const spacesWithOnlyMatchingOptions = groupOptions.filter(
+        spaceOptions => spaceOptions.length > 0 && spaceOptions.every(option => tileMatches(option, criteria))
+      ).length;
+      const existingNonMatchingTiles = group.filter(tile => tile && !tileMatches(tile, criteria)).length;
+      const remainingNonMatchingTilesNeeded = requiredNonMatchingTiles - existingNonMatchingTiles;
 
-        const openSpaces = group.filter(tile => tile === undefined).length;
+      const openSpaces = group.filter(tile => tile === undefined).length;
 
-        if (spacesWithOnlyMatchingOptions == openSpaces - remainingNonMatchinTilesNeeded) {
-          for (const spaceOptions of groupOptions) {
-            if (spaceOptions.some(option => !tileMatches(option, criteria))) {
-              // In place filter as mentioned here: https://stackoverflow.com/a/49587869/3908710
-              const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => !tileMatches(option, criteria)));
-              if (oldOptions.length > spaceOptions.length) {
-                madeProgress = true;
-                console.log('Group Inner Lock Out', groupDescription, criteria);
-              }
+      if (spacesWithOnlyMatchingOptions == openSpaces - remainingNonMatchingTilesNeeded) {
+        for (const [i, spaceOptions] of groupOptions.entries()) {
+          if (spaceOptions.some(option => !tileMatches(option, criteria))) {
+            // In place filter as mentioned here: https://stackoverflow.com/a/49587869/3908710
+            const oldOptions = spaceOptions.splice(0, spaceOptions.length, ...spaceOptions.filter(option => !tileMatches(option, criteria)));
+            if (oldOptions.length > spaceOptions.length) {
+              madeProgress = true;
+              console.log('Group Inner Lock Out', groupDescription, criteria, i);
             }
           }
         }
@@ -407,7 +427,7 @@ function singleGroupInnerLockOut(
   return madeProgress;
 }
 
-function singleGroupLockOut(
+function singleGroupOuterLockOut(
   level: Level,
   board: Array<Array<Tile | undefined>>,
   options: Array<Array<Array<Tile>>>,
@@ -431,7 +451,7 @@ function singleGroupLockOut(
               if (options[rowOptionsIndex][colOptionsIndex].length !== spaceOptions.length) {
                 madeProgress = true;
                 console.log(
-                  'Single Group Lock Out',
+                  'Single Group Outer Lock Out',
                   groupDescription,
                   criteria,
                   {lockedOutRow: rowOptionsIndex, lockedOutCol: colOptionsIndex},
@@ -567,10 +587,31 @@ function multiRowAndColSuitSegregation(
   ];
 
   const combinations = [
+    // 1 row and 1 column
     { rows: [0], cols: [0] }, { rows: [0], cols: [1] }, { rows: [0], cols: [2] }, { rows: [0], cols: [3] },
     { rows: [1], cols: [0] }, { rows: [1], cols: [1] }, { rows: [1], cols: [2] }, { rows: [1], cols: [3] },
     { rows: [2], cols: [0] }, { rows: [2], cols: [1] }, { rows: [2], cols: [2] }, { rows: [2], cols: [3] },
     { rows: [3], cols: [0] }, { rows: [3], cols: [1] }, { rows: [3], cols: [2] }, { rows: [3], cols: [3] },
+
+    // 1 row and 2 columns
+    { rows: [0], cols: [0, 1] }, { rows: [0], cols: [0, 2] }, { rows: [0], cols: [0, 3] }, { rows: [0], cols: [1, 2] }, { rows: [0], cols: [1, 3] }, { rows: [0], cols: [2, 3] },
+    { rows: [1], cols: [0, 1] }, { rows: [1], cols: [0, 2] }, { rows: [1], cols: [0, 3] }, { rows: [1], cols: [1, 2] }, { rows: [1], cols: [1, 3] }, { rows: [1], cols: [2, 3] },
+    { rows: [2], cols: [0, 1] }, { rows: [2], cols: [0, 2] }, { rows: [2], cols: [0, 3] }, { rows: [2], cols: [1, 2] }, { rows: [2], cols: [1, 3] }, { rows: [2], cols: [2, 3] },
+    { rows: [3], cols: [0, 1] }, { rows: [3], cols: [0, 2] }, { rows: [3], cols: [0, 3] }, { rows: [3], cols: [1, 2] }, { rows: [3], cols: [1, 3] }, { rows: [3], cols: [2, 3] },
+
+    // 2 rows and 1 column
+    { rows: [0, 1], cols: [0] }, { rows: [0, 2], cols: [0] }, { rows: [0, 3], cols: [0] }, { rows: [1, 2], cols: [0] }, { rows: [1, 3], cols: [0] }, { rows: [2, 3], cols: [0] },
+    { rows: [0, 1], cols: [1] }, { rows: [0, 2], cols: [1] }, { rows: [0, 3], cols: [1] }, { rows: [1, 2], cols: [1] }, { rows: [1, 3], cols: [1] }, { rows: [2, 3], cols: [1] },
+    { rows: [0, 1], cols: [2] }, { rows: [0, 2], cols: [2] }, { rows: [0, 3], cols: [2] }, { rows: [1, 2], cols: [2] }, { rows: [1, 3], cols: [2] }, { rows: [2, 3], cols: [2] },
+    { rows: [0, 1], cols: [3] }, { rows: [0, 2], cols: [3] }, { rows: [0, 3], cols: [3] }, { rows: [1, 2], cols: [3] }, { rows: [1, 3], cols: [3] }, { rows: [2, 3], cols: [3] },
+
+    // 2 rows and 2 columns
+    { rows: [0, 1], cols: [0, 1] }, { rows: [0, 1], cols: [0, 2] }, { rows: [0, 1], cols: [0, 3] }, { rows: [0, 1], cols: [1, 2] }, { rows: [0, 1], cols: [1, 3] }, { rows: [0, 1], cols: [2, 3] },
+    { rows: [0, 2], cols: [0, 1] }, { rows: [0, 2], cols: [0, 2] }, { rows: [0, 2], cols: [0, 3] }, { rows: [0, 2], cols: [1, 2] }, { rows: [0, 2], cols: [1, 3] }, { rows: [0, 2], cols: [2, 3] },
+    { rows: [0, 3], cols: [0, 1] }, { rows: [0, 3], cols: [0, 2] }, { rows: [0, 3], cols: [0, 3] }, { rows: [0, 3], cols: [1, 2] }, { rows: [0, 3], cols: [1, 3] }, { rows: [0, 3], cols: [2, 3] },
+    { rows: [1, 2], cols: [0, 1] }, { rows: [1, 2], cols: [0, 2] }, { rows: [1, 2], cols: [0, 3] }, { rows: [1, 2], cols: [1, 2] }, { rows: [1, 2], cols: [1, 3] }, { rows: [1, 2], cols: [2, 3] },
+    { rows: [1, 3], cols: [0, 1] }, { rows: [1, 3], cols: [0, 2] }, { rows: [1, 3], cols: [0, 3] }, { rows: [1, 3], cols: [1, 2] }, { rows: [1, 3], cols: [1, 3] }, { rows: [1, 3], cols: [2, 3] },
+    { rows: [2, 3], cols: [0, 1] }, { rows: [2, 3], cols: [0, 2] }, { rows: [2, 3], cols: [0, 3] }, { rows: [2, 3], cols: [1, 2] }, { rows: [2, 3], cols: [1, 3] }, { rows: [2, 3], cols: [2, 3] },
   ];
 
   suit_loop:
@@ -578,8 +619,8 @@ function multiRowAndColSuitSegregation(
     const unplacedRemainingTilesOfSuit = tiles.filter(tile => tile.suit === suit).length;
 
     for (const indexes of combinations) {
-      const rowConditions = indexes.rows.map(i => level.rowConditions[i]).filter(condition => condition.type === 'ContainSuits');
-      const colConditions = indexes.cols.map(i => level.colConditions[i]).filter(condition => condition.type === 'ContainSuits');
+      const rowConditions = indexes.rows.map(i => level.rowConditions[i]).filter(condition => condition.type === 'Contain');
+      const colConditions = indexes.cols.map(i => level.colConditions[i]).filter(condition => condition.type === 'Contain');
       const rows = indexes.rows.map(i => board[i]);
       const columns = indexes.cols.map(i => columnarBoard[i]);
 
@@ -622,7 +663,7 @@ function multiRowAndColSuitSegregation(
             }
           }
         }
-        continue suit_loop;
+        //continue suit_loop;
       }
     }
   }
@@ -645,10 +686,31 @@ function multiRowAndColNumberSegregation(
   ];
 
   const combinations = [
+    // 1 row and 1 column
     { rows: [0], cols: [0] }, { rows: [0], cols: [1] }, { rows: [0], cols: [2] }, { rows: [0], cols: [3] },
     { rows: [1], cols: [0] }, { rows: [1], cols: [1] }, { rows: [1], cols: [2] }, { rows: [1], cols: [3] },
     { rows: [2], cols: [0] }, { rows: [2], cols: [1] }, { rows: [2], cols: [2] }, { rows: [2], cols: [3] },
     { rows: [3], cols: [0] }, { rows: [3], cols: [1] }, { rows: [3], cols: [2] }, { rows: [3], cols: [3] },
+
+    // 1 row and 2 columns
+    { rows: [0], cols: [0, 1] }, { rows: [0], cols: [0, 2] }, { rows: [0], cols: [0, 3] }, { rows: [0], cols: [1, 2] }, { rows: [0], cols: [1, 3] }, { rows: [0], cols: [2, 3] },
+    { rows: [1], cols: [0, 1] }, { rows: [1], cols: [0, 2] }, { rows: [1], cols: [0, 3] }, { rows: [1], cols: [1, 2] }, { rows: [1], cols: [1, 3] }, { rows: [1], cols: [2, 3] },
+    { rows: [2], cols: [0, 1] }, { rows: [2], cols: [0, 2] }, { rows: [2], cols: [0, 3] }, { rows: [2], cols: [1, 2] }, { rows: [2], cols: [1, 3] }, { rows: [2], cols: [2, 3] },
+    { rows: [3], cols: [0, 1] }, { rows: [3], cols: [0, 2] }, { rows: [3], cols: [0, 3] }, { rows: [3], cols: [1, 2] }, { rows: [3], cols: [1, 3] }, { rows: [3], cols: [2, 3] },
+
+    // 2 rows and 1 column
+    { rows: [0, 1], cols: [0] }, { rows: [0, 2], cols: [0] }, { rows: [0, 3], cols: [0] }, { rows: [1, 2], cols: [0] }, { rows: [1, 3], cols: [0] }, { rows: [2, 3], cols: [0] },
+    { rows: [0, 1], cols: [1] }, { rows: [0, 2], cols: [1] }, { rows: [0, 3], cols: [1] }, { rows: [1, 2], cols: [1] }, { rows: [1, 3], cols: [1] }, { rows: [2, 3], cols: [1] },
+    { rows: [0, 1], cols: [2] }, { rows: [0, 2], cols: [2] }, { rows: [0, 3], cols: [2] }, { rows: [1, 2], cols: [2] }, { rows: [1, 3], cols: [2] }, { rows: [2, 3], cols: [2] },
+    { rows: [0, 1], cols: [3] }, { rows: [0, 2], cols: [3] }, { rows: [0, 3], cols: [3] }, { rows: [1, 2], cols: [3] }, { rows: [1, 3], cols: [3] }, { rows: [2, 3], cols: [3] },
+
+    // 2 rows and 2 columns
+    { rows: [0, 1], cols: [0, 1] }, { rows: [0, 1], cols: [0, 2] }, { rows: [0, 1], cols: [0, 3] }, { rows: [0, 1], cols: [1, 2] }, { rows: [0, 1], cols: [1, 3] }, { rows: [0, 1], cols: [2, 3] },
+    { rows: [0, 2], cols: [0, 1] }, { rows: [0, 2], cols: [0, 2] }, { rows: [0, 2], cols: [0, 3] }, { rows: [0, 2], cols: [1, 2] }, { rows: [0, 2], cols: [1, 3] }, { rows: [0, 2], cols: [2, 3] },
+    { rows: [0, 3], cols: [0, 1] }, { rows: [0, 3], cols: [0, 2] }, { rows: [0, 3], cols: [0, 3] }, { rows: [0, 3], cols: [1, 2] }, { rows: [0, 3], cols: [1, 3] }, { rows: [0, 3], cols: [2, 3] },
+    { rows: [1, 2], cols: [0, 1] }, { rows: [1, 2], cols: [0, 2] }, { rows: [1, 2], cols: [0, 3] }, { rows: [1, 2], cols: [1, 2] }, { rows: [1, 2], cols: [1, 3] }, { rows: [1, 2], cols: [2, 3] },
+    { rows: [1, 3], cols: [0, 1] }, { rows: [1, 3], cols: [0, 2] }, { rows: [1, 3], cols: [0, 3] }, { rows: [1, 3], cols: [1, 2] }, { rows: [1, 3], cols: [1, 3] }, { rows: [1, 3], cols: [2, 3] },
+    { rows: [2, 3], cols: [0, 1] }, { rows: [2, 3], cols: [0, 2] }, { rows: [2, 3], cols: [0, 3] }, { rows: [2, 3], cols: [1, 2] }, { rows: [2, 3], cols: [1, 3] }, { rows: [2, 3], cols: [2, 3] },
   ];
 
   number_loop:
@@ -656,8 +718,8 @@ function multiRowAndColNumberSegregation(
     const unplacedRemainingTilesOfNumber = tiles.filter(tile => tile.value === number).length;
 
     for (const indexes of combinations) {
-      const rowConditions = indexes.rows.map(i => level.rowConditions[i]).filter(condition => condition.type === 'ContainNumbers');
-      const colConditions = indexes.cols.map(i => level.colConditions[i]).filter(condition => condition.type === 'ContainNumbers');
+      const rowConditions = indexes.rows.map(i => level.rowConditions[i]).filter(condition => condition.type === 'Contain');
+      const colConditions = indexes.cols.map(i => level.colConditions[i]).filter(condition => condition.type === 'Contain');
       const rows = indexes.rows.map(i => board[i]);
       const columns = indexes.cols.map(i => columnarBoard[i]);
 
@@ -725,7 +787,7 @@ function hiddenSingle(
     if (availableSpaces.length === 1) {
       const {row, col} = availableSpaces[0];
       placeTile(board, options, tiles, tile, row, col)
-      console.log(row, col, 'hiddenSingle');
+      console.log(row, col, 'hiddenSingle', options);
       return true;
     }
   }

@@ -1,12 +1,8 @@
 import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
-import type { Level } from './level.ts';
-import { blue, green, white, red, allSuits } from './suit';
-import { tilesAreEqual } from './tile';
 
 export type Condition = (
-    { type: 'ContainSuits', suits: Array<Suit> } |
-    { type: 'ContainNumbers', numbers: Array<TileValue> } |
+    { type: 'Contain', suits: Array<Suit>, numbers: Array<TileValue>} |
     { type: 'SumGreaterThan', amount: number } |
     { type: 'OddOrSuit', suit: Suit } |
     { type: 'EvenOrSuit', suit: Suit }
@@ -38,12 +34,17 @@ export function evaluate(
     }
   }
 
-  if (condition.type === 'ContainSuits') {
-    return containsSuits(tiles, condition.suits);
-  }
-
-  if (condition.type === 'ContainNumbers') {
-    return containsNumbers(tiles, condition.numbers);
+  if (condition.type === 'Contain') {
+    let unmatchedSuits = countUnmatchedSuits(tiles, condition.suits);
+    let unmatchedNumbers = countUnmatchedNumbers(tiles, condition.numbers);
+    let openSpaces = 4 - tiles.length;
+    if (complete) {
+      return unmatchedSuits === 0 && unmatchedNumbers === 0;
+    }
+    if (unmatchedSuits > openSpaces || unmatchedNumbers > openSpaces) {
+      return false;
+    }
+    return null;
   }
 
   if (condition.type === 'EvenOrSuit') {
@@ -67,44 +68,35 @@ export function evaluate(
   throw new Error(`Programming Error: Condition "${condition.type}" did not match any evaluator`);
 }
 
-export function containsSuits(
+export function countUnmatchedSuits(
   tiles: Array<Tile>,
   requiredSuits: Array<Suit>,
-): boolean | null {
-  const suits = requiredSuits.slice();
-  const complete = tiles.length === 4;
+): number {
+  const unmatchedSuits = requiredSuits.slice();
 
   for (const tile of tiles) {
-    var index = suits.indexOf(tile.suit);
-    if (index === -1) {
-      return false;
+    var index = unmatchedSuits.indexOf(tile.suit);
+    if (index !== -1) {
+      unmatchedSuits.splice(index, 1);
     }
-    suits.splice(index, 1);
   }
-  if (!complete) {
-    return null;
-  }
-  return suits.length === 0;
+  return unmatchedSuits.length
 }
 
-export function containsNumbers(
+export function countUnmatchedNumbers(
   tiles: Array<Tile>,
   requiredNumbers: Array<TileValue>,
-): boolean | null {
-  const numbers = requiredNumbers.slice();
-  const complete = tiles.length === 4;
+): number {
+  const unmatchedNumbers = requiredNumbers.slice();
 
   for (const tile of tiles) {
-    var index = numbers.indexOf(tile.value);
-    if (index === -1) {
-      return false;
+    var index = unmatchedNumbers.indexOf(tile.value);
+    if (index !== -1) {
+      unmatchedNumbers.splice(index, 1);
     }
-    numbers.splice(index, 1);
   }
-  if (!complete) {
-    return null;
-  }
-  return numbers.length === 0;
+
+  return unmatchedNumbers.length;
 }
 
 export function getTitle(condition: Condition, type: 'row' | 'column'): string {
@@ -112,12 +104,14 @@ export function getTitle(condition: Condition, type: 'row' | 'column'): string {
     return `Tiles in ${type} must add to more than ${condition.amount}`;
   }
 
-  if (condition.type === 'ContainSuits') {
-    return `Must have a matching tile in ${type} for each shown symbol`;
-  }
-
-  if (condition.type === 'ContainNumbers') {
-    return `Must have a matching tile in ${type} for each number shown`;
+  if (condition.type === 'Contain') {
+    if (condition.suits.length === 0) {
+      return `Must have a matching tile in ${type} for each number shown`;
+    }
+    if (condition.numbers.length === 0) {
+      return `Must have a matching tile in ${type} for each shown symbol`;
+    }
+      return `Must have a tile matching each symbol or number shown in ${type}`;
   }
 
   if (condition.type === 'EvenOrSuit') {
