@@ -5,7 +5,6 @@
   import type { Tile, TileValue } from './tile.ts';
   import { tilesAreEqual } from './tile.ts';
   import { red, blue, white, green } from './suit';
-  import { dragState } from './dragState.svelte';
 
   const values: Array<TileValue> = [1, 2, 3, 4];
   const suits: Array<Suit> = [red, blue, white, green];

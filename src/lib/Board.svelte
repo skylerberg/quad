@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { dragState } from './dragState.svelte';
   import ConditionIcon from './ConditionIcon.svelte';
   import TileToken from './TileToken.svelte';
   import type { Tile } from './tile';
@@ -24,13 +23,6 @@
   const col3 = $derived([rows[0][3], rows[1][3], rows[2][3], rows[3][3]])
 
   const cols = $derived([col0, col1, col2, col3]);
-
-  const dropOnEmptySpace = (row: number, col: number) => {
-    if (dragState.tile) {
-      rows[row][col] = dragState.tile;
-      dragState.droppedOnBoard = true;
-    }
-  }
 
   let solution = tacticalSolver(level); 
   //let solution = solve(level); 

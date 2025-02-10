@@ -2,7 +2,6 @@
   import type { Suit } from './suit';
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './suit';
-  import { dragState } from './dragState.svelte';
 
   let { tile }: {
     tile: Tile,
