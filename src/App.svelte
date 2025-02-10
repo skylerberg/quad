@@ -5,32 +5,33 @@
   import StorageHandler from './lib/StorageHandler.svelte';
   import { levels } from './lib/level.ts';
   import { onMount } from 'svelte';
+  import type { Tile } from './tile';
+  import { writable, derived } from 'svelte/store';
 
-  let level: number = $state(0);
+  let board: Array<Array<Tile | undefined>> = $state([
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+    [undefined, undefined, undefined, undefined],
+  ]);
 
-  const savedCurrentLevelId = localStorage.getItem('currentLevel');
-  if (savedCurrentLevelId) {
-    const levelIndex = levels.findIndex(level => level.id === savedCurrentLevelId);
-    if (levelIndex !== -1) {
-      level = levelIndex;
-    }
+  let levelIndex: number = writable(0);
+  let level = derived(levelIndex, ($levelIndex) => levels[$levelIndex]);
+
+  const goToNextLevel = () => {
+    $levelIndex += 1;
   }
-
-  $effect(() => {
-    window.dispatchEvent(
-      new CustomEvent('level-changed', {detail: {level: levels[level]}})
-    );
-  })
 </script>
 
 <h1>Tile Game</h1>
-<h2>Level {level + 1}</h2>
+<h2>Level {$levelIndex + 1}</h2>
 <main>
-  {#key level}
-    <Board level={levels[level]} />
-    <TileBag />
-    <DragHandler />
-    <StorageHandler />
+  <StorageHandler bind:levelIndex bind:board />
+  <!-- TODO figure out how to get the board to clear without needing this key -->
+  {#key $levelIndex}
+    <Board board={board} level={levels[$levelIndex]} />
+    <TileBag board={board} />
+    <DragHandler bind:board />
   {/key}
-  <button onclick={() => level += 1}>Next Level</button>
+  <button onclick={() => goToNextLevel()}>Next Level</button>
 </main>

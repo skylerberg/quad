@@ -10,3 +10,5 @@ export function tilesAreEqual(a: Tile | undefined, b: Tile | undefined) {
   }
   return a.value === b.value && a.suit === b.suit;
 }
+
+export const allNumbers: Array<TileValue> = [1, 2, 3, 4];

@@ -8,14 +8,12 @@
   import type { Level } from './level';
   import { solve, tacticalSolver } from './solver';
 
-  let { level }: { level: Level } = $props();
+  let { level, board }: {
+    level: Level,
+    board: Array<Array<Tile | undefined>>
+  } = $props();
 
-  let rows: Array<Array<Tile | undefined>> = $state([
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-  ]);
+  let rows = board;
 
   const col0 = $derived([rows[0][0], rows[1][0], rows[2][0], rows[3][0]])
   const col1 = $derived([rows[0][1], rows[1][1], rows[2][1], rows[3][1]])
@@ -24,64 +22,12 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const savedBoard = localStorage.getItem(`level-${level.id}`);
-  if (savedBoard) {
-    rows = JSON.parse(savedBoard);
-    for (const row of rows) {
-      for (const tile of row) {
-        if (tile) {
-          window.dispatchEvent(
-            new CustomEvent('removed-from-bag', {detail: {tile}})
-          );
-        }
-      }
-    }
-  }
 
   //let solution = tacticalSolver(level); 
   ////let solution = solve(level); 
   //if (solution) {
   //  //rows = solution;
   //}
-
-  onMount(() => {
-    const placedOnBoard = (event) => {
-      const { row, col, tile } = event.detail;
-      rows[row][col] = tile;
-
-      window.dispatchEvent(
-        new CustomEvent('board-changed', {detail: {board: rows, level}})
-      );
-    };
-    const removedFromBoard = (event) => {
-      const { row, col } = event.detail;
-      rows[row][col] = undefined;
-
-      window.dispatchEvent(
-        new CustomEvent('board-changed', {detail: {board: rows, level}})
-      );
-    };
-    const swappedBoardSpaces = (event) => {
-      const { to, from } = event.detail;
-      const fromTile = rows[from.row][from.col];
-      rows[from.row][from.col] = rows[to.row][to.col];
-      rows[to.row][to.col] = fromTile;
-
-      window.dispatchEvent(
-        new CustomEvent('board-changed', {detail: {board: rows, level}})
-      );
-    };
-
-    window.addEventListener('placed-on-board', placedOnBoard);
-    window.addEventListener('removed-from-board', removedFromBoard);
-    window.addEventListener('swapped-board-spaces', swappedBoardSpaces);
-
-    return () => {
-      window.removeEventListener('placed-on-board', placedOnBoard);
-      window.removeEventListener('removed-from-board', removedFromBoard);
-      window.removeEventListener('swapped-board-spaces', swappedBoardSpaces);
-    };
-  });
 </script>
 
 <div class='board'>
