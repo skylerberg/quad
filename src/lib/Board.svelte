@@ -24,27 +24,52 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  let solution = tacticalSolver(level); 
-  //let solution = solve(level); 
-  if (solution) {
-    //rows = solution;
+  const savedBoard = localStorage.getItem(`level-${level.id}`);
+  if (savedBoard) {
+    rows = JSON.parse(savedBoard);
+    for (const row of rows) {
+      for (const tile of row) {
+        if (tile) {
+          window.dispatchEvent(
+            new CustomEvent('removed-from-bag', {detail: {tile}})
+          );
+        }
+      }
+    }
   }
 
-  onMount(() => {
+  //let solution = tacticalSolver(level); 
+  ////let solution = solve(level); 
+  //if (solution) {
+  //  //rows = solution;
+  //}
 
+  onMount(() => {
     const placedOnBoard = (event) => {
       const { row, col, tile } = event.detail;
       rows[row][col] = tile;
+
+      window.dispatchEvent(
+        new CustomEvent('board-changed', {detail: {board: rows, level}})
+      );
     };
     const removedFromBoard = (event) => {
       const { row, col } = event.detail;
       rows[row][col] = undefined;
+
+      window.dispatchEvent(
+        new CustomEvent('board-changed', {detail: {board: rows, level}})
+      );
     };
     const swappedBoardSpaces = (event) => {
       const { to, from } = event.detail;
       const fromTile = rows[from.row][from.col];
       rows[from.row][from.col] = rows[to.row][to.col];
       rows[to.row][to.col] = fromTile;
+
+      window.dispatchEvent(
+        new CustomEvent('board-changed', {detail: {board: rows, level}})
+      );
     };
 
     window.addEventListener('placed-on-board', placedOnBoard);

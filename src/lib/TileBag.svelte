@@ -9,6 +9,7 @@
   const values: Array<TileValue> = [1, 2, 3, 4];
   const suits: Array<Suit> = [red, blue, white, green];
   let tiles: Array<Tile> = $state([])
+
   for (const suit of suits) {
     for (const value of values) {
       tiles.push({suit, value});
