@@ -74,6 +74,34 @@ the puzzle requires more complicated use of previously learned techniques.
 
 Additionally, we will occasionally introduce new conditions to the game.
 
+## Terms
+
+**Group:** A row or column.
+
+**Attribute:** A suit or number.
+
+**Lockout:** A technique showing that every space in some set of spaces cannot
+have a particular attribute.
+
+**Lock-in:** A technique showing that every space in a set of spaces must have a
+particular attribute. Once shown, we can remove any options for those spaces
+that does not have that attribute.
+
+**Outer Lockout:** A lockout where by showing that all tiles with a
+particular attribute must be within a set of spaces, all spaces outside that
+group are locked out of that attribute.
+
+**Inner Lockout:** A lockout where in a set of spaces, a limited number of tiles
+must have a particular attribute. By showing that limited number is entirely
+confined to a subset of the spaces, we can lock out the spaces not in that
+subset from having that attribute.
+
+**Inner Lock-In:** A lock-in where in a set of spaces at least some number of
+tiles must have a particular attribute. If the largest subset of spaces that
+could hold a tile with that attribute is equal to the required number of tiles
+with that attribute, then we can lock-in that attribute for that subset.
+
+
 ## Techniques
 
 ### Hidden Single
@@ -83,15 +111,23 @@ that tile on that space.
 
 In sudoku terminology, this is a hidden single.
 
-### (Suit / Number) Segregation (full row / full column)
+### Single Group Outer Lockout
 
-If a row requires as many tiles of a given suit as there are remaining tiles of
-that suit, then no space in another row may have a tile of that suit.
+If a group requires as many tiles with a particular attribute as there are
+remaining tiles with that attribute, then no space outside that group may have a
+tile with that attribute.
 
-The same statement can be made for numbers instead of suits and for columns
-instead of rows.
+Example: If a row requires all four 4's, no other row can have a 4.
 
-### (Suit / Number) Segregation (multiple rows / multiple columns)
+Example: If a row requires three 4's, currently has no 4's, and one 4 has
+already been placed elsewhere, then no empty space outside of the row can have a
+4.
+
+### Single Group Inner Lock
+
+### Single Group Inner Lockout
+
+### Multi-Row Outer Lockout
 
 If a set of rows requires as many tiles of a given suit as there are remaining
 tiles of that suit, then no space in a row outside that set may have a tile of
@@ -101,7 +137,7 @@ that suit.
 The same statement can be made for numbers instead of suits and for columns
 instead of rows.
 
-### (Suit / Number) Segregation (row and column)
+### Row and Column Outer Lockout
 
 For a given suit, add the count of required tiles of that suit for a particular
 row and a particular column. If the required count of tiles of that suit is
@@ -114,7 +150,7 @@ column is occupied, then no other row or column may contain that suit.
 
 In both cases, the same statements can be made for numbers
 
-### (Suit / Number) Segregation (multiple rows and columns)
+### Row and Column Combination Outer Lockout
 
 This generalizes the previous technique to handle multiples rows and columns.
 Suppose we have a set of rows and columns and we take the count of required
@@ -124,6 +160,33 @@ the set, then no tiles of that suit may appear outside that set of rows and
 columns.
 
 The same technique can be used for numbers.
+
+### Intersectional Lock-In
+
+In the technique above, a row and column together may require more tiles with an
+attribute than remaining tiles with that attribute exists. This is possible
+because they can share a tile at their intersection. In this case, we can
+lock-in that attribute for the space at the intersection.
+
+### Inferred Containment Conditions
+
+If there are X tiles remaining with an attribute, when we consider a group, if
+there are Y empty spaces outside that group that may contain that attribute,
+then the group must contain at least X - Y tiles with that attribute.
+
+For example, if we have placed two plant tiles, and the top three rows have no
+spaces that can hold plant tiles, then we know that the bottom row must have two
+plant tiles. Thus we create a new containment condition for that row.
+
+### Pigeonhole Principle After Inferred Containment
+
+By inferring containment conditions, we can have rows with more than 4 items
+they must contain. We may be able to deduce that specific tiles must be in that
+group.
+
+For instance if we have a row that must contain 3, 4, 4, 4, Plant, and Plant,
+then we know that the 4-Plant and 3-Plant must both appear in this row. We can
+lock those tiles out of all other rows.
 
 ### Naked Pair
 
