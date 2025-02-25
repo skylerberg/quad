@@ -95,7 +95,7 @@ function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: 
   }
 }
 
-function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>): boolean | null {
+export function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>): boolean | null {
   let result: boolean | null = true;
   for (const [index, row] of board.entries()) {
     const evaluation = evaluate(level.rowConditions[index], row);
@@ -184,7 +184,11 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
 
     nakedPair,
 
-    arbitraryGuess,
+    // Heuristic approaches
+    //randomGuess,
+    //intersectionGuess, // Maybe this is a bad heuristic?
+    greedyGuess,
+    //arbitraryGuess,
   ];
 
   let madeProgress = true;
@@ -217,6 +221,113 @@ function arbitraryGuess(
         console.log(i, j, 'Arbitrary Guess', options[i][j]);
         placeTile(board, options, tiles, options[i][j][0], i, j)
         return true;
+      }
+    }
+  }
+  return false;
+}
+
+function greedyGuess(
+  level: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  let bestScore = 0;
+  let bestTile = null;
+  let bestSpace = null;
+  for (const tile of tiles) {
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        if (board[row][col] === undefined) {
+          let currentScore = 0;
+          if (options[row][col].some(option => tilesAreEqual(tile, option))) {
+            let rowCondition = level.rowConditions[row];
+            let colCondition = level.colConditions[col];
+            if (rowCondition.type === 'Contain') {
+              currentScore += rowCondition.suits.filter(suit => suit === tile.suit).length;
+              currentScore += rowCondition.numbers.filter(suit => suit === tile.value).length;
+            }
+            if (colCondition.type === 'Contain') {
+              currentScore += colCondition.suits.filter(suit => suit === tile.suit).length;
+              currentScore += colCondition.numbers.filter(suit => suit === tile.value).length;
+            }
+
+            if (currentScore > bestScore) {
+              bestScore = currentScore;
+              bestTile = tile;
+              bestSpace = { row, col };
+            }
+          }
+        }
+      }
+    }
+  }
+  if (bestTile && bestSpace) {
+      console.log(bestSpace.row, bestSpace.col, 'Greedy Guess', bestScore, bestTile, bestSpace);
+      placeTile(board, options, tiles, bestTile, bestSpace.row, bestSpace.col)
+      return true;
+  }
+  return false;
+}
+
+function randomGuess(
+  _: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  let fewestOptionsCount = 17;
+  let space = null;
+  for (let row = 0; row < board.length; row++) {
+    for (let col = 0; col < board[row].length; col++) {
+      if (board[row][col] === undefined) {
+        if (options[row][col].length < fewestOptionsCount) {
+          fewestOptionsCount = options[row][col].length;
+          space = { row, col };
+        }
+      }
+    }
+  }
+  if (space) {
+    const spaceOptions = options[space.row][space.col];
+    const randomTile = spaceOptions[Math.floor(Math.random() * spaceOptions.length)];
+    console.log(space.row, space.col, 'Random Guess', randomTile);
+    placeTile(board, options, tiles, randomTile, space.row, space.col)
+    return true;
+  }
+  return false;
+}
+
+function intersectionGuess(
+  level: Level,
+  board: Array<Array<Tile | undefined>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  for (const tile of tiles) {
+    for (let row = 0; row < board.length; row++) {
+      for (let col = 0; col < board[row].length; col++) {
+        if (board[row][col] === undefined) {
+          if (options[row][col].some(option => tilesAreEqual(tile, option))) {
+            let rowCondition = level.rowConditions[row];
+            let colCondition = level.colConditions[col];
+
+
+            if (rowCondition.type === 'Contain' && colCondition.type == 'Contain') {
+              if (
+                (rowCondition.numbers.some(value => value === tile.value) &&
+                  colCondition.numbers.some(value => value === tile.value))
+                || (rowCondition.suits.some(suit => suit === tile.suit) &&
+                  colCondition.suits.some(suit => suit === tile.suit))
+              ) {
+                console.log(row, col, 'Intersection Guess', tile);
+                placeTile(board, options, tiles, tile, row, col)
+                return true;
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -13,7 +13,6 @@
   if (savedCurrentLevelId) {
     const foundIndex = levels.findIndex(level => level.id === savedCurrentLevelId);
     if (foundIndex !== -1) {
-      console.log('here', foundIndex);
       $levelIndex = foundIndex;
     }
   }

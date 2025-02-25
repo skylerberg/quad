@@ -6,7 +6,7 @@
   import type { Condition } from './condition';
   import { red, blue } from './suit';
   import type { Level } from './level';
-  import { solve, tacticalSolver } from './solver';
+  import { solve, tacticalSolver, checkPuzzle } from './solver';
 
   let { level, board }: {
     level: Level,
@@ -28,6 +28,18 @@
   if (solution) {
     //rows = solution;
   }
+
+  //const iterations = 1000;
+  //let wins = 0;
+
+  //for (let i = 0; i < iterations; i++) {
+  //  const attempt = tacticalSolver(level);
+  //  if (checkPuzzle(level, attempt)) {
+  //    wins += 1;
+  //  }
+  //}
+
+  //console.log(wins / iterations, wins, iterations);
 </script>
 
 <div class='board'>

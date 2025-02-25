@@ -28,7 +28,7 @@
 <h2>Level {$levelIndex + 1}</h2>
 <img src={helpCircleOutlineUri} class='help-icon' />
 
-<dialog id="how-to-play-dialog" open>
+<dialog id="how-to-play-dialog">
   <h2>How To Play</h2>
   <p>Place all 16 tiles and meet the goal for each row and column</p>
   <hr />
