@@ -13,7 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   
   --border-color: #666;
-  --tile-border-radius: .25em;
+  --tile-border-radius: 10px;
   --board-max-width: 500px;
 }
 

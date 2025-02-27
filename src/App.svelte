@@ -39,62 +39,6 @@
 </main>
 
 <style>
-  .navbar {
-    height: 50px;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    background: #131313;
-    margin-bottom: 1em;
-  }
-
-  .title {
-    margin-left: 0.25em;
-    font-size: 24px;
-    align-self: center;
-  }
-
-  .title-letter {
-    display: inline-flex;
-    box-sizing: border-box;
-    width: 35px;
-    aspect-ratio: 1 / 1;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    justify-content: center;
-    align-items: center;
-    line-height: 1;
-    font-size: 28px;
-    align-self: center;
-    text-align: center;
-  }
-
-  .level {
-    font-size: 20px;
-    align-self: center;
-  }
-
-  .nav-buttons {
-    display: flex
-  }
-
-  .icon {
-    width: 2em;
-    filter: invert();
-    margin-left: 0.25em;
-    margin-right: 0.25em;
-    align-self: center;
-  }
-
-  #how-to-play-dialog {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    text-align: center;
-    max-width: min(400px, 80vw);
-  }
-
   main {
     max-width: 1280px;
     margin: 0 auto;
