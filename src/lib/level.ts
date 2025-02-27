@@ -9,6 +9,21 @@ export type Level = {
 
 export const levels = [
   {
+    id: 'Fireplace',
+    rowConditions: [
+      {type: 'EvenOrSuit', suit: blue},
+      {type: 'Contain', suits: [red, red, blue, white ], numbers: [ ]},
+      {type: 'Contain', suits: [ red, red, white, blue ], numbers: [ ]},
+      {type: 'SumGreaterThan', amount: 14},
+    ],
+    colConditions: [
+      {type: 'EvenOrSuit', suit: green},
+      {type: 'Contain', numbers: [ ], suits: [red, red, blue, white]},
+      {type: 'Contain', numbers: [ ], suits: [red, red, white, blue]},
+      {type: 'Contain', suits: [], numbers: [ ]},
+    ]
+  },
+  {
     id: 'UuZDwv4ue0',
     rowConditions: [
       {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},

@@ -2,12 +2,11 @@
   import Board from './lib/Board.svelte';
   import TileBag from './lib/TileBag.svelte';
   import DragHandler from './lib/DragHandler.svelte';
+  import Header from './lib/Header.svelte';
   import StorageHandler from './lib/StorageHandler.svelte';
   import { levels } from './lib/level.ts';
-  import { onMount } from 'svelte';
   import type { Tile } from './tile';
   import { writable, derived } from 'svelte/store';
-  import helpCircleOutlineUri from './assets/help-circle-outline.svg';
 
   let board: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -18,6 +17,7 @@
 
   let levelIndex: number = writable(0);
   let level = derived(levelIndex, ($levelIndex) => levels[$levelIndex]);
+  let levelNumber: number = derived(levelIndex, ($levelIndex) => $levelIndex + 1);
 
   const goToNextLevel = () => {
     $levelIndex += 1;
@@ -25,18 +25,7 @@
 </script>
 
 
-<h2>Level {$levelIndex + 1}</h2>
-<img src={helpCircleOutlineUri} class='help-icon' />
-
-<dialog id="how-to-play-dialog">
-  <h2>How To Play</h2>
-  <p>Place all 16 tiles and meet the goal for each row and column</p>
-  <hr />
-  <p></p>
-  <form method="dialog">
-    <button>Got It</button>
-  </form>
-</dialog>
+<Header levelNumber={levelNumber} />
 
 <main>
   <StorageHandler bind:levelIndex bind:board />
@@ -50,9 +39,51 @@
 </main>
 
 <style>
-  .help-icon {
+  .navbar {
+    height: 50px;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    background: #131313;
+    margin-bottom: 1em;
+  }
+
+  .title {
+    margin-left: 0.25em;
+    font-size: 24px;
+    align-self: center;
+  }
+
+  .title-letter {
+    display: inline-flex;
+    box-sizing: border-box;
+    width: 35px;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    font-size: 28px;
+    align-self: center;
+    text-align: center;
+  }
+
+  .level {
+    font-size: 20px;
+    align-self: center;
+  }
+
+  .nav-buttons {
+    display: flex
+  }
+
+  .icon {
     width: 2em;
     filter: invert();
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    align-self: center;
   }
 
   #how-to-play-dialog {
@@ -62,5 +93,11 @@
     margin: auto;
     text-align: center;
     max-width: min(400px, 80vw);
+  }
+
+  main {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
   }
 </style>

@@ -1,8 +1,14 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import type { Condition } from './condition.ts';
   import { evaluate, getTitle } from './condition';
   import { getSuitIcon, suitSymbolToName } from './suit';
   import type { Tile } from './tile.ts';
+  import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
+
+  let conditionDiv;
+  let tooltipDiv;
+  let arrowElement;
 
   let { tiles, condition, type, position }: {
     tiles: Array<Tile | undefined>,
@@ -28,10 +34,70 @@
   else if (position === 3) {
     classes.push('last');
   }
+
+
+  function updateToolTip() {
+    const placement = type === 'row' ? 'right' : 'bottom';
+    console.log('updating tooltip');
+    computePosition(conditionDiv, tooltipDiv, {
+      placement,
+      middleware: [
+        offset(6),
+        flip(),
+        shift({padding: 5}),
+        arrow({element: arrowElement}),
+      ],
+    }).then(({x, y, placement, middlewareData}) => {
+      Object.assign(tooltipDiv.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+      });
+
+      // Accessing the data
+      const {x: arrowX, y: arrowY} = middlewareData.arrow;
+     
+      const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+      }[placement.split('-')[0]];
+     
+      Object.assign(arrowElement.style, {
+        left: arrowX != null ? `${arrowX}px` : '',
+        top: arrowY != null ? `${arrowY}px` : '',
+        right: '',
+        bottom: '',
+        [staticSide]: '-9px',
+      });
+    });
+  }
+
+  onMount(() => {
+    function showTooltip() {
+      tooltipDiv.style.display = 'block';
+      updateToolTip();
+    }
+     
+    function hideTooltip() {
+      tooltipDiv.style.display = '';
+    }
+     
+    [
+      ['mouseenter', showTooltip],
+      ['mouseleave', hideTooltip],
+      ['focus', showTooltip],
+      ['blur', hideTooltip],
+    ].forEach(([event, listener]) => {
+      conditionDiv.addEventListener(event, listener);
+    });
+
+    updateToolTip();
+  });
 </script>
 
 
-<div title={title} class={classes.join(' ')}>
+<div bind:this={conditionDiv} class={classes.join(' ')}>
   {#if condition.type === 'SumGreaterThan'}
     Σ &gt; {condition.amount}
   {:else if condition.type === 'Contain'}
@@ -54,7 +120,10 @@
   {:else if status === false}
     <span class="status">❌</span>
   {/if}
-
+</div>
+<div class="tooltip" bind:this={tooltipDiv} role="tooltip">
+  <div class="arrow" bind:this={arrowElement}></div>
+  <span style="position: relative">{title}</span>
 </div>
 
 <style>
@@ -128,5 +197,27 @@
     z-index: -1;
     opacity: 0.75;
     font-size: min(15vmin, 58pt);
+  }
+
+  .tooltip {
+    display: none;
+    width: max-content;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #444;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 16pt;
+  }
+
+  .arrow {
+    position: absolute;
+    background: #444;
+    width: 18px;
+    height: 18px;
+    transform: rotate(45deg);
   }
 </style>

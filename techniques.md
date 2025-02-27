@@ -123,7 +123,7 @@ Example: If a row requires three 4's, currently has no 4's, and one 4 has
 already been placed elsewhere, then no empty space outside of the row can have a
 4.
 
-### Single Group Inner Lock
+### Single Group Inner Lockin
 
 ### Single Group Inner Lockout
 
