@@ -2,7 +2,6 @@
   import type { Suit } from './suit';
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './suit';
-  import { dragState } from './dragState.svelte';
 
   let { tile }: {
     tile: Tile,
@@ -44,7 +43,6 @@
   }
 
   .tile-number {
-    z-index: 1;
     color: white;
     text-shadow: 2px 2px 4px black;
   }

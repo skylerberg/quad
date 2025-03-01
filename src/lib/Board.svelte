@@ -1,22 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { dragState } from './dragState.svelte';
   import ConditionIcon from './ConditionIcon.svelte';
   import TileToken from './TileToken.svelte';
   import type { Tile } from './tile';
   import type { Condition } from './condition';
   import { red, blue } from './suit';
   import type { Level } from './level';
-  import { solve } from './condition';
+  import { solve, tacticalSolver, checkPuzzle } from './solver';
 
-  let { level }: { level: Level } = $props();
+  let { level, board }: {
+    level: Level,
+    board: Array<Array<Tile | undefined>>
+  } = $props();
 
-  let rows: Array<Array<Tile | undefined>> = $state([
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-  ]);
+  let rows = board;
 
   const col0 = $derived([rows[0][0], rows[1][0], rows[2][0], rows[3][0]])
   const col1 = $derived([rows[0][1], rows[1][1], rows[2][1], rows[3][1]])
@@ -25,46 +22,24 @@
 
   const cols = $derived([col0, col1, col2, col3]);
 
-  const dropOnEmptySpace = (row: number, col: number) => {
-    if (dragState.tile) {
-      rows[row][col] = dragState.tile;
-      dragState.droppedOnBoard = true;
-    }
-  }
 
-/*
-  window.dispatchEvent(
-    new CustomEvent('placed-on-board', {detail: {row, col, tile}})
-  );
-  */
+  //let solution = tacticalSolver(level); 
+  ////let solution = solve(level); 
+  //if (solution) {
+  //  //rows = solution;
+  //}
 
-  onMount(() => {
+  //const iterations = 1000;
+  //let wins = 0;
 
-    const placedOnBoard = (event) => {
-      const { row, col, tile } = event.detail;
-      rows[row][col] = tile;
-    };
-    const removedFromBoard = (event) => {
-      const { row, col } = event.detail;
-      rows[row][col] = undefined;
-    };
-    const swappedBoardSpaces = (event) => {
-      const { to, from } = event.detail;
-      const fromTile = rows[from.row][from.col];
-      rows[from.row][from.col] = rows[to.row][to.col];
-      rows[to.row][to.col] = fromTile;
-    };
+  //for (let i = 0; i < iterations; i++) {
+  //  const attempt = tacticalSolver(level);
+  //  if (checkPuzzle(level, attempt)) {
+  //    wins += 1;
+  //  }
+  //}
 
-    window.addEventListener('placed-on-board', placedOnBoard);
-    window.addEventListener('removed-from-board', removedFromBoard);
-    window.addEventListener('swapped-board-spaces', swappedBoardSpaces);
-
-    return () => {
-      window.removeEventListener('placed-on-board', placedOnBoard);
-      window.removeEventListener('removed-from-board', removedFromBoard);
-      window.removeEventListener('swapped-board-spaces', swappedBoardSpaces);
-    };
-  });
+  //console.log(wins / iterations, wins, iterations);
 </script>
 
 <div class='board'>

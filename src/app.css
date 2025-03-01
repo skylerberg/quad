@@ -13,7 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   
   --border-color: #666;
-  --tile-border-radius: .25em;
+  --tile-border-radius: 10px;
   --board-max-width: 500px;
 }
 
@@ -25,7 +25,9 @@ body {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  text-align: center;
+  width: 100%;
+}
+
+.draggable-source--is-dragging {
+  opacity: .3;
 }

@@ -2,9 +2,28 @@
   import Draggable from '@shopify/draggable/build/esm/Draggable/Draggable';
   import { onMount } from 'svelte';
 
+  let { level, board }: {
+    level: Level,
+    board: Array<Array<Tile | undefined>>
+  } = $props();
+
   let draggable = $state(undefined);
   let draggedOverSpace = undefined;
   let tileInDraggedOverSpace = undefined;
+
+  const removeFromBoard = (row: number, col: number) => {
+    board[row][col] = null;
+  }
+
+  const placeOnBoard = (row: number, col: number, tile: Tile) => {
+    board[row][col] = tile;
+  }
+
+  const swapBoardSpaces = (first: {row: number, col: number}, second: {row: number, col: number}) => {
+    const fromTile = board[first.row][first.col];
+    board[first.row][first.col] = board[second.row][second.col];
+    board[second.row][second.col] = fromTile;
+  }
 
   onMount(() => {
     const containers = document.querySelectorAll('.board, .tile-bag');
@@ -13,6 +32,7 @@
       delay: {
         touch: 0,
       },
+      ghostClass: '.being-dragged',
     });
 
     draggable.on('drag:move', (event) => {
@@ -26,36 +46,22 @@
       const draggingFrom = event.sourceContainer.classList.contains('board') ? 'board' : 'bag';
       const droppedOnSpace = draggedOverSpace;
 
-      if (droppedOnSpace && draggingFrom === 'bag' && !tileInDraggedOverSpace) {
-        window.dispatchEvent(
-          new CustomEvent('removed-from-bag', {detail: {tile}})
-        );
-
+      if (droppedOnSpace && draggingFrom === 'bag') {
         const row = droppedOnSpace.dataset.row;
         const col = droppedOnSpace.dataset.col;
-        window.dispatchEvent(
-          new CustomEvent('placed-on-board', {detail: {row, col, tile}})
-        );
+        placeOnBoard(row, col, tile);
       }
 
       else if (draggingFrom === 'board' && droppedOnSpace) {
         const from = { row: tileToken.parentNode.dataset.row, col: tileToken.parentNode.dataset.col };
         const to = { row: droppedOnSpace.dataset.row, col: droppedOnSpace.dataset.col };
-        window.dispatchEvent(
-          new CustomEvent('swapped-board-spaces', {detail: {from, to}})
-        );
+        swapBoardSpaces(from, to);
       }
 
       else if (draggingFrom === 'board' && !droppedOnSpace) {
         const row = tileToken.parentNode.dataset.row;
         const col = tileToken.parentNode.dataset.col;
-        window.dispatchEvent(
-          new CustomEvent('removed-from-board', {detail: {row, col}})
-        );
-
-        window.dispatchEvent(
-          new CustomEvent('added-to-bag', {detail: {tile}})
-        );
+        removeFromBoard(row, col);
       }
 
       draggedOverSpace = undefined;
