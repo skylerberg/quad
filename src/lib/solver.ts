@@ -185,9 +185,9 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     nakedPair,
 
     // Heuristic approaches
-    //randomGuess,
+    randomGuess,
     //intersectionGuess, // Maybe this is a bad heuristic?
-    greedyGuess,
+    //greedyGuess,
     //arbitraryGuess,
   ];
 
@@ -292,7 +292,7 @@ function randomGuess(
   if (space) {
     const spaceOptions = options[space.row][space.col];
     const randomTile = spaceOptions[Math.floor(Math.random() * spaceOptions.length)];
-    console.log(space.row, space.col, 'Random Guess', randomTile);
+    console.log(space.row, space.col, 'Random Guess', spaceOptions, randomTile);
     placeTile(board, options, tiles, randomTile, space.row, space.col)
     return true;
   }

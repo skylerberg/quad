@@ -23,11 +23,11 @@
   const cols = $derived([col0, col1, col2, col3]);
 
 
-  let solution = tacticalSolver(level); 
-  //let solution = solve(level); 
-  if (solution) {
-    //rows = solution;
-  }
+  //let solution = tacticalSolver(level); 
+  ////let solution = solve(level); 
+  //if (solution) {
+  //  //rows = solution;
+  //}
 
   //const iterations = 1000;
   //let wins = 0;

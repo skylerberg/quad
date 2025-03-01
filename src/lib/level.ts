@@ -8,52 +8,38 @@ export type Level = {
 };
 
 export const levels = [
-  {
-    id: 'Fireplace',
-    rowConditions: [
-      {type: 'EvenOrSuit', suit: blue},
-      {type: 'Contain', suits: [red, red, blue, white ], numbers: [ ]},
-      {type: 'Contain', suits: [ red, red, white, blue ], numbers: [ ]},
-      {type: 'SumGreaterThan', amount: 14},
-    ],
-    colConditions: [
-      {type: 'EvenOrSuit', suit: green},
-      {type: 'Contain', numbers: [ ], suits: [red, red, blue, white]},
-      {type: 'Contain', numbers: [ ], suits: [red, red, white, blue]},
-      {type: 'Contain', suits: [], numbers: [ ]},
-    ]
-  },
-  {
-    id: 'UuZDwv4ue0',
-    rowConditions: [
-      {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
-      {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
-      {type: 'Contain', suits: [green, white, green, white], numbers: []},
-      {type: 'Contain', suits: [red, red, red, red], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, green, red], numbers: []},
-      {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
-      {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
-      {type: 'Contain', numbers: [], suits: [white, white, white, red]},
-    ]
-  },
 
-  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
-    id: '94phGRw1A1',
-    rowConditions: [
-      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
-      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
-      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
-      {type: 'Contain', suits: [red, red, red, red], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, green, red], numbers: []},
-      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
-      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
-      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
-    ]
-  },
+  //{
+  //  id: 'UuZDwv4ue0',
+  //  rowConditions: [
+  //    {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
+  //    {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
+  //    {type: 'Contain', suits: [green, white, green, white], numbers: []},
+  //    {type: 'Contain', suits: [red, red, red, red], numbers: []},
+  //  ],
+  //  colConditions: [
+  //    {type: 'Contain', suits: [green, green, green, red], numbers: []},
+  //    {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
+  //    {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
+  //    {type: 'Contain', numbers: [], suits: [white, white, white, red]},
+  //  ]
+  //},
+
+  //{  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
+  //  id: '94phGRw1A1',
+  //  rowConditions: [
+  //    {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
+  //    {type: 'Contain', suits: [blue, white, green, white], numbers: []},
+  //    {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
+  //    {type: 'Contain', suits: [red, red, red, red], numbers: []},
+  //  ],
+  //  colConditions: [
+  //    {type: 'Contain', suits: [green, green, green, red], numbers: []},
+  //    {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+  //    {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
+  //    {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
+  //  ]
+  //},
 
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
