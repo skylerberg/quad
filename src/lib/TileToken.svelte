@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Suit } from './suit';
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './suit';
 
@@ -26,7 +25,7 @@
   .tile-token {
     box-sizing: border-box;
     display: flex;
-    width: min(18vmin, calc(500px / 5));
+    width: var(--tile-width);
     aspect-ratio: 1 / 1;
     border: 2px solid var(--border-color);
     border-radius: var(--tile-border-radius);

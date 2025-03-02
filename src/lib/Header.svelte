@@ -75,7 +75,6 @@
 
   function runResetLevel() {
     resetLevel();
-
     const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
     dialog.close();
   }
@@ -83,7 +82,6 @@
   function clearGameState() {
     localStorage.clear();
     goToLevel(1);
-
     const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
     dialog.close();
   }

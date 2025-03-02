@@ -15,6 +15,7 @@
   --border-color: #666;
   --tile-border-radius: 10px;
   --board-max-width: 500px;
+  --tile-width: min(18vmin, calc(500px / 5));
 }
 
 body {
