@@ -72,8 +72,8 @@
     closeMenu();
   }
 
-  function showLevelDialog() {
-    const dialog = document.getElementById('level-select-dialog') as HTMLDialogElement;
+  function showLevelDialog(dialogId: string) {
+    const dialog = document.getElementById(dialogId) as HTMLDialogElement;
     dialog.showModal();
     closeMenu();
   }
@@ -108,7 +108,7 @@
   </span>
   <span class='level'>Level {$levelNumber}</span>
   <div class="nav-buttons">
-    <button class="menu-button" aria-label="Help">
+    <button class="menu-button" aria-label="Help" onclick={() => showLevelDialog('how-to-play-dialog')}>
       <img src={helpCircleOutlineUri} class='icon' alt="Help icon" />
     </button>
     <div class="menu-container">
@@ -116,7 +116,7 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={showLevelDialog}>Go To Level</button>
+        <button class="menu-item" onclick={() => showLevelDialog('level-select-dialog')}>Go To Level</button>
         <button class="menu-item" onclick={runResetLevel}>Reset Level</button>
         <button class="menu-item" onclick={clearGameState}>Clear Game State</button>
         <button class="menu-item">💝 Donate</button>
@@ -129,7 +129,7 @@
   </div>
 </nav>
 
-<dialog id="how-to-play-dialog">
+<dialog id="how-to-play-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
   <p>Place all 16 tiles and meet the goal for each row and column</p>
   <hr />
@@ -274,7 +274,7 @@
     background: #3f3f3f;
   }
 
-  #level-select-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
   }
 </style>
