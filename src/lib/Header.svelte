@@ -61,15 +61,31 @@
     };
   });
 
+  function showResetLevelDialog() {
+    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
+    dialog.showModal();
+    closeMenu();
+  }
+
+  function showResetGameDialog() {
+    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
+    dialog.showModal();
+    closeMenu();
+  }
+
   function runResetLevel() {
     resetLevel();
-    closeMenu();
+
+    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
+    dialog.close();
   }
 
   function clearGameState() {
     localStorage.clear();
     goToLevel(1);
-    closeMenu();
+
+    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
+    dialog.close();
   }
 
   function showLevelDialog(dialogId: string) {
@@ -117,8 +133,8 @@
       </button>
       <div bind:this={menu} class="menu">
         <button class="menu-item" onclick={() => showLevelDialog('level-select-dialog')}>Go To Level</button>
-        <button class="menu-item" onclick={runResetLevel}>Reset Level</button>
-        <button class="menu-item" onclick={clearGameState}>Clear Game State</button>
+        <button class="menu-item" onclick={showResetLevelDialog}>Reset Level</button>
+        <button class="menu-item" onclick={showResetGameDialog}>Reset Game</button>
         <button class="menu-item">💝 Donate</button>
         <hr />
         <span>Developer Options</span>
@@ -140,7 +156,7 @@
 </dialog>
 
 <dialog id="level-select-dialog" onclick={handleDialogClick}>
-  <h2 id="level-select-title">Select Level</h2>
+  <h2>Select Level</h2>
   <div class="level-grid">
     {#each Array(levelCount) as _, i}
       <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
@@ -149,6 +165,29 @@
   <form method="dialog">
     <button>Cancel</button>
   </form>
+</dialog>
+
+<dialog id="reset-level-dialog" onclick={handleDialogClick}>
+  <h2>Reset Level</h2>
+  <p>Are you sure you want to reset this level?</p>
+  <div class="dialog-buttons">
+    <form method="dialog">
+      <button>Cancel</button>
+    </form>
+    <button onclick={runResetLevel} class="destructive">Reset Level</button>
+  </div>
+</dialog>
+
+<dialog id="reset-game-dialog" onclick={handleDialogClick}>
+  <h2>Reset Game</h2>
+  <p>Are you sure you want to clear all game data?</p>
+  <p>This will reset all progress and return you to level 1.</p>
+  <div class="dialog-buttons">
+    <form method="dialog">
+      <button>Cancel</button>
+    </form>
+    <button onclick={clearGameState} class="destructive">Clear All Data</button>
+  </div>
 </dialog>
 
 <style>
@@ -244,10 +283,9 @@
     bottom: 0;
     margin: auto;
     text-align: center;
-    max-width: min(400px, 80vw);
   }
   
-  #level-select-title {
+  h2 {
     margin-top: 0;
   }
 
@@ -258,7 +296,6 @@
     margin-bottom: 20px;
     max-height: 60vh;
     overflow-y: auto;
-    width: min(400px, 80vw);
   }
 
   .level-button {
@@ -273,8 +310,32 @@
   .level-button:hover {
     background: #3f3f3f;
   }
+  
+  dialog {
+    width: min(400px, 80vw);
+  }
 
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.7);
+  }
+
+  .dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-top: 1em;
+  }
+
+  .destructive {
+    background: #cc0000;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .destructive:hover {
+    background: #ff2222;
   }
 </style>
