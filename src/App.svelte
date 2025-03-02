@@ -7,6 +7,7 @@
   import { levels } from './lib/level.ts';
   import type { Tile } from './tile';
   import { writable, derived } from 'svelte/store';
+  import { solve, tacticalSolver } from './lib/solver';
 
   let board: Array<Array<Tile | undefined>> = $state([
     [undefined, undefined, undefined, undefined],
@@ -22,10 +23,40 @@
   const goToNextLevel = () => {
     $levelIndex += 1;
   }
+
+  const resetLevel = () => {
+    board = [
+      [undefined, undefined, undefined, undefined],
+      [undefined, undefined, undefined, undefined],
+      [undefined, undefined, undefined, undefined],
+      [undefined, undefined, undefined, undefined],
+    ];
+  }
+
+  const runTacticalSolver = () => {
+    board = tacticalSolver($level);
+  }
+
+  const runBacktrackingSolver = () => {
+    let solution = solve($level)
+    if (solution) {
+      board = solution;
+    }
+  }
+
+  const goToLevel = (level: number) => {
+    $levelIndex = level - 1;
+  }
 </script>
 
 
-<Header levelNumber={levelNumber} />
+<Header
+    resetLevel={resetLevel}
+    levelNumber={levelNumber}
+    runBacktrackingSolver={runBacktrackingSolver}
+    runTacticalSolver={runTacticalSolver}
+    goToLevel={goToLevel}
+/>
 
 <main>
   <StorageHandler bind:levelIndex bind:board />

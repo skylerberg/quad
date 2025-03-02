@@ -4,8 +4,12 @@
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
 
-  let { levelNumber }: {
+  let { levelNumber, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel }: {
     levelNumber: number,
+    runBacktrackingSolver: () => undefined,
+    runTacticalSolver: () => undefined,
+    goToLevel: (level: number) => undefined,
+    resetLevel: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
@@ -15,7 +19,6 @@
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
-    console.log(isMenuOpen);
     menu.style.display = isMenuOpen ? 'block' : 'none';
   }
   
@@ -58,14 +61,14 @@
     };
   });
 
-  function resetLevel() {
-    // TODO: Implement reset level logic
+  function runResetLevel() {
+    resetLevel();
     closeMenu();
   }
 
   function clearGameState() {
     localStorage.clear();
-    window.location.reload();
+    goToLevel(1);
     closeMenu();
   }
 </script>
@@ -87,7 +90,9 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={resetLevel}>Reset Level</button>
+        <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
+        <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
+        <button class="menu-item" onclick={runResetLevel}>Reset Level</button>
         <button class="menu-item" onclick={clearGameState}>Clear Game State</button>
         <button class="menu-item">💝 Donate</button>
       </div>

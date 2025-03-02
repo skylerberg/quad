@@ -38,7 +38,6 @@
 
   function updateToolTip() {
     const placement = type === 'row' ? 'right' : 'bottom';
-    console.log('updating tooltip');
     computePosition(conditionDiv, tooltipDiv, {
       placement,
       middleware: [

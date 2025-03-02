@@ -38,8 +38,8 @@ export function evaluate(
     let unmatchedSuits = countUnmatchedSuits(tiles, condition.suits);
     let unmatchedNumbers = countUnmatchedNumbers(tiles, condition.numbers);
     let openSpaces = 4 - tiles.length;
-    if (complete) {
-      return unmatchedSuits === 0 && unmatchedNumbers === 0;
+    if (unmatchedSuits === 0 && unmatchedNumbers === 0) {
+      return true;
     }
     if (unmatchedSuits > openSpaces || unmatchedNumbers > openSpaces) {
       return false;
