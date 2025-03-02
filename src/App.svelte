@@ -56,6 +56,7 @@
     runBacktrackingSolver={runBacktrackingSolver}
     runTacticalSolver={runTacticalSolver}
     goToLevel={goToLevel}
+    levelCount={levels.length}
 />
 
 <main>

@@ -4,8 +4,9 @@
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
 
-  let { levelNumber, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel }: {
+  let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel }: {
     levelNumber: number,
+    levelCount: number,
     runBacktrackingSolver: () => undefined,
     runTacticalSolver: () => undefined,
     goToLevel: (level: number) => undefined,
@@ -15,7 +16,6 @@
   let menuButton: HTMLElement;
   let menu: HTMLElement;
   let isMenuOpen = false;
-
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
@@ -71,6 +71,32 @@
     goToLevel(1);
     closeMenu();
   }
+
+  function showLevelDialog() {
+    const dialog = document.getElementById('level-select-dialog') as HTMLDialogElement;
+    dialog.showModal();
+    closeMenu();
+  }
+
+  function handleLevelSelect(level: number) {
+    goToLevel(level);
+    const dialog = document.getElementById('level-select-dialog') as HTMLDialogElement;
+    dialog.close();
+  }
+
+  function handleDialogClick(event: MouseEvent) {
+    const dialog = event.currentTarget as HTMLDialogElement;
+    const rect = dialog.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= event.clientY
+      && event.clientY <= rect.top + rect.height
+      && rect.left <= event.clientX
+      && event.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) {
+      dialog.close();
+    }
+  }
 </script>
 
 
@@ -90,11 +116,14 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
-        <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
+        <button class="menu-item" onclick={showLevelDialog}>Go To Level</button>
         <button class="menu-item" onclick={runResetLevel}>Reset Level</button>
         <button class="menu-item" onclick={clearGameState}>Clear Game State</button>
         <button class="menu-item">💝 Donate</button>
+        <hr />
+        <span>Developer Options</span>
+        <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
+        <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
       </div>
     </div>
   </div>
@@ -107,6 +136,18 @@
   <p></p>
   <form method="dialog">
     <button>Got It</button>
+  </form>
+</dialog>
+
+<dialog id="level-select-dialog" onclick={handleDialogClick}>
+  <h2 id="level-select-title">Select Level</h2>
+  <div class="level-grid">
+    {#each Array(levelCount) as _, i}
+      <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
+    {/each}
+  </div>
+  <form method="dialog">
+    <button>Cancel</button>
   </form>
 </dialog>
 
@@ -204,5 +245,36 @@
     margin: auto;
     text-align: center;
     max-width: min(400px, 80vw);
+  }
+  
+  #level-select-title {
+    margin-top: 0;
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+    width: min(400px, 80vw);
+  }
+
+  .level-button {
+    padding: 10px;
+    background: #2f2f2f;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .level-button:hover {
+    background: #3f3f3f;
+  }
+
+  #level-select-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
   }
 </style>
