@@ -6,8 +6,8 @@ import { allSuits } from './suit';
 import { tilesAreEqual } from './tile';
 import { evaluate } from './condition';
 
-function tileMatches(tile: Tile | undefined, criteria: Partial<Tile>): boolean {
-  if (tile === undefined) {
+function tileMatches(tile: Tile | undefined | null, criteria: Partial<Tile>): boolean {
+  if (!tile) {
     return false;
   }
   if (criteria.suit && criteria.value) {
@@ -20,6 +20,52 @@ function tileMatches(tile: Tile | undefined, criteria: Partial<Tile>): boolean {
     return tile.value === criteria.value;
   }
   return false;
+}
+
+function tilesAreEquivalentForCondition(firstTile: Tile, secondTile: Tile, condition: Condition): boolean {
+  if (condition.type === 'Contain') {
+    const firstTileSuitIsRequired = condition.suits.some(suit => suit === firstTile.suit);
+    const secondTileSuitIsRequired = condition.suits.some(suit => suit === secondTile.suit);
+    const firstTileNumberIsRequired = condition.numbers.some(num => num === firstTile.value);
+    const secondTileNumberIsRequired = condition.numbers.some(num => num === secondTile.value);
+    const suitsAreEquivalent = (
+      (!firstTileSuitIsRequired && !secondTileSuitIsRequired)
+      || firstTile.suit === secondTile.suit
+    );
+    const numbersAreEquivalent = (
+      (!firstTileNumberIsRequired && !secondTileNumberIsRequired)
+      || firstTile.value === secondTile.value
+    );
+    return suitsAreEquivalent && numbersAreEquivalent;
+  }
+  else if (condition.type === 'OddOrSuit') {
+    const firstResult = firstTile.value % 2 === 1 || firstTile.suit == condition.suit;
+    const secondResult = secondTile.value % 2 === 1 || secondTile.suit == condition.suit;
+    return firstResult === secondResult;
+  }
+  else if (condition.type === 'EvenOrSuit') {
+    const firstResult = firstTile.value % 2 === 0 || firstTile.suit == condition.suit;
+    const secondResult = secondTile.value % 2 === 0 || secondTile.suit == condition.suit;
+    return firstResult === secondResult;
+  }
+  else if (condition.type === 'SumGreaterThan') {
+    return firstTile.value === secondTile.value;
+  }
+  else {
+    throw Error('Add case for new condition type');
+  }
+}
+
+function optionsMatch(first: Array<Tile>, second: Array<Tile>): boolean {
+  if (first.length !== second.length) {
+    return false;
+  }
+  for (const [i, tile] of first.entries()) {
+    if (!tilesAreEqual(tile, second[i])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function conditionRequirementCountForCriteria(condition: Condition, criteria: Partial<Tile>): number {
@@ -49,12 +95,12 @@ const allCriteria: Array<Partial<Tile>> = allSuits.map(
   allNumbers.map(value => ({value} as Partial<Tile>))
 );
 
-export function solve(level: Level): Array<Array<Tile | undefined>> | undefined {
-  const rows: Array<Array<Tile | undefined>> = [
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
+export function solve(level: Level): Array<Array<Tile | null>> | undefined {
+  const rows: Array<Array<Tile | null>> = [
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
   ];
   const values: Array<TileValue> = [1, 2, 3, 4];
   const suits: Array<Suit> = allSuits;
@@ -67,7 +113,7 @@ export function solve(level: Level): Array<Array<Tile | undefined>> | undefined 
   return solveInner(level, rows, tiles, 1);
 }
 
-function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: Array<Tile>, depth: number): Array<Array<Tile | undefined>> | undefined {
+function solveInner(level: Level, board: Array<Array<Tile | null>>, tiles: Array<Tile>, depth: number): Array<Array<Tile | null>> | undefined {
   const currentStatus = checkPuzzle(level, board);
   if (currentStatus === true) {
     return board;
@@ -78,7 +124,7 @@ function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: 
   outer_loop:
   for (const [rowIndex, row] of board.entries()) {
     for (const [colIndex, space] of row.entries()) {
-      if (space === undefined) {
+      if (space === null) {
         for (let i = tiles.length - 1; i >= 0; i--) {
           const tile = tiles.splice(i, 1)[0];
           board[rowIndex][colIndex] = tile;
@@ -86,7 +132,7 @@ function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: 
           if (solution) {
             return solution;
           }
-          board[rowIndex][colIndex] = undefined;
+          board[rowIndex][colIndex] = null;
           tiles.push(tile);
         }
         break outer_loop;
@@ -95,7 +141,7 @@ function solveInner(level: Level, board: Array<Array<Tile | undefined>>, tiles: 
   }
 }
 
-export function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>): boolean | null {
+export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boolean | null {
   let result: boolean | null = true;
   for (const [index, row] of board.entries()) {
     const evaluation = evaluate(level.rowConditions[index], row);
@@ -126,12 +172,15 @@ export function checkPuzzle(level: Level, board: Array<Array<Tile | undefined>>)
   return result;
 }
 
-export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | undefined {
-  const rows: Array<Array<Tile | undefined>> = [
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
+export function tacticalSolver(level: Level, board: undefined | Array<Array<Tile | null>>): [Array<Array<Tile | null>> | undefined, any] {
+
+  level = structuredClone(level);  // Clone so that we can derive implicit conditions without changing the level
+
+  const rows: Array<Array<Tile | null>> = board || [
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
   ];
   const values: Array<TileValue> = [1, 2, 3, 4];
   const suits: Array<Suit> = allSuits;
@@ -142,26 +191,30 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     [[], [], [], []],
     [[], [], [], []],
   ];
+
+  let availableTiles = [];
+  for (const suit of suits) {
+    for (const value of values) {
+      availableTiles.push({suit, value});
+    }
+  }
+  availableTiles = availableTiles.filter(
+    tile => !rows.flat().some(otherTile => otherTile && tilesAreEqual(tile, otherTile))
+  );
+
   for (let i = 0; i < rows.length; i++) {
     for (let j = 0; j < rows[i].length; j++) {
-      for (const suit of suits) {
-        for (const value of values) {
-          options[i][j].push({suit, value});
-        }
+      if (!rows[i][j]) {
+        options[i][j] = [...availableTiles];
       }
     }
   }
 
-  const tiles: Array<Tile> = [];
-  for (const suit of suits) {
-    for (const value of values) {
-      tiles.push({suit, value});
-    }
-  }
+  const tiles: Array<Tile> = availableTiles;
 
   const tactics: Array<(
     level: Level,
-    board: Array<Array<Tile | undefined>>,
+    board: Array<Array<Tile | null>>,
     options: Array<Array<Array<Tile>>>,
     tiles: Array<Tile>,
   ) => boolean> = [
@@ -175,6 +228,12 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     multiRowLockOut,
     multiColLockOut,
 
+    attributeLockin,
+
+
+    // Interchangability
+    interchangableOptions,
+
     // Row + Col Condition Segregation
     // NOTE: I currently only have these for up to 2x2 rows and columns
     multiRowAndColSuitSegregation,
@@ -183,6 +242,10 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     hiddenSingle,
 
     nakedPair,
+
+    // TODO implicit conditions can interfere with our interchangability code
+    // Is there a way to fix that?
+    singleTileImplicitCondition,
 
     // Heuristic approaches
     randomGuess,
@@ -203,18 +266,18 @@ export function tacticalSolver(level: Level): Array<Array<Tile | undefined>> | u
     }
   }
 
-  return rows
+  return [rows, options]
 }
 
 function arbitraryGuess(
   _: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === undefined) {
+      if (board[i][j] === null) {
         if (options[i][j].length === 0) {
           return false; // Stop if we know we've made a mistake
         }
@@ -229,7 +292,7 @@ function arbitraryGuess(
 
 function greedyGuess(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -239,7 +302,7 @@ function greedyGuess(
   for (const tile of tiles) {
     for (let row = 0; row < board.length; row++) {
       for (let col = 0; col < board[row].length; col++) {
-        if (board[row][col] === undefined) {
+        if (board[row][col] === null) {
           let currentScore = 0;
           if (options[row][col].some(option => tilesAreEqual(tile, option))) {
             let rowCondition = level.rowConditions[row];
@@ -273,7 +336,7 @@ function greedyGuess(
 
 function randomGuess(
   _: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -281,7 +344,7 @@ function randomGuess(
   let space = null;
   for (let row = 0; row < board.length; row++) {
     for (let col = 0; col < board[row].length; col++) {
-      if (board[row][col] === undefined) {
+      if (board[row][col] === null) {
         if (options[row][col].length < fewestOptionsCount) {
           fewestOptionsCount = options[row][col].length;
           space = { row, col };
@@ -301,14 +364,14 @@ function randomGuess(
 
 function intersectionGuess(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
   for (const tile of tiles) {
     for (let row = 0; row < board.length; row++) {
       for (let col = 0; col < board[row].length; col++) {
-        if (board[row][col] === undefined) {
+        if (board[row][col] === null) {
           if (options[row][col].some(option => tilesAreEqual(tile, option))) {
             let rowCondition = level.rowConditions[row];
             let colCondition = level.colConditions[col];
@@ -334,36 +397,8 @@ function intersectionGuess(
   return false;
 }
 
-function educatedGuess(
-  _: Level,
-  board: Array<Array<Tile | undefined>>,
-  options: Array<Array<Array<Tile>>>,
-  tiles: Array<Tile>,
-): boolean {
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === undefined) {
-      }
-    }
-  }
-
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === undefined) {
-        if (options[i][j].length === 0) {
-          return false; // Stop if we know we've made a mistake
-        }
-        console.log(i, j, 'Educated Guess', options[i][j]);
-        placeTile(board, options, tiles, options[i][j][0], i, j)
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 function placeTile(
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
   tile: Tile,
@@ -387,13 +422,13 @@ function placeTile(
 
 function nakedSingle(
   _: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === undefined && options[i][j].length === 1) {
+      if (board[i][j] === null && options[i][j].length === 1) {
         placeTile(board, options, tiles, options[i][j][0], i, j)
         console.log(i, j, 'nakedSingle');
         return true;
@@ -405,17 +440,17 @@ function nakedSingle(
 
 function conditionBasedElimination(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   _: Array<Tile>,
 ): boolean {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === undefined) {
+      if (board[i][j] === null) {
         for (const option of options[i][j]) {
           board[i][j] = option;
           let placementViolatesCondition = checkPuzzle(level, board) === false;
-          board[i][j] = undefined;
+          board[i][j] = null;
           if (placementViolatesCondition) {
             options[i][j] = options[i][j].filter((tile) => !tilesAreEqual(tile, option));
             return true;
@@ -427,18 +462,192 @@ function conditionBasedElimination(
   return false;
 }
 
+function attributeLockin(
+  _: Level,
+  __: Array<Array<Tile | null>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  let madeProgress = false;
+
+  criteria_loop:
+  for (const criteria of allCriteria) {
+    const unplacedMatchingTileCount = tiles.filter(tile => tileMatches(tile, criteria)).length;
+    let matchingSpaces = [];
+
+    for (const [rowIndex, rowOptions] of options.entries()) {
+      for (const [colIndex, tileOptions] of rowOptions.entries()) {
+        if (tileOptions.some(tile => tileMatches(tile, criteria))) {
+          matchingSpaces.push({row: rowIndex, col: colIndex});
+        }
+      }
+    }
+
+    if (unplacedMatchingTileCount === matchingSpaces.length) {
+      for (const space of matchingSpaces) {
+        if (options[space.row][space.col].some(tile => !tileMatches(tile, criteria))) {
+          options[space.row][space.col] = options[space.row][space.col].filter(tile => tileMatches(tile, criteria));
+          madeProgress = true;
+          console.log(
+            'Attribute Lockin',
+            criteria,
+            {lockedInRow: space.row, LockedInCol: space.col},
+          );
+          break criteria_loop;
+        }
+      }
+    }
+  }
+  return madeProgress;
+}
+
+// If a single tile must be in a particular group, that group's condition can be updated to include
+// the attributes of that tile. For example, assume a column has a 2 already placed, and we know
+// that there is another 2 tile that must be in that column. If that column only contains one 2, we
+// can add another 2 condition because we know there must be at least two 2's.
+function singleTileImplicitCondition(
+  level: Level,
+  board: Array<Array<Tile | null>>,
+  options: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  let madeProgress = false;
+
+  for (const tile of tiles) {
+    const placesTileCanBe: Array<{row: number, col: number}> = [];
+    for (const [rowIndex, rowOptions] of options.entries()) {
+      for (const [colIndex, tileOptions] of rowOptions.entries()) {
+        if (tileOptions.some(option => tilesAreEqual(tile, option))) {
+          placesTileCanBe.push({row: rowIndex, col: colIndex});
+        }
+      }
+    }
+
+    if (placesTileCanBe.length === 0) {
+      break;
+    }
+
+    if (placesTileCanBe.every(place => place.row == placesTileCanBe[0].row)) {
+      const row = placesTileCanBe[0].row;
+      const rowCondition = level.rowConditions[row];
+      if (rowCondition.type === 'Contain') {
+        const requiredMatchingNumbers = rowCondition.numbers.filter(value => value === tile.value).length;
+        const placedMatchingNumbers = board[row].filter(tileInRow => tileInRow && tileInRow.value === tile.value).length;
+        if (requiredMatchingNumbers <= placedMatchingNumbers) {
+          madeProgress = true;
+          console.log('Single Tile Implicit Condition', tile.value, {row: placesTileCanBe[0].row});
+          rowCondition.numbers.push(tile.value);
+        }
+
+        const requiredMatchingSuits = rowCondition.suits.filter(suit => suit === tile.suit).length;
+        const placedMatchingSuits = board[row].filter(tileInRow => tileInRow && tileInRow.suit === tile.suit).length;
+        if (requiredMatchingSuits <= placedMatchingSuits) {
+          madeProgress = true;
+          console.log('Single Tile Implicit Condition', tile.suit, {row: placesTileCanBe[0].row});
+          rowCondition.suits.push(tile.suit);
+        }
+      }
+    }
+    if (placesTileCanBe.every(place => place.col == placesTileCanBe[0].col)) {
+      const col = placesTileCanBe[0].col;
+      const columns = getColumns(board);
+      const colCondition = level.colConditions[placesTileCanBe[0].col];
+      if (colCondition.type === 'Contain') {
+        const requiredMatchingNumbers = colCondition.numbers.filter(value => value === tile.value).length;
+        const placedMatchingNumbers = columns[col].filter(tileInCol => tileInCol && tileInCol.value === tile.value).length;
+        if (requiredMatchingNumbers <= placedMatchingNumbers) {
+          madeProgress = true;
+          console.log('Single Tile Implicit Condition', tile.value, {col: placesTileCanBe[0].col});
+          colCondition.numbers.push(tile.value);
+        }
+        const requiredMatchingSuits = colCondition.suits.filter(suit => suit === tile.suit).length;
+        const placedMatchingSuits = columns[col].filter(tileInCol => tileInCol && tileInCol.suit === tile.suit).length;
+        if (requiredMatchingSuits <= placedMatchingSuits) {
+          madeProgress = true;
+          console.log('Single Tile Implicit Condition', tile.suit, {col: placesTileCanBe[0].col});
+          colCondition.suits.push(tile.suit);
+        }
+      }
+    }
+  }
+
+  return madeProgress;
+}
+
+function interchangableOptions(
+  level: Level,
+  board: Array<Array<Tile | null>>,
+  allOptions: Array<Array<Array<Tile>>>,
+  tiles: Array<Tile>,
+): boolean {
+  let madeProgress = false;
+
+  const optionsToSpaces: Record<string, Array<{row: number, col: number}>> = {}
+  for (const [rowIndex, rowOptions] of allOptions.entries()) {
+    for (const [colIndex, spaceOptions] of rowOptions.entries()) {
+      const key = JSON.stringify(spaceOptions);
+      if (optionsToSpaces[key] === undefined) {
+        optionsToSpaces[key] = [];
+      }
+      optionsToSpaces[key].push({row: rowIndex, col: colIndex});
+    }
+  }
+
+  for (const [optionsString, spaces] of Object.entries(optionsToSpaces)) {
+    if (spaces.length > 1) {
+      const options: Array<Tile> = JSON.parse(optionsString);
+      if (options.length === spaces.length) {  // TODO is there a way to relax this constraint?
+        let areInterchangeable = true;
+
+        spaces_loop:
+        for (let spaceIndex = 0; spaceIndex < spaces.length; spaceIndex++) {
+          for (let otherSpaceIndex = spaceIndex + 1; otherSpaceIndex < spaces.length; otherSpaceIndex++) {
+            for (let tileIndex = 0; tileIndex < options.length; tileIndex++) {
+              for (let otherTileIndex = tileIndex + 1; otherTileIndex < options.length; otherTileIndex++) {
+                const firstTile = options[tileIndex];
+                const secondTile = options[otherTileIndex];
+                const conditions = [
+                  level.rowConditions[spaces[spaceIndex].row],
+                  level.colConditions[spaces[spaceIndex].col],
+                  level.rowConditions[spaces[otherSpaceIndex].row],
+                  level.colConditions[spaces[otherSpaceIndex].col],
+                ]
+                if (conditions.some(condition => !tilesAreEquivalentForCondition(firstTile, secondTile, condition))) {
+                  //console.log('!!!!!', firstTile, secondTile, conditions.filter(condition => !tilesAreEquivalentForCondition(firstTile, secondTile, condition)));
+                  areInterchangeable = false;
+                  break spaces_loop;
+                }
+              }
+            }
+          }
+        }
+
+        if (areInterchangeable) {
+          madeProgress = true;
+          const tile = options[0];
+          const {row, col} = spaces[0];
+          placeTile(board, allOptions, tiles, tile, row, col)
+          console.log(row, col, 'interchangableOptions', tile, options);
+        }
+      }
+    }
+  }
+
+  return madeProgress
+}
+
 function getGroups(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
 ): Array<[
-  Array<Tile | undefined>,  // Spaces in group
+  Array<Tile | null>,  // Spaces in group
   Array<Array<Tile>>,  // Options per space in group
   Condition,
   Partial<{ row: number, col: number }>,  // Group description
 ]> {
   const groups: Array<[
-    Array<Tile | undefined>,
+    Array<Tile | null>,
     Array<Array<Tile>>,
     Condition,
     Partial<{ row: number, col: number }>,
@@ -448,12 +657,7 @@ function getGroups(
     groups.push([row, options[i], level.rowConditions[i], {row: i}]);
   }
 
-  const columns = [
-    [board[0][0], board[1][0], board[2][0], board[3][0]],
-    [board[0][1], board[1][1], board[2][1], board[3][1]],
-    [board[0][2], board[1][2], board[2][2], board[3][2]],
-    [board[0][3], board[1][3], board[2][3], board[3][3]],
-  ];
+  const columns = getColumns(board);
 
   const columnOptions = [
     [options[0][0], options[1][0], options[2][0], options[3][0]],
@@ -469,9 +673,18 @@ function getGroups(
   return groups;
 }
 
+function getColumns(board: Array<Array<Tile | null>>) {
+  return [
+    [board[0][0], board[1][0], board[2][0], board[3][0]],
+    [board[0][1], board[1][1], board[2][1], board[3][1]],
+    [board[0][2], board[1][2], board[2][2], board[3][2]],
+    [board[0][3], board[1][3], board[2][3], board[3][3]],
+  ];
+}
+
 function singleGroupInnerLockIn(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   _: Array<Tile>,
 ): boolean {
@@ -504,7 +717,7 @@ function singleGroupInnerLockIn(
 
 function singleGroupInnerLockOut(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   _: Array<Tile>,
 ): boolean {
@@ -519,7 +732,7 @@ function singleGroupInnerLockOut(
       const existingNonMatchingTiles = group.filter(tile => tile && !tileMatches(tile, criteria)).length;
       const remainingNonMatchingTilesNeeded = requiredNonMatchingTiles - existingNonMatchingTiles;
 
-      const openSpaces = group.filter(tile => tile === undefined).length;
+      const openSpaces = group.filter(tile => tile === null).length;
 
       if (spacesWithOnlyMatchingOptions == openSpaces - remainingNonMatchingTilesNeeded) {
         for (const [i, spaceOptions] of groupOptions.entries()) {
@@ -540,7 +753,7 @@ function singleGroupInnerLockOut(
 
 function singleGroupOuterLockOut(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -581,7 +794,7 @@ function singleGroupOuterLockOut(
 
 function multiRowLockOut(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -628,7 +841,7 @@ function multiRowLockOut(
 
 function multiColLockOut(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -663,6 +876,11 @@ function multiColLockOut(
         column => column.filter(tile => tileMatches(tile, criteria)).length
       ).reduce((a, b) => a + b);
 
+      if (colIndexes[0] === 1 && colIndexes[1] === 3 && criteria.value === 2) {
+        console.log(conditions);
+        console.log(requiredMatchingTiles, existingMatchingTiles, unplacedMatchingTiles);
+      }
+
       if (requiredMatchingTiles - existingMatchingTiles >= unplacedMatchingTiles) {
         for (const [rowOptionsIndex, _] of options.entries()) {
           for (const [colOptionsIndex, spaceOptions] of options[rowOptionsIndex].entries()) {
@@ -684,7 +902,7 @@ function multiColLockOut(
 
 function multiRowAndColSuitSegregation(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -752,7 +970,7 @@ function multiRowAndColSuitSegregation(
       let emptyIntersectionsThatCanHaveATileOfSuit = 0;
       for (const row of indexes.rows) {
         for (const col of indexes.cols) {
-          if (board[row][col] === undefined && options[row][col].some(tile => tile.suit === suit)) {
+          if (board[row][col] === null && options[row][col].some(tile => tile.suit === suit)) {
             emptyIntersectionsThatCanHaveATileOfSuit += 1;
           }
         }
@@ -783,7 +1001,7 @@ function multiRowAndColSuitSegregation(
 
 function multiRowAndColNumberSegregation(
   level: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -851,7 +1069,7 @@ function multiRowAndColNumberSegregation(
       let emptyIntersectionsThatCanHaveATileOfNumber = 0;
       for (const row of indexes.rows) {
         for (const col of indexes.cols) {
-          if (board[row][col] === undefined && options[row][col].some(tile => tile.value === number)) {
+          if (board[row][col] === null && options[row][col].some(tile => tile.value === number)) {
             emptyIntersectionsThatCanHaveATileOfNumber += 1;
           }
         }
@@ -882,7 +1100,7 @@ function multiRowAndColNumberSegregation(
 
 function hiddenSingle(
   _: Level,
-  board: Array<Array<Tile | undefined>>,
+  board: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   tiles: Array<Tile>,
 ): boolean {
@@ -916,7 +1134,7 @@ const allTiles = [1, 2, 3, 4].flatMap(
 
 function nakedPair(
   _: Level,
-  __: Array<Array<Tile | undefined>>,
+  __: Array<Array<Tile | null>>,
   options: Array<Array<Array<Tile>>>,
   ___: Array<Tile>,
 ): boolean {

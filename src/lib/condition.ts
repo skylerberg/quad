@@ -10,7 +10,7 @@ export type Condition = (
 
 export function evaluate(
   condition: Condition,
-  spaces: Array<Tile | undefined>
+  spaces: Array<Tile | null>
 ): boolean | null {
   const tiles: Array<Tile> = spaces.filter(space => !!space);
   const complete = tiles.length === 4;

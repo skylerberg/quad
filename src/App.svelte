@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Board from './lib/Board.svelte';
+  import Board from './lib/NoteBoard.svelte';
   import TileBag from './lib/TileBag.svelte';
   import DragHandler from './lib/DragHandler.svelte';
   import Header from './lib/Header.svelte';
@@ -9,12 +9,14 @@
   import { writable, derived } from 'svelte/store';
   import { solve, tacticalSolver } from './lib/solver';
 
-  let board: Array<Array<Tile | undefined>> = $state([
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
-    [undefined, undefined, undefined, undefined],
+  let board: Array<Array<Tile | null>> = $state([
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
   ]);
+
+  let options = $state(undefined);
 
   let levelIndex: number = writable(0);
   let level = derived(levelIndex, ($levelIndex) => levels[$levelIndex]);
@@ -26,15 +28,15 @@
 
   const resetLevel = () => {
     board = [
-      [undefined, undefined, undefined, undefined],
-      [undefined, undefined, undefined, undefined],
-      [undefined, undefined, undefined, undefined],
-      [undefined, undefined, undefined, undefined],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
     ];
   }
 
   const runTacticalSolver = () => {
-    board = tacticalSolver($level);
+    [board, options] = tacticalSolver($level, board);
   }
 
   const runBacktrackingSolver = () => {
@@ -63,7 +65,7 @@
   <StorageHandler bind:levelIndex bind:board />
   <!-- TODO figure out how to get the board to clear without needing this key -->
   {#key $levelIndex}
-    <Board board={board} level={levels[$levelIndex]} />
+    <Board options={options} board={board} level={levels[$levelIndex]} />
     <TileBag board={board} />
     <DragHandler bind:board />
   {/key}
