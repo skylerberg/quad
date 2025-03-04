@@ -4,18 +4,22 @@
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
 
-  let { levelNumber }: {
+  let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel, generateRandomLevel }: {
     levelNumber: number,
+    levelCount: number,
+    runBacktrackingSolver: () => undefined,
+    runTacticalSolver: () => undefined,
+    goToLevel: (level: number) => undefined,
+    resetLevel: () => undefined,
+    generateRandomLevel: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
   let menu: HTMLElement;
   let isMenuOpen = false;
 
-
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
-    console.log(isMenuOpen);
     menu.style.display = isMenuOpen ? 'block' : 'none';
   }
   
@@ -58,15 +62,55 @@
     };
   });
 
-  function resetLevel() {
-    // TODO: Implement reset level logic
+  function showResetLevelDialog() {
+    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
+    dialog.showModal();
     closeMenu();
+  }
+
+  function showResetGameDialog() {
+    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
+    dialog.showModal();
+    closeMenu();
+  }
+
+  function runResetLevel() {
+    resetLevel();
+    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
+    dialog.close();
   }
 
   function clearGameState() {
     localStorage.clear();
-    window.location.reload();
+    goToLevel(1);
+    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
+    dialog.close();
+  }
+
+  function showLevelDialog(dialogId: string) {
+    const dialog = document.getElementById(dialogId) as HTMLDialogElement;
+    dialog.showModal();
     closeMenu();
+  }
+
+  function handleLevelSelect(level: number) {
+    goToLevel(level);
+    const dialog = document.getElementById('level-select-dialog') as HTMLDialogElement;
+    dialog.close();
+  }
+
+  function handleDialogClick(event: MouseEvent) {
+    const dialog = event.currentTarget as HTMLDialogElement;
+    const rect = dialog.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= event.clientY
+      && event.clientY <= rect.top + rect.height
+      && rect.left <= event.clientX
+      && event.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) {
+      dialog.close();
+    }
   }
 </script>
 
@@ -77,9 +121,9 @@
       <span class='title-letter'>Q</span><span class='title-letter'>U</span><span class='title-letter'>A</span><span class='title-letter'>D</span>
     </nobr>
   </span>
-  <span class='level'>Level {$levelNumber}</span>
+  <span class='level'>Level {levelNumber}</span>
   <div class="nav-buttons">
-    <button class="menu-button" aria-label="Help">
+    <button class="menu-button" aria-label="Help" onclick={() => showLevelDialog('how-to-play-dialog')}>
       <img src={helpCircleOutlineUri} class='icon' alt="Help icon" />
     </button>
     <div class="menu-container">
@@ -87,15 +131,21 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={resetLevel}>Reset Level</button>
-        <button class="menu-item" onclick={clearGameState}>Clear Game State</button>
+        <button class="menu-item" onclick={() => showLevelDialog('level-select-dialog')}>Go To Level</button>
+        <button class="menu-item" onclick={showResetLevelDialog}>Reset Level</button>
+        <button class="menu-item" onclick={showResetGameDialog}>Reset Game</button>
         <button class="menu-item">💝 Donate</button>
+        <hr />
+        <span>Developer Options</span>
+        <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
+        <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
+        <button class="menu-item" onclick={generateRandomLevel}>Generate Random Level</button>
       </div>
     </div>
   </div>
 </nav>
 
-<dialog id="how-to-play-dialog">
+<dialog id="how-to-play-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
   <p>Place all 16 tiles and meet the goal for each row and column</p>
   <hr />
@@ -103,6 +153,41 @@
   <form method="dialog">
     <button>Got It</button>
   </form>
+</dialog>
+
+<dialog id="level-select-dialog" onclick={handleDialogClick}>
+  <h2>Select Level</h2>
+  <div class="level-grid">
+    {#each Array(levelCount) as _, i}
+      <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
+    {/each}
+  </div>
+  <form method="dialog">
+    <button>Cancel</button>
+  </form>
+</dialog>
+
+<dialog id="reset-level-dialog" onclick={handleDialogClick}>
+  <h2>Reset Level</h2>
+  <p>Are you sure you want to reset this level?</p>
+  <div class="dialog-buttons">
+    <form method="dialog">
+      <button>Cancel</button>
+    </form>
+    <button onclick={runResetLevel} class="destructive">Reset Level</button>
+  </div>
+</dialog>
+
+<dialog id="reset-game-dialog" onclick={handleDialogClick}>
+  <h2>Reset Game</h2>
+  <p>Are you sure you want to clear all game data?</p>
+  <p>This will reset all progress and return you to level 1.</p>
+  <div class="dialog-buttons">
+    <form method="dialog">
+      <button>Cancel</button>
+    </form>
+    <button onclick={clearGameState} class="destructive">Clear All Data</button>
+  </div>
 </dialog>
 
 <style>
@@ -198,6 +283,59 @@
     bottom: 0;
     margin: auto;
     text-align: center;
-    max-width: min(400px, 80vw);
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .level-button {
+    padding: 10px;
+    background: #2f2f2f;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .level-button:hover {
+    background: #3f3f3f;
+  }
+  
+  dialog {
+    width: min(400px, 80vw);
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-top: 1em;
+  }
+
+  .destructive {
+    background: #cc0000;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .destructive:hover {
+    background: #ff2222;
   }
 </style>

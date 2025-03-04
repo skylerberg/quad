@@ -22,12 +22,28 @@
   }
 
   let tiles = $derived.by(tilesNotOnBoard);
+
+  let tilesBySuit = $derived.by(() => {
+    const result: Record<string, Tile[]> = {};
+    for (const suit of allSuits) {
+      result[suit] = tiles.filter(tile => tile.suit === suit);
+    }
+    return result;
+  });
 </script>
 
 <main>
   <div class="tile-bag">
-    {#each tiles as tile (tile.suit + tile.value)}
-      <TileToken tile={tile} location="bag" />
+    {#each Object.entries(tilesBySuit) as [suit, tilesOfSuit]}
+      <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
+        {#each allNumbers as number}
+          {#if tilesOfSuit.some(tile => tile.value === number)}
+            <TileToken tile={tilesOfSuit.find(t => t.value === number)} location="bag" />
+          {:else}
+            <div class="blank-tile"></div>
+          {/if}
+        {/each}
+      </div>
     {/each}
   </div>
 </main>
@@ -40,8 +56,24 @@
     margin-left: auto;
     margin-right:auto;
     min-height: 50px;
-    margin-top: 25px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  .suit-group {
+    display: flex;
+    margin: 5px;
     gap: 10px;
     justify-content: center;
+  }
+  
+  .suit-group.empty {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .blank-tile {
+    width: var(--tile-width, 40px);
+    height: 0;
   }
 </style>

@@ -9,37 +9,52 @@ export type Level = {
 
 export const levels = [
 
-  //{
-  //  id: 'UuZDwv4ue0',
-  //  rowConditions: [
-  //    {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
-  //    {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
-  //    {type: 'Contain', suits: [green, white, green, white], numbers: []},
-  //    {type: 'Contain', suits: [red, red, red, red], numbers: []},
-  //  ],
-  //  colConditions: [
-  //    {type: 'Contain', suits: [green, green, green, red], numbers: []},
-  //    {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
-  //    {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
-  //    {type: 'Contain', numbers: [], suits: [white, white, white, red]},
-  //  ]
-  //},
+  {
+    id: 'asdf',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, red, white, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 4]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
+    ]
+  },
+  {
+    id: 'UuZDwv4ue0',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
+      {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
+      {type: 'Contain', suits: [green, white, green, white], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
+      {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
+      {type: 'Contain', numbers: [], suits: [white, white, white, red]},
+    ]
+  },
 
-  //{  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
-  //  id: '94phGRw1A1',
-  //  rowConditions: [
-  //    {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
-  //    {type: 'Contain', suits: [blue, white, green, white], numbers: []},
-  //    {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
-  //    {type: 'Contain', suits: [red, red, red, red], numbers: []},
-  //  ],
-  //  colConditions: [
-  //    {type: 'Contain', suits: [green, green, green, red], numbers: []},
-  //    {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
-  //    {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
-  //    {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
-  //  ]
-  //},
+  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
+    id: '94phGRw1A1',
+    rowConditions: [
+      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
+      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
+      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
+      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
+    ]
+  },
 
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',

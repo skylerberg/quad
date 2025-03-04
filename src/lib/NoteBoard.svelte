@@ -1,12 +1,14 @@
 <script lang="ts">
   import ConditionIcon from './ConditionIcon.svelte';
   import TileToken from './TileToken.svelte';
+  import TileNote from './TileNote.svelte';
   import type { Tile } from './tile';
   import type { Level } from './level';
 
-  let { level, board }: {
+  let { level, board, options }: {
     level: Level,
-    board: Array<Array<Tile | null>>
+    board: Array<Array<Tile | undefined>>
+    hideNumbers: boolean
   } = $props();
 
   const col0 = $derived([board[0][0], board[1][0], board[2][0], board[3][0]])
@@ -28,6 +30,14 @@
         >
           {#if tile}
             <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
+          {:else if options}
+            <div class='notes'>
+              {#each options[rowIndex][colIndex] as option}
+                <div class='note-ghost'>
+                  <TileNote tile={option} location={{row: rowIndex, col: colIndex}}/>
+                </div>
+              {/each}
+            </div>
           {/if}
         </div>
       {/key}
@@ -41,6 +51,14 @@
 </div>
 
 <style>
+  .notes {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .note-ghost {
+  }
+
   .board {
     margin-left: auto;
     margin-right: auto;

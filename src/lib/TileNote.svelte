@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './suit';
 
   let { tile }: {
     tile: Tile,
   } = $props();
-
-  let numberVisibility: { hidden: boolean } = getContext('numberVisibility');
 
   let element: HTMLElement;
 
@@ -21,31 +18,31 @@
     data-tile={JSON.stringify(tile)}
     style="background-image: url({getSuitIcon(tile.suit)});"
 >
-  <span class={{'hide-numbers': numberVisibility.hidden}}>{tile.value}</span>
+  <span class="tile-number">{tile.value}</span>
 </div>
 
 <style>
   .tile-token {
     box-sizing: border-box;
     display: flex;
-    width: var(--tile-width);
+    width: calc((var(--tile-width) / 4) - 0.50px);
     aspect-ratio: 1 / 1;
-    border: 2px solid var(--border-color);
-    border-radius: var(--tile-border-radius);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
     justify-content: center;
     align-items: center;
-    line-height: 1;
-    font-size: min(14vmin, 40px);
-    cursor: grab;
-    touch-action: none;
-    user-select: none;
-    background-size: 100%;
+    line-height: .1;
+    font-size: min(2.5vmin, 68px);
+    background-size: min(2vmin, 80px);
     background-position: center;
     background-repeat: no-repeat;
+    box-sizing: border-box;
+    opacity: 0.4;
   }
 
-  .hide-numbers {
-    display: none;
+  .tile-number {
+    color: white;
+    text-shadow: 2px 2px 4px black;
   }
 
   .background {
@@ -57,22 +54,18 @@
   }
   
   .red {
-    color: black;
-    background-color: rgb(155, 95, 53);
+    background-color: darkred;
   }
 
   .blue {
-    color: white;
-    background-color: rgb(135, 195, 255);
+    background-color: darkblue;
   }
 
   .white {
-    background-color: rgb(255, 230, 128);
-    color: black;
+    background-color: black;
   }
 
   .green {
-    color: white;
-    background-color: rgb(184, 255, 137);
+    background-color: darkgreen;
   }
 </style>
