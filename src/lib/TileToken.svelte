@@ -32,18 +32,16 @@
     justify-content: center;
     align-items: center;
     line-height: 1;
-    font-size: min(14vmin, 68px);
+    font-size: min(14vmin, 40px);
     cursor: grab;
     touch-action: none;
     user-select: none;
-    background-size: min(15vmin, 80px);
+    background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
   }
 
   .tile-number {
-    color: white;
-    text-shadow: 2px 2px 4px black;
   }
 
   .background {
@@ -55,18 +53,22 @@
   }
   
   .red {
-    background-color: darkred;
+    color: black;
+    background-color: rgb(155, 95, 53);
   }
 
   .blue {
-    background-color: darkblue;
+    color: white;
+    background-color: rgb(135, 195, 255);
   }
 
   .white {
-    background-color: black;
+    background-color: rgb(255, 230, 128);
+    color: black;
   }
 
   .green {
-    background-color: darkgreen;
+    color: white;
+    background-color: rgb(184, 255, 137);
   }
 </style>

@@ -248,7 +248,7 @@ export function tacticalSolver(level: Level, board: undefined | Array<Array<Tile
     singleTileImplicitCondition,
 
     // Heuristic approaches
-    randomGuess,
+    //randomGuess,
     //intersectionGuess, // Maybe this is a bad heuristic?
     //greedyGuess,
     //arbitraryGuess,

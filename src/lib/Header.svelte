@@ -4,13 +4,14 @@
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
 
-  let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel }: {
+  let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel, generateRandomLevel }: {
     levelNumber: number,
     levelCount: number,
     runBacktrackingSolver: () => undefined,
     runTacticalSolver: () => undefined,
     goToLevel: (level: number) => undefined,
     resetLevel: () => undefined,
+    generateRandomLevel: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
@@ -138,6 +139,7 @@
         <span>Developer Options</span>
         <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
         <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
+        <button class="menu-item" onclick={generateRandomLevel}>Generate Random Level</button>
       </div>
     </div>
   </div>

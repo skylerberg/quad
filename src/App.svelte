@@ -8,6 +8,7 @@
   import type { Tile } from './tile';
   import { writable, derived } from 'svelte/store';
   import { solve, tacticalSolver } from './lib/solver';
+  import { randomLevel } from './lib/generator';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
@@ -46,6 +47,14 @@
     }
   }
 
+  const generateRandomLevel = () => {
+    const level = randomLevel();
+    console.log(JSON.stringify(level));
+    levels.unshift(level);
+    $levelIndex = 1;
+    $levelIndex = 0;
+  }
+
   const goToLevel = (level: number) => {
     $levelIndex = level - 1;
   }
@@ -59,6 +68,7 @@
     runTacticalSolver={runTacticalSolver}
     goToLevel={goToLevel}
     levelCount={levels.length}
+    generateRandomLevel={generateRandomLevel}
 />
 
 <main>

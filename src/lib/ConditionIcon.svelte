@@ -1,4 +1,6 @@
 <script lang="ts">
+  import xIcon from '../assets/x.svg';
+  import checkIcon from '../assets/check.svg';
   import { onMount } from 'svelte';
   import type { Condition } from './condition.ts';
   import { evaluate, getTitle } from './condition';
@@ -115,9 +117,9 @@
   {/if}
 
   {#if status}
-    <span class="status">✅</span>
+    <img class="status succeeded" src={checkIcon} />
   {:else if status === false}
-    <span class="status">❌</span>
+    <img class="status failed" src={xIcon} />
   {/if}
 </div>
 <div class="tooltip" bind:this={tooltipDiv} role="tooltip">
@@ -150,6 +152,7 @@
   }
 
   .row-condition {
+    position: relative;
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
   }
@@ -163,6 +166,7 @@
   }
 
   .column-condition {
+    position: relative;
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
   }
@@ -193,9 +197,18 @@
 
   .status {
     position: absolute;
-    z-index: -1;
-    opacity: 0.75;
-    font-size: min(15vmin, 58pt);
+  }
+
+  .failed {
+    filter: invert(37%) sepia(100%) saturate(7450%) hue-rotate(358deg) brightness(103%) contrast(127%); /* red */
+    width: 70%;
+    opacity: 0.6;
+  }
+
+  .succeeded {
+    filter: invert(53%) sepia(79%) saturate(2879%) hue-rotate(85deg) brightness(121%) contrast(122%);
+    width: 90%;
+    opacity: 0.8;
   }
 
   .tooltip {
