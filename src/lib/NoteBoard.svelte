@@ -8,6 +8,7 @@
   let { level, board, options }: {
     level: Level,
     board: Array<Array<Tile | undefined>>
+    hideNumbers: boolean
   } = $props();
 
   const col0 = $derived([board[0][0], board[1][0], board[2][0], board[3][0]])

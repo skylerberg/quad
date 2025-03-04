@@ -121,7 +121,7 @@
       <span class='title-letter'>Q</span><span class='title-letter'>U</span><span class='title-letter'>A</span><span class='title-letter'>D</span>
     </nobr>
   </span>
-  <span class='level'>Level {$levelNumber}</span>
+  <span class='level'>Level {levelNumber}</span>
   <div class="nav-buttons">
     <button class="menu-button" aria-label="Help" onclick={() => showLevelDialog('how-to-play-dialog')}>
       <img src={helpCircleOutlineUri} class='icon' alt="Help icon" />

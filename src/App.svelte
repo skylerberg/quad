@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { setContext } from 'svelte';
   import Board from './lib/NoteBoard.svelte';
   import TileBag from './lib/TileBag.svelte';
   import DragHandler from './lib/DragHandler.svelte';
@@ -6,7 +7,6 @@
   import StorageHandler from './lib/StorageHandler.svelte';
   import { levels } from './lib/level.ts';
   import type { Tile } from './tile';
-  import { writable, derived } from 'svelte/store';
   import { solve, tacticalSolver } from './lib/solver';
   import { randomLevel } from './lib/generator';
 
@@ -19,12 +19,23 @@
 
   let options = $state(undefined);
 
-  let levelIndex: number = writable(0);
-  let level = derived(levelIndex, ($levelIndex) => levels[$levelIndex]);
-  let levelNumber: number = derived(levelIndex, ($levelIndex) => $levelIndex + 1);
+  let levelIndex: number = $state(0);
+  let level = $derived(levels[levelIndex] || levels[0]);
+  let levelNumber: number = $derived(levelIndex + 1);
+
+  let shouldHideNumbers = $derived(level && level.rowConditions.concat(level.colConditions).every(
+    condition => condition.type === 'Contain' && condition.numbers.length === 0
+  ));
+
+  let numberVisibility = $state({ hidden: shouldHideNumbers });
+  $effect(() => {
+    numberVisibility.hidden = shouldHideNumbers;
+  });
+
+  setContext('numberVisibility', numberVisibility);
 
   const goToNextLevel = () => {
-    $levelIndex += 1;
+    levelIndex += 1;
   }
 
   const resetLevel = () => {
@@ -37,11 +48,11 @@
   }
 
   const runTacticalSolver = () => {
-    [board, options] = tacticalSolver($level, board);
+    [board, options] = tacticalSolver(level, board);
   }
 
   const runBacktrackingSolver = () => {
-    let solution = solve($level)
+    let solution = solve(level)
     if (solution) {
       board = solution;
     }
@@ -51,15 +62,18 @@
     const level = randomLevel();
     console.log(JSON.stringify(level));
     levels.unshift(level);
-    $levelIndex = 1;
-    $levelIndex = 0;
+    levelIndex = 1;
+    levelIndex = 0;
   }
 
   const goToLevel = (level: number) => {
-    $levelIndex = level - 1;
+    levelIndex = level - 1;
+  }
+
+  const setBoard = (newBoard: Array<Array<Tile | null>>) => {
+    board = newBoard;
   }
 </script>
-
 
 <Header
     resetLevel={resetLevel}
@@ -72,13 +86,20 @@
 />
 
 <main>
-  <StorageHandler bind:levelIndex bind:board />
+  <StorageHandler
+      level={level}
+      board={board}
+      goToLevel={goToLevel}
+      setBoard={setBoard}
+  />
   <!-- TODO figure out how to get the board to clear without needing this key -->
-  {#key $levelIndex}
-    <Board options={options} board={board} level={levels[$levelIndex]} />
-    <TileBag board={board} />
-    <DragHandler bind:board />
-  {/key}
+  {#if level}
+    {#key levelIndex}
+      <Board options={options} board={board} level={level} />
+      <TileBag board={board} />
+      <DragHandler bind:board />
+    {/key}
+  {/if}
   <button onclick={() => goToNextLevel()}>Next Level</button>
 </main>
 
