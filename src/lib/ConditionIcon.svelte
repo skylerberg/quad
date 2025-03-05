@@ -23,7 +23,7 @@
 
   const title = getTitle(condition, type);
 
-  let classes = ['tile'];
+  let classes = ['tile', 'condition'];
   if (type === 'row') {
     classes.push('row-condition')
   }
@@ -152,7 +152,6 @@
   }
 
   .row-condition {
-    position: relative;
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
   }
@@ -166,7 +165,6 @@
   }
 
   .column-condition {
-    position: relative;
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
   }
@@ -193,10 +191,6 @@
   div.tile:last-child {
     border-right-width: 0px;
     border-right-style: none;
-  }
-
-  .status {
-    position: absolute;
   }
 
   .failed {
@@ -231,5 +225,18 @@
     width: 18px;
     height: 18px;
     transform: rotate(45deg);
+  }
+
+  .condition {
+    display: grid;
+  }
+
+  .condition > * {
+    grid-column-start: 1;
+    grid-row-start: 1;
+  }
+
+  .status {
+    margin: auto;
   }
 </style>

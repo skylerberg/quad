@@ -319,6 +319,7 @@
     background: #1f1f1f;
     border: 1px solid var(--border-color);
     border-radius: 4px;
+    z-index: 1;
   }
 
   .menu-item {
