@@ -362,17 +362,12 @@
 
   .level-button {
     padding: 10px;
-    background: #2f2f2f;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: white;
     cursor: pointer;
   }
 
-  .level-button:hover {
-    background: #3f3f3f;
-  }
-  
   dialog {
     width: min(400px, 80vw);
   }

@@ -147,7 +147,7 @@
 
   .number-requirement {
     margin: auto;
-    font-size: min(7vmin, 42px);
+    font-size: round(calc(var(--tile-width) / 2.4), 1px);
     line-height: 0.8;
   }
 
