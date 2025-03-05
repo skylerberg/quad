@@ -3,11 +3,13 @@
   import type { Level } from './level';
   import type { Tile } from './tile';
 
-  let { level, board, setBoard, goToLevel  }: {
+  let { level, board, completedLevels, setBoard, goToLevel, setCompletedLevels}: {
     level: Level,
     board: Array<Array<Tile | null>>,
     setBoard: (newBoard: Array<Array<Tile | null>>) => undefined,
     goToLevel: (level: number) => undefined,
+    setCompletedLevels: (levelIds: Array<string>) => undefined,
+    completedLevels: Array<string>,
   } = $props();
 
   // Load your current level at startup
@@ -18,6 +20,15 @@
       goToLevel(foundIndex + 1);
     }
   }
+
+  const savedCompletedLevels = localStorage.getItem('completedLevels');
+  if (savedCompletedLevels && Array.isArray(savedCompletedLevels)) {
+    setCompletedLevels(savedCompletedLevels);
+  }
+
+  $effect(() => {
+    localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+  });
 
   // Load you board if one exists when you go to a level
   $effect(() => {
