@@ -35,7 +35,7 @@
     justify-content: center;
     align-items: center;
     line-height: 1;
-    font-size: min(14vmin, 40px);
+    font-size: round(calc(var(--tile-width) / 2.8), 1px);
     cursor: grab;
     touch-action: none;
     user-select: none;

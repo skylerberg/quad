@@ -17,10 +17,13 @@
 
   /*
   10 vh * 4 = 40
+
+  if in two rows, should be larger than 10vh; otherwise should be 10vh
+
   */
 
   --board-max-width: 500px;
-  --tile-width: min(10vh, 18vw, calc(var(--board-max-width) / 5));
+  --tile-width: min(8vmax, 18vw, calc(var(--board-max-width) / 5));
   --board-width: calc(var(--tile-width) * 5);
 
   --border-color: #666;

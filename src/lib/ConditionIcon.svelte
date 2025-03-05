@@ -227,16 +227,11 @@
     transform: rotate(45deg);
   }
 
-  .condition {
-    display: grid;
-  }
-
-  .condition > * {
-    grid-column-start: 1;
-    grid-row-start: 1;
-  }
-
   .status {
-    margin: auto;
+    position: absolute;
+  }
+
+  .condition {
+    position: relative;
   }
 </style>
