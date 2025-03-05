@@ -135,6 +135,7 @@
   }
 
   .next-level {
+    font-size: 14pt;
     background-color: var(--success);
     box-shadow: 0 0 5px 2px white;
     animation: pulse 1.0s infinite alternate ease-in-out;

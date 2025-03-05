@@ -12,10 +12,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
+  --header-height: 50px;
+  --header-margin: 20px;
+
+  /*
+  10 vh * 4 = 40
+  */
+
+  --board-max-width: 500px;
+  --tile-width: min(10vh, 18vw, calc(var(--board-max-width) / 5));
+  --board-width: calc(var(--tile-width) * 5);
+
   --border-color: #666;
   --tile-border-radius: 10px;
-  --board-max-width: 500px;
-  --tile-width: min(8vh, 18vw, calc(500px / 5));
   --success: #109030;
   --success-filter: invert(39%) sepia(82%) saturate(615%) hue-rotate(86deg) brightness(91%) contrast(91%);
 }
@@ -24,7 +33,6 @@ body {
   margin: 0;
   display: flex;
   min-width: 320px;
-  min-height: 100vh;
 }
 
 button {

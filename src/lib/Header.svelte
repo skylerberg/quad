@@ -253,11 +253,11 @@
 
 <style>
   .navbar {
-    height: 50px;
+    height: var(--header-height);
     display: grid;
     width: 100%;
     background: #131313;
-    margin-bottom: 1em;
+    margin-bottom: var(--header-margin);
     padding-left: 10px;
     padding-right: 10px;
     box-sizing: border-box;
