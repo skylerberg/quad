@@ -6,22 +6,24 @@
   import { evaluate, getTitle } from './condition';
   import { getSuitIcon, suitSymbolToName } from './suit';
   import type { Tile } from './tile.ts';
+  import type { Level } from './level.ts';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
 
   let conditionDiv;
   let tooltipDiv;
   let arrowElement;
 
-  let { tiles, condition, type, position }: {
+  let { tiles, condition, type, position, level }: {
     tiles: Array<Tile | undefined>,
     condition: Condition,
     type: 'row' | 'column',
     position: number,
+    level: Level,
   } = $props();
 
   let status = $derived(evaluate(condition, tiles));
 
-  const title = getTitle(condition, type);
+  const title = getTitle(level, condition, type);
 
   let classes = ['tile', 'condition'];
   if (type === 'row') {
@@ -143,6 +145,7 @@
     margin: auto;
     max-height: 90%;
     max-width: 90%;
+    filter: drop-shadow(0px 0px 7px white);
   }
 
   .number-requirement {
@@ -208,6 +211,7 @@
   .tooltip {
     display: none;
     width: max-content;
+    max-width: calc(100vw - var(--tile-width) * 1.8);
     position: absolute;
     top: 0;
     left: 0;
@@ -216,7 +220,11 @@
     font-weight: bold;
     padding: 5px;
     border-radius: 4px;
-    font-size: 16pt;
+    font-size: 12pt;
+  }
+  
+  :global(body.draggable--is-dragging) .tooltip {
+    display: none !important;
   }
 
   .arrow {

@@ -1,3 +1,4 @@
+import type { Level } from './level.ts';
 import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
 
@@ -99,19 +100,27 @@ export function countUnmatchedNumbers(
   return unmatchedNumbers.length;
 }
 
-export function getTitle(condition: Condition, type: 'row' | 'column'): string {
+export function getTitle(level: Level, condition: Condition, type: 'row' | 'column'): string {
+  let symbolName = 'flowers';
+  if (level.section === 'Celestial') {
+    symbolName = 'celestial objects';
+  }
+  else if (level.section === 'Elemental') {
+    symbolName = 'elements';
+  }
+
   if (condition.type === 'SumGreaterThan') {
     return `Tiles in ${type} must add to more than ${condition.amount}`;
   }
 
   if (condition.type === 'Contain') {
     if (condition.suits.length === 0) {
-      return `Must have a matching tile in ${type} for each number shown`;
+      return `This ${type} must have these numbers`;
     }
     if (condition.numbers.length === 0) {
-      return `Must have a matching tile in ${type} for each shown symbol`;
+      return `This ${type} must have these ${symbolName}`;
     }
-      return `Must have a tile matching each symbol or number shown in ${type}`;
+    return `This ${type} must have these ${symbolName} and numbers`;
   }
 
   if (condition.type === 'EvenOrSuit') {

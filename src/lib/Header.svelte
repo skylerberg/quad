@@ -312,6 +312,8 @@
     border: none;
     padding: 0;
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
 
   .menu {
@@ -319,7 +321,7 @@
     background: #1f1f1f;
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    z-index: 1;
+    z-index: 2;
   }
 
   .menu-item {

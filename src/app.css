@@ -58,3 +58,7 @@ button:hover {
 .draggable-source--is-dragging {
   opacity: .3;
 }
+
+.draggable-mirror {
+  z-index: 1;
+}

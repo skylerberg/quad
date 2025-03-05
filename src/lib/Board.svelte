@@ -32,11 +32,11 @@
         </div>
       {/key}
     {/each}
-    <ConditionIcon tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
+    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
   {/each}
 
   {#each level.colConditions as condition, index}
-    <ConditionIcon tiles={cols[index]} condition={condition} type='column' position={index} />
+    <ConditionIcon level={level} tiles={cols[index]} condition={condition} type='column' position={index} />
   {/each}
 </div>
 
