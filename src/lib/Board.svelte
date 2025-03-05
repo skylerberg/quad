@@ -46,7 +46,7 @@
     margin-right: auto;
     display: grid;
     font-size: 36px;
-    width: 90vmin;
+    width: min(90vw, 40vh);
     max-width: var(--board-max-width);
     aspect-ratio: 1 / 1;
     grid-template-columns: repeat(5, 1fr);
