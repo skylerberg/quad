@@ -87,6 +87,10 @@
   const setBoard = (newBoard: Array<Array<Tile | null>>) => {
     board = newBoard;
   }
+
+  const unlockAllLevels = () => {
+    completedLevels = levels.map(level => level.id)
+  }
 </script>
 
 <Header
@@ -98,6 +102,7 @@
     goToLevel={goToLevel}
     levelCount={levels.length}
     generateRandomLevel={generateRandomLevel}
+    unlockAllLevels={unlockAllLevels}
 />
 
 <main>

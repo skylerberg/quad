@@ -4,8 +4,20 @@
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
   import { getSuitIcon, allSuits } from './suit';
+  import { levels } from './level';
 
-  let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel, generateRandomLevel }: {
+  let {
+    levelNumber,
+    levelCount,
+    completedLevels,
+    runTacticalSolver,
+    runBacktrackingSolver,
+    resetLevel,
+    goToLevel,
+    generateRandomLevel,
+    unlockAllLevels,
+  }: {
+    completedLevels: Array<string>
     levelNumber: number,
     levelCount: number,
     runBacktrackingSolver: () => undefined,
@@ -13,11 +25,22 @@
     goToLevel: (level: number) => undefined,
     resetLevel: () => undefined,
     generateRandomLevel: () => undefined,
+    unlockAllLevels: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
   let menu: HTMLElement;
   let isMenuOpen = false;
+
+  let highestUnlockedLevel = $state(1);
+
+  $effect(() => {
+    highestUnlockedLevel = Math.max(0, ...completedLevels.map(
+      id => levels.findIndex(level => level.id === id)
+    )) + 1;
+    console.log(completedLevels);
+    console.log(highestUnlockedLevel);
+  });
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
@@ -139,6 +162,7 @@
         <button class="menu-item">💝 Donate</button>
         <hr />
         <span>Developer Options</span>
+        <button class="menu-item" onclick={unlockAllLevels}>Unlock All Levels</button>
         <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
         <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
         <button class="menu-item" onclick={generateRandomLevel}>Generate Random Level</button>
@@ -160,13 +184,12 @@
 <dialog id="level-select-dialog" onclick={handleDialogClick}>
   <h2>Tutorial</h2>
   <div class="level-grid">
-    {#each Array(levelCount) as _, i}
-      <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
+    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
+      {#if levels[i].section === 'Tutorial'}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
+      {/if}
     {/each}
   </div>
-  <form method="dialog">
-    <button>Cancel</button>
-  </form>
 
   <div class="level-section">
     <h2>Floral</h2>&nbsp;&nbsp;
@@ -174,8 +197,35 @@
       <img class='suit-icon' src={getSuitIcon(suit)} />
     {/each}
   </div>
+  <div class="level-grid">
+    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
+      {#if levels[i].section === 'Floral'}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+      {/if}
+    {/each}
+  </div>
   <h2>Locked</h2>
+  <div class="level-grid">
+    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
+      {#if levels[i].section === 'Elemental'}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+      {/if}
+    {/each}
+  </div>
   <h2>Locked</h2>
+  <div class="level-grid">
+    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
+      {#if levels[i].section === 'Celestial'}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+      {/if}
+    {/each}
+  </div>
+
+  <div style="float: right">
+  <form method="dialog">
+    <button>Cancel</button>
+  </form>
+  </div>
 </dialog>
 
 <dialog id="reset-level-dialog" onclick={handleDialogClick}>
@@ -302,7 +352,7 @@
 
   .level-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     margin-bottom: 20px;
     max-height: 60vh;
