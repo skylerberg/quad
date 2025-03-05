@@ -3,6 +3,7 @@
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
+  import { getSuitIcon, allSuits } from './suit';
 
   let { levelNumber, levelCount, runTacticalSolver, runBacktrackingSolver, resetLevel, goToLevel, generateRandomLevel }: {
     levelNumber: number,
@@ -81,6 +82,7 @@
   }
 
   function clearGameState() {
+    resetLevel();
     localStorage.clear();
     goToLevel(1);
     const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
@@ -156,7 +158,7 @@
 </dialog>
 
 <dialog id="level-select-dialog" onclick={handleDialogClick}>
-  <h2>Select Level</h2>
+  <h2>Tutorial</h2>
   <div class="level-grid">
     {#each Array(levelCount) as _, i}
       <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
@@ -165,6 +167,15 @@
   <form method="dialog">
     <button>Cancel</button>
   </form>
+
+  <div class="level-section">
+    <h2>Floral</h2>&nbsp;&nbsp;
+    {#each allSuits as suit}
+      <img class='suit-icon' src={getSuitIcon(suit)} />
+    {/each}
+  </div>
+  <h2>Locked</h2>
+  <h2>Locked</h2>
 </dialog>
 
 <dialog id="reset-level-dialog" onclick={handleDialogClick}>
@@ -337,5 +348,13 @@
 
   .destructive:hover {
     background: #ff2222;
+  }
+
+  .level-section {
+    display: flex;
+  }
+
+  .suit-icon {
+    height: 2em;
   }
 </style>

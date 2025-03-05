@@ -7,7 +7,7 @@
   import StorageHandler from './lib/StorageHandler.svelte';
   import { levels } from './lib/level.ts';
   import type { Tile } from './tile';
-  import { solve, tacticalSolver } from './lib/solver';
+  import { checkPuzzle, solve, tacticalSolver } from './lib/solver';
   import { randomLevel } from './lib/generator';
 
   let board: Array<Array<Tile | null>> = $state([
@@ -20,8 +20,10 @@
   let options = $state(undefined);
 
   let levelIndex: number = $state(0);
-  let level = $derived(levels[levelIndex] || levels[0]);
+  let level: Level = $derived(levels[levelIndex] || levels[0]);
   let levelNumber: number = $derived(levelIndex + 1);
+
+  let solved: boolean = $derived.by(() => checkPuzzle(level, board));
 
   let shouldHideNumbers = $derived(level && level.rowConditions.concat(level.colConditions).every(
     condition => condition.type === 'Contain' && condition.numbers.length === 0
@@ -33,6 +35,18 @@
   });
 
   setContext('numberVisibility', numberVisibility);
+
+  let completedLevels = $state([]);
+
+  const setCompletedLevels = (levelIds: Array<string>) => {
+    completedLevels = levelIds;
+  }
+
+  $effect(() => {
+    if (solved && !completedLevels.some(id => id === level.id)) {
+      completedLevels.push(level.id);
+    }
+  })
 
   const goToNextLevel = () => {
     levelIndex += 1;
@@ -76,6 +90,7 @@
 </script>
 
 <Header
+    completedLevels={completedLevels}
     resetLevel={resetLevel}
     levelNumber={levelNumber}
     runBacktrackingSolver={runBacktrackingSolver}
@@ -89,8 +104,10 @@
   <StorageHandler
       level={level}
       board={board}
+      completedLevels={completedLevels}
       goToLevel={goToLevel}
       setBoard={setBoard}
+      setCompletedLevels={setCompletedLevels}
   />
   <!-- TODO figure out how to get the board to clear without needing this key -->
   {#if level}
@@ -100,7 +117,9 @@
       <DragHandler bind:board />
     {/key}
   {/if}
-  <button onclick={() => goToNextLevel()}>Next Level</button>
+  {#if solved}
+    <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
+  {/if}
 </main>
 
 <style>
@@ -108,5 +127,20 @@
     max-width: 1280px;
     margin: 0 auto;
     text-align: center;
+  }
+
+  .next-level {
+    background-color: var(--success);
+    box-shadow: 0 0 5px 2px white;
+    animation: pulse 1.0s infinite alternate ease-in-out;
+  }
+
+  @keyframes pulse {
+      0% {
+          box-shadow: 0 0 5px 2px white;
+      }
+      100% {
+        box-shadow: 0 0 10px 7px rgba(255, 255, 255, 0.8);
+      }
   }
 </style>

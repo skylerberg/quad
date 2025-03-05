@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #1c1b22;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -16,6 +16,8 @@
   --tile-border-radius: 10px;
   --board-max-width: 500px;
   --tile-width: min(18vmin, calc(500px / 5));
+  --success: #109030;
+  --success-filter: invert(39%) sepia(82%) saturate(615%) hue-rotate(86deg) brightness(91%) contrast(91%);
 }
 
 body {
@@ -23,6 +25,14 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+}
+
+button {
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #444;
 }
 
 #app {
