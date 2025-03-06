@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1in"
+   height="1in"
+   viewBox="0 0 25.4 25.4"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
+   sodipodi:docname="favicon.svg"
+   inkscape:export-filename="../../public/favicon.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="44.194174"
+     inkscape:cy="34.825009"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#333333;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-dasharray:none"
+       id="rect1"
+       width="24.397938"
+       height="24.396227"
+       x="0.5010311"
+       y="0.50188655"
+       rx="5"
+       ry="5" />
+    <text
+       xml:space="preserve"
+       style="font-size:19.7556px;line-height:1.25;font-family:sans-serif;fill:#ffffff;stroke-width:0.264583"
+       x="5.4595728"
+       y="18.261202"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:19.7556px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Medium';fill:#ffffff;stroke-width:0.264583"
+         x="5.4595728"
+         y="18.261202">Q</tspan></text>
+  </g>
+</svg>

@@ -38,8 +38,6 @@
     highestUnlockedLevel = Math.max(0, ...completedLevels.map(
       id => levels.findIndex(level => level.id === id)
     )) + 1;
-    console.log(completedLevels);
-    console.log(highestUnlockedLevel);
   });
 
   function toggleMenu() {

@@ -74,7 +74,6 @@
 
   const generateRandomLevel = () => {
     const level = randomLevel();
-    console.log(JSON.stringify(level));
     levels.unshift(level);
     levelIndex = 1;
     levelIndex = 0;
