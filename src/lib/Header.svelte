@@ -1,5 +1,6 @@
 <script lang="ts">
   import helpCircleOutlineUri from '../assets/help-circle-outline.svg';
+  import lockUri from '../assets/lock.svg';
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
@@ -16,6 +17,7 @@
     goToLevel,
     generateRandomLevel,
     unlockAllLevels,
+    lockAllLevels,
   }: {
     completedLevels: Array<string>
     levelNumber: number,
@@ -26,16 +28,17 @@
     resetLevel: () => undefined,
     generateRandomLevel: () => undefined,
     unlockAllLevels: () => undefined,
+    lockAllLevels: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
   let menu: HTMLElement;
   let isMenuOpen = false;
 
-  let highestUnlockedLevel = $state(1);
+  let highestUnlockedLevel = $state(0);
 
   $effect(() => {
-    highestUnlockedLevel = Math.max(0, ...completedLevels.map(
+    highestUnlockedLevel = Math.max(-1, ...completedLevels.map(
       id => levels.findIndex(level => level.id === id)
     )) + 1;
   });
@@ -104,6 +107,7 @@
 
   function clearGameState() {
     resetLevel();
+    lockAllLevels();
     localStorage.clear();
     goToLevel(1);
     const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
@@ -180,11 +184,18 @@
 </dialog>
 
 <dialog id="level-select-dialog" onclick={handleDialogClick}>
-  <h2>Tutorial</h2>
+  <div class="level-section">
+    <h2>Tutorial</h2>
+  </div>
   <div class="level-grid">
-    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
-      {#if levels[i].section === 'Tutorial'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level {i + 1}</button>
+    {#each levels as level, i}
+      {#if level.section === 'Tutorial'}
+        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
+          {#if i > highestUnlockedLevel}
+            <img class='level-lock-icon' src={lockUri} />
+          {/if}
+          Level {i + 1}
+        </button>
       {/if}
     {/each}
   </div>
@@ -196,25 +207,44 @@
     {/each}
   </div>
   <div class="level-grid">
-    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
-      {#if levels[i].section === 'Floral'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+    {#each levels as level, i}
+      {#if level.section === 'Floral'}
+        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
+          {#if i > highestUnlockedLevel}
+            <img class='level-lock-icon' src={lockUri} />
+          {/if}
+          Level {i + 1}
+        </button>
       {/if}
     {/each}
   </div>
-  <h2>Locked</h2>
+  <div class="level-section">
+    <img class='section-icon' src={lockUri} />&nbsp;&nbsp;<h2>Locked</h2>
+  </div>
   <div class="level-grid">
-    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
-      {#if levels[i].section === 'Elemental'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+    {#each levels as level, i}
+      {#if level.section === 'Elemental'}
+        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
+          Level&nbsp;{i + 1}
+          {#if i > highestUnlockedLevel}
+            <img class='section-icon' src={lockUri} />
+          {/if}
+        </button>
       {/if}
     {/each}
   </div>
-  <h2>Locked</h2>
+  <div class="level-section">
+    <img class='section-icon' src={lockUri} />&nbsp;&nbsp;<h2>Locked</h2>
+  </div>
   <div class="level-grid">
-    {#each Array(Math.min(highestUnlockedLevel + 1, levels.length)) as _, i}
-      {#if levels[i].section === 'Celestial'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>Level&nbsp;{i + 1}</button>
+    {#each levels as level, i}
+      {#if level.section === 'Celestial'}
+        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
+          {#if i > highestUnlockedLevel}
+            <img class='level-lock-icon' src={lockUri} />
+          {/if}
+          Level&nbsp;{i + 1}
+        </button>
       {/if}
     {/each}
   </div>
@@ -309,7 +339,6 @@
     background: none;
     border: none;
     padding: 0;
-    cursor: pointer;
     display: flex;
     align-items: center;
   }
@@ -330,7 +359,6 @@
     background: none;
     border: none;
     color: white;
-    cursor: pointer;
     font-size: 12pt;
     white-space: nowrap;
   }
@@ -362,10 +390,11 @@
 
   .level-button {
     padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
     color: white;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    justify-content: center;
   }
 
   dialog {
@@ -389,7 +418,6 @@
     border: none;
     padding: 0.5em 1em;
     border-radius: 4px;
-    cursor: pointer;
   }
 
   .destructive:hover {
@@ -398,9 +426,28 @@
 
   .level-section {
     display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .level-section > h2 {
+    margin-bottom: 0;
   }
 
   .suit-icon {
     height: 2em;
+  }
+
+  .section-icon {
+    height: 1.5em;
+    filter: invert(100%);
+    margin-top: -2px;
+  }
+
+  .level-lock-icon {
+    height: 1.1em;
+    filter: invert(95%);
+    margin-right: 0.25em;
+    margin-top: -2px;
   }
 </style>

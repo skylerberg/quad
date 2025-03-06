@@ -88,7 +88,11 @@
   }
 
   const unlockAllLevels = () => {
-    completedLevels = levels.map(level => level.id)
+    completedLevels = levels.map(level => level.id);
+  }
+
+  const lockAllLevels = () => {
+    completedLevels = [];
   }
 </script>
 
@@ -102,6 +106,7 @@
     levelCount={levels.length}
     generateRandomLevel={generateRandomLevel}
     unlockAllLevels={unlockAllLevels}
+    lockAllLevels={lockAllLevels}
 />
 
 <main>
