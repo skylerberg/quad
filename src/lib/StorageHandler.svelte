@@ -21,8 +21,9 @@
     }
   }
 
-  const savedCompletedLevels = localStorage.getItem('completedLevels');
+  const savedCompletedLevels = JSON.parse(localStorage.getItem('completedLevels'));
   if (savedCompletedLevels && Array.isArray(savedCompletedLevels)) {
+    console.log(savedCompletedLevels);
     setCompletedLevels(savedCompletedLevels);
   }
 

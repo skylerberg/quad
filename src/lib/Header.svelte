@@ -253,8 +253,9 @@
         <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
           {#if i > highestUnlockedLevel}
             <img class='level-lock-icon' src={lockUri} />
+          {:else}
+            Level {i + 1}
           {/if}
-          Level {i + 1}
         </button>
       {/if}
     {/each}
@@ -272,8 +273,9 @@
         <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
           {#if i > highestUnlockedLevel}
             <img class='level-lock-icon' src={lockUri} />
+          {:else}
+            Level {i + 1}
           {/if}
-          Level {i + 1}
         </button>
       {/if}
     {/each}
@@ -285,9 +287,10 @@
     {#each levels as level, i}
       {#if level.section === 'Elemental'}
         <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
-          Level&nbsp;{i + 1}
           {#if i > highestUnlockedLevel}
             <img class='section-icon' src={lockUri} />
+          {:else}
+            Level {i + 1}
           {/if}
         </button>
       {/if}
@@ -302,8 +305,9 @@
         <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
           {#if i > highestUnlockedLevel}
             <img class='level-lock-icon' src={lockUri} />
+          {:else}
+            Level {i + 1}
           {/if}
-          Level&nbsp;{i + 1}
         </button>
       {/if}
     {/each}

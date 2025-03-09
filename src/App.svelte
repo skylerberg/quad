@@ -127,11 +127,19 @@
     {/key}
   {/if}
   {#if solved}
-    <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
+    {#if levelIndex + 1=== levels.length}
+      <h1>Thank you for playing!</h1>
+    {:else}
+      <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
+    {/if}
   {/if}
 </main>
 
 <style>
+  h1 {
+    margin: 0;
+  }
+
   main {
     max-width: 1280px;
     margin: 0 auto;
