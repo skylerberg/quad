@@ -33,11 +33,6 @@
   --success-filter: invert(39%) sepia(82%) saturate(615%) hue-rotate(86deg) brightness(91%) contrast(91%);
 }
 
-html {
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
 body {
   margin: 0;
   display: flex;
