@@ -1,0 +1,13 @@
+{
+  "name": "Quad",
+  "icons": [
+    {
+      "src": "quad/favicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "display": "standalone",
+  "start_url": "/quad"
+}
+
