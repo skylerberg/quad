@@ -10,6 +10,61 @@ export type Level = {
 };
 
 export const levels = [
+  {
+    id: 'GBLEws4vY5',
+    name: 'New Easy?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 1]},
+      {type: 'Contain', suits: [red, red, red, blue ], numbers: []},
+      {type: 'Contain', suits: [green, green, green, blue ], numbers: []},
+      {type: 'Contain', suits: [white, white, white, blue ], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue], numbers: [2, 2, 2]},
+      {type: 'Contain', suits: [blue], numbers: [3, 3, 3]},
+      {type: 'Contain', suits: [blue], numbers: [4, 4, 4]},
+      {type: 'Contain', suits: [blue], numbers: [2, 3, 4]},
+    ]
+  },
+
+  {
+    id: 'egHNiuQKmq',
+    name: 'New Medium?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue, white, white, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [blue, green, red, white, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [red, red, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3,]},
+    ]
+  },
+
+  {
+    id: 'mYt1sYy17n',
+    name: 'New Hard?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [green, red, red, red, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [red, blue, blue, blue], numbers: []},
+      {type: 'Contain', suits: [green, green, red, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4,]},
+    ]
+  },
+
+
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
     section: 'Tutorial',
@@ -296,6 +351,3 @@ export const levels = [
     //id: 'UroBskL0wy',
     //id: 'YldmuQfL1r',
     //id: 'f7Kc3UQNkU',
-    //id: 'mYt1sYy17n',
-    //id: 'egHNiuQKmq',
-    //id: 'GBLEws4vY5',
