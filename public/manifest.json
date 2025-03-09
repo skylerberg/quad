@@ -2,7 +2,7 @@
   "name": "Quad",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "quad/favicon.png",
       "type": "image/png",
       "sizes": "192x192"
     }
