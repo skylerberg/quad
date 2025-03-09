@@ -6,113 +6,10 @@ export type Level = {
   colConditions: Array<Condition>,
   id: string,  // An unchanging ID we use to uniquely identify levels for sessionStorage
   section: 'Tutorial' | 'Floral' | 'Elemental' | 'Celestial',
+  name: string | undefined,
 };
 
 export const levels = [
-  {
-    id: 'Elements Only Hard',
-    section: 'Tutorial',
-    rowConditions: [
-      {type: 'Contain', suits: [green, red, red, white], numbers: [ ]},
-      {type: 'Contain', suits: [ blue, blue, white, white], numbers: []},
-      {type: 'Contain', suits: [green, green, white, red], numbers: []},
-      {type: 'Contain', suits: [blue, blue, green, red,], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, white, red], numbers: []},
-      {type: 'Contain', suits: [white, white, blue, red], numbers: []},
-      {type: 'Contain', suits: [green, green, blue, blue], numbers: []},
-      {type: 'Contain', suits: [white, red, red, blue], numbers: []},
-    ]
-  },
-
-  // Challenging and fun
-  {
-    id: 'Fireplace',
-    section: 'Celestial',
-    rowConditions: [
-      {type: 'EvenOrSuit', suit: blue},
-      {type: 'Contain', suits: [red, red, blue, white ], numbers: [ ]},
-      {type: 'Contain', suits: [ red, red, green, blue ], numbers: [ ]},
-      {type: 'SumGreaterThan', amount: 13},
-    ],
-    colConditions: [
-      {type: 'EvenOrSuit', suit: green},
-      {type: 'Contain', numbers: [ ], suits: [red, red, green, white]},
-      {type: 'Contain', numbers: [ ], suits: [red, red, white, blue ]},
-      {type: 'Contain', suits: [white, white, blue, blue], numbers: [ ]},
-    ]
-  },
-
-  // Pretty easy
-  {
-    id: 'Corner1s',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [blue, white ], numbers: [1, 1]},
-      {type: 'Contain', suits: [], numbers: [3, 3, 4, 4, ]},
-      {type: 'Contain', suits: [ ], numbers: [2, 2, 4, 4]},
-      {type: 'Contain', suits: [ green, red], numbers: [1, 1]},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [red, white], numbers: [1, 1]},
-      {type: 'Contain', numbers: [2, 3, 4, 4,], suits: []},
-      {type: 'Contain', numbers: [2, 3, 3, 4], suits: []},
-      {type: 'Contain', numbers: [1, 1], suits: [green, blue]},
-    ]
-  },
-
-  // Wild Lawn! This is the a challenging one that I generated randomly
-  {
-    id: 'asdf',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-      {type: 'Contain', suits: [blue, red, white, white], numbers: []},
-      {type: 'Contain', suits: [blue, blue, green, red], numbers: []},
-      {type: 'Contain', suits: [], numbers: [2, 2, 3, 4]},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
-      {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
-    ]
-  },
-  {
-    section: 'Floral',
-    id: 'UuZDwv4ue0',
-    rowConditions: [
-      {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
-      {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
-      {type: 'Contain', suits: [green, white, green, white], numbers: []},
-      {type: 'Contain', suits: [red, red, red, red], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, green, red], numbers: []},
-      {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
-      {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
-      {type: 'Contain', numbers: [], suits: [white, white, white, red]},
-    ]
-  },
-
-  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
-    id: '94phGRw1A1',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
-      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
-      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
-      {type: 'Contain', suits: [red, red, red, red], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, green, red], numbers: []},
-      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
-      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
-      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
-    ]
-  },
-
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
     section: 'Tutorial',
@@ -148,6 +45,23 @@ export const levels = [
   },
 
   {
+    id: 'Elements Only Hard',
+    section: 'Tutorial',
+    rowConditions: [
+      {type: 'Contain', suits: [red, red, green, white], numbers: [ ]},
+      {type: 'Contain', suits: [blue, blue, white, white], numbers: []},
+      {type: 'Contain', suits: [green, green, white, red], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, red,], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, white, red], numbers: []},
+      {type: 'Contain', suits: [white, white, blue, red], numbers: []},
+      {type: 'Contain', suits: [green, green, blue, blue], numbers: []},
+      {type: 'Contain', suits: [red, red, white, blue], numbers: []},
+    ]
+  },
+
+  {
     id: 'I3nisPzcLE',
     section: 'Floral',
     rowConditions: [
@@ -163,6 +77,59 @@ export const levels = [
       {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
     ]
   },
+
+  {
+    section: 'Floral',
+    id: 'UuZDwv4ue0',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue], numbers: [1, 1]},
+      {type: 'Contain', suits: [blue, blue, white], numbers: [1]},
+      {type: 'Contain', suits: [green, white, green, white], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [3, 4], suits: [blue, blue]},
+      {type: 'Contain', numbers: [1, 1], suits: [blue, blue]},
+      {type: 'Contain', numbers: [], suits: [white, white, white, red]},
+    ]
+  },
+
+  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
+    id: '94phGRw1A1',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
+      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
+      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
+      {type: 'Contain', suits: [red, red, red, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
+      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
+    ]
+  },
+
+  // Pretty easy
+  {
+    id: 'Corner1s',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, white ], numbers: [1, 1]},
+      {type: 'Contain', suits: [], numbers: [3, 3, 4, 4, ]},
+      {type: 'Contain', suits: [ ], numbers: [2, 2, 4, 4]},
+      {type: 'Contain', suits: [ green, red], numbers: [1, 1]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [red, white], numbers: [1, 1]},
+      {type: 'Contain', numbers: [2, 3, 4, 4,], suits: []},
+      {type: 'Contain', numbers: [2, 3, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 1], suits: [green, blue]},
+    ]
+  },
+
 
   // ^ Need slightly easier level(s) between these two
 
@@ -183,22 +150,58 @@ export const levels = [
     ]
   },
 
-  // Need many easier levels between these two
+  // Wild Lawn! This is the a challenging one that I generated randomly
   {
-    section: 'Celestial',
+    id: 'asdf',
+    section: 'Floral',
     rowConditions: [
-      {type: 'SumGreaterThan', amount: 11},
-      {type: 'OddOrSuit', suit: blue},
-      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
-      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, red, white, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 4]},
     ],
     colConditions: [
-      {type: 'SumGreaterThan', amount: 11},
-      {type: 'EvenOrSuit', suit: red},
-      {type: 'Contain', suits: [blue, white, green, red], numbers: []},
-      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
     ]
   },
+
+  // Need many easier levels between these two
+  //{
+  //  section: 'Celestial',
+  //  rowConditions: [
+  //    {type: 'SumGreaterThan', amount: 11},
+  //    {type: 'OddOrSuit', suit: blue},
+  //    {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+  //    {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+  //  ],
+  //  colConditions: [
+  //    {type: 'SumGreaterThan', amount: 11},
+  //    {type: 'EvenOrSuit', suit: red},
+  //    {type: 'Contain', suits: [blue, white, green, red], numbers: []},
+  //    {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+  //  ]
+  //},
+
+  // Challenging and fun
+  //{
+  //  id: 'Fireplace',
+  //  section: 'Celestial',
+  //  rowConditions: [
+  //    {type: 'EvenOrSuit', suit: blue},
+  //    {type: 'Contain', suits: [red, red, blue, white ], numbers: [ ]},
+  //    {type: 'Contain', suits: [ red, red, green, blue ], numbers: [ ]},
+  //    {type: 'SumGreaterThan', amount: 13},
+  //  ],
+  //  colConditions: [
+  //    {type: 'EvenOrSuit', suit: green},
+  //    {type: 'Contain', numbers: [ ], suits: [red, red, green, white]},
+  //    {type: 'Contain', numbers: [ ], suits: [red, red, white, blue ]},
+  //    {type: 'Contain', suits: [white, white, blue, blue], numbers: [ ]},
+  //  ]
+  //},
 ];
 
 // Unused ids for your convenience
