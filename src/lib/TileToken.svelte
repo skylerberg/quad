@@ -48,14 +48,6 @@
     display: none;
   }
 
-  .background {
-    position: absolute;
-  }
-
-  .background {
-    position: absolute;
-  }
-  
   .red {
     color: black;
     background-color: rgb(155, 95, 53);

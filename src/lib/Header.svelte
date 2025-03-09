@@ -2,10 +2,14 @@
   import helpCircleOutlineUri from '../assets/help-circle-outline.svg';
   import lockUri from '../assets/lock.svg';
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
+  import goalArrowUri from '../assets/goal-arrow.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
   import { getSuitIcon, allSuits } from './suit';
   import { levels } from './level';
+  import ConditionIcon from './ConditionIcon.svelte';
+  import { red, blue, green, white } from './suit';
+  import ExampleTile from './ExampleTile.svelte';
 
   let {
     levelNumber,
@@ -64,40 +68,17 @@
     }
   }
 
-  onMount(() => {
-    menu.style.display = 'none';
-
-    const cleanup = autoUpdate(menuButton, menu, () => {
-      computePosition(menuButton, menu, {
-        placement: 'bottom-end',
-        middleware: [offset(6), shift()]
-      }).then(({ x, y }) => {
-        Object.assign(menu.style, {
-          left: `${x}px`,
-          top: `${y}px`
-        });
-      });
-    });
-
-    document.addEventListener('click', handleClickOutside);
-
-    return () => {
-      cleanup();
-      document.removeEventListener('click', handleClickOutside);
-    };
-  });
-
-  function showResetLevelDialog() {
-    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
-    dialog.showModal();
-    closeMenu();
-  }
-
-  function showResetGameDialog() {
-    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
-    dialog.showModal();
-    closeMenu();
-  }
+  let exampleRowSequenceIndex = $state(0);
+  const exampleRowSequence = [
+    [null, null, null, null],
+    [{suit: white, value: 1}, null, null, null],
+    [{suit: white, value: 1}, {suit: green, value: 1}, null, null],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, null],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
+  ];
+  const exampleCondition = {type: 'Contain', suits: [green, red, red, white], numbers: [ ]};
 
   function runResetLevel() {
     resetLevel();
@@ -114,7 +95,30 @@
     dialog.close();
   }
 
-  function showLevelDialog(dialogId: string) {
+  let howToPlayExampleSequenceIntervalId = null;
+
+  function showHowToPlay() {
+    localStorage.setItem('seenHowToPlay', 'true');
+
+    exampleRowSequenceIndex = 0;
+    if (!howToPlayExampleSequenceIntervalId) {
+      howToPlayExampleSequenceIntervalId = setInterval(() => {
+        exampleRowSequenceIndex += 1;
+        exampleRowSequenceIndex %= exampleRowSequence.length;
+      }, 1500)
+    }
+
+    const dialog = document.getElementById('how-to-play-dialog') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  function clearExampleSequence() {
+    exampleRowSequenceIndex = 0;
+    clearInterval(howToPlayExampleSequenceIntervalId);
+    howToPlayExampleSequenceIntervalId = null;
+  }
+
+  function showDialog(dialogId: string) {
     const dialog = document.getElementById(dialogId) as HTMLDialogElement;
     dialog.showModal();
     closeMenu();
@@ -139,6 +143,33 @@
       dialog.close();
     }
   }
+
+  onMount(() => {
+    menu.style.display = 'none';
+
+    const removeMenuEvents = autoUpdate(menuButton, menu, () => {
+      computePosition(menuButton, menu, {
+        placement: 'bottom-end',
+        middleware: [offset(6), shift()]
+      }).then(({ x, y }) => {
+        Object.assign(menu.style, {
+          left: `${x}px`,
+          top: `${y}px`
+        });
+      });
+    });
+
+    document.addEventListener('click', handleClickOutside);
+
+    if (!localStorage.getItem('seenHowToPlay')) {
+      showHowToPlay();
+    }
+
+    return () => {
+      removeMenuEvents();
+      document.removeEventListener('click', handleClickOutside);
+    };
+  });
 </script>
 
 
@@ -150,7 +181,12 @@
   </span>
   <span class='level'>Level {levelNumber}</span>
   <div class="nav-buttons">
-    <button class="menu-button" aria-label="Help" onclick={() => showLevelDialog('how-to-play-dialog')}>
+    <button
+      class="menu-button"
+      aria-label="Help"
+      onclick={() => showHowToPlay()}
+      onclose={() => clearExampleSequence()}
+    >
       <img src={helpCircleOutlineUri} class='icon' alt="Help icon" />
     </button>
     <div class="menu-container">
@@ -158,9 +194,9 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={() => showLevelDialog('level-select-dialog')}>Go To Level</button>
-        <button class="menu-item" onclick={showResetLevelDialog}>Reset Level</button>
-        <button class="menu-item" onclick={showResetGameDialog}>Reset Game</button>
+        <button class="menu-item" onclick={() => showDialog('level-select-dialog')}>Go To Level</button>
+        <button class="menu-item" onclick={() => showDialog('reset-level-dialog')}>Reset Level</button>
+        <button class="menu-item" onclick={() => showDialog('reset-game-dialog')}>Reset Game</button>
         <button class="menu-item">💝 Donate</button>
         <hr />
         <span>Developer Options</span>
@@ -175,9 +211,33 @@
 
 <dialog id="how-to-play-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
-  <p>Place all 16 tiles and meet the goal for each row and column</p>
+  <p>Drag tiles onto the board<br /> to fulfill all row and column goals</p>
+  <h3>Example</h3>
+  <div class="example-row">
+    <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
+  </div>
+  <div class="example-row">
+    <div class="condition">
+      <ConditionIcon
+        level={{type: 'Tutorial'}}
+        tiles={exampleRowSequence[exampleRowSequenceIndex]}
+        condition={exampleCondition}
+        type='row'
+        position={1}
+      />
+    </div>
+    {#each exampleRowSequence[exampleRowSequenceIndex] as tile}
+    <div class="space {tile ? "" : "empty"}">
+            
+      {#if tile}
+        <ExampleTile suit={tile.suit} />
+      {/if}
+    </div>
+    {/each}
+  </div>
+  <br />
+  Tap or mouse over a goal for more details
   <hr />
-  <p></p>
   <form method="dialog">
     <button>Got It</button>
   </form>
@@ -449,5 +509,48 @@
     filter: invert(95%);
     margin-right: 0.25em;
     margin-top: -2px;
+  }
+
+  .condition {
+    box-sizing: border-box;
+    width: calc(var(--tile-width) / 1.3);
+    aspect-ratio: 1 / 1;
+    touch-action: none;
+  }
+
+  .space {
+    box-sizing: border-box;
+    width: calc(var(--tile-width) / 1.3);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--tile-border-radius);
+    touch-action: none;
+    background-color: #242424;
+  }
+  
+  .empty {
+    border: 1px solid var(--border-color);
+  }
+
+  .example-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .condition-example {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    width: var(--tile-width);
+  }
+
+  .goal-arrow {
+    width: calc(var(--tile-width) / 1.3 * 5);
+    filter: invert();
+  }
+
+  h3 {
+    margin-bottom: 0px;
   }
 </style>

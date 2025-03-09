@@ -19,6 +19,7 @@
 
 <div class='board'>
   {#each board as row, rowIndex}
+    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
     {#each row as tile, colIndex}
       {#key tile}
         <div
@@ -27,14 +28,14 @@
             data-col={colIndex}
         >
           {#if tile}
-            <TileToken tile={tile} location={{row: rowIndex, col: colIndex}}/>
+            <TileToken tile={tile}/>
           {/if}
         </div>
       {/key}
     {/each}
-    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
   {/each}
 
+  <div></div>
   {#each level.colConditions as condition, index}
     <ConditionIcon level={level} tiles={cols[index]} condition={condition} type='column' position={index} />
   {/each}
