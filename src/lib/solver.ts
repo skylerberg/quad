@@ -245,6 +245,7 @@ export function tacticalSolver(level: Level, board: undefined | Array<Array<Tile
 
     // TODO implicit conditions can interfere with our interchangability code
     // Is there a way to fix that?
+    productOfEliminationImplicitConditions,
     singleTileImplicitCondition,
 
     // Heuristic approaches
@@ -501,6 +502,176 @@ function attributeLockin(
   return madeProgress;
 }
 
+// If we know the suit of all tiles NOT in a given group, then we know the suits
+// in the given group by product of elimination. The same applies for numbers.
+function productOfEliminationImplicitConditions(
+  level: Level,
+  board: Array<Array<Tile | null>>,
+  _: Array<Array<Array<Tile>>>,
+  __: Array<Tile>,
+): boolean {
+  let madeProgress = false;
+
+  for (const [row, rowCondition] of level.rowConditions.entries()) {
+    if (rowCondition.type === 'Contain') {
+      if (rowCondition.suits.length === 0) {
+        const suitsRequiredInOtherRowsCount = Object.fromEntries(allSuits.map(suit => {
+          return [
+            suit,
+            [...Array(4).keys()].filter(i => i !== row).map(i => {
+              return Math.max(
+                level.rowConditions[i].suits?.filter((conditionSuit: Suit) => conditionSuit === suit).length || 0,
+                board[i].filter(tile => tile && tile.suit === suit).length,
+              )
+            }).reduce((total, count) => total + count, 0),
+          ];
+        }));
+
+        if (allSuits.map(suit => suitsRequiredInOtherRowsCount[suit]).reduce((a, x) => a + x, 0) === 12) {
+          const suitsRequiredInThisRowCount = Object.fromEntries(
+            Object.entries(suitsRequiredInOtherRowsCount).map(
+              ([suit, count]) => [suit, 4 - count]
+            )
+          );
+          for (const [suit, count] of Object.entries(suitsRequiredInThisRowCount)) {
+            for (const _ of Array(count)) {
+              madeProgress = true;
+              rowCondition.suits.push(suit as Suit);
+            }
+          }
+          if (madeProgress) {
+            console.log(
+              'Implicit Condition via product of elimination',
+              { row },
+              rowCondition.suits,
+            );
+            return madeProgress;
+          }
+        }
+      }
+
+      if (rowCondition.numbers.length === 0) {
+        const numbersRequiredInOtherRowsCount = Object.fromEntries(allNumbers.map(number => {
+          return [
+            number,
+            [...Array(4).keys()].filter(i => i !== row).map(i => {
+              return Math.max(
+                level.rowConditions[i].numbers?.filter((conditionNumber: TileValue) => conditionNumber === number).length || 0,
+                board[i].filter(tile => tile && tile.value === number).length,
+              )
+            }).reduce((total, count) => total + count, 0),
+          ];
+        }));
+
+        if (allNumbers.map(number => numbersRequiredInOtherRowsCount[number]).reduce((a, x) => a + x, 0) === 12) {
+          const numbersRequiredInThisRowCount = Object.fromEntries(
+            Object.entries(numbersRequiredInOtherRowsCount).map(
+              ([number, count]) => [number, 4 - count]
+            )
+          );
+          for (const [number, count] of Object.entries(numbersRequiredInThisRowCount)) {
+            for (let i = 0; i < count; i++) {
+              madeProgress = true;
+              rowCondition.numbers.push(parseInt(number) as TileValue);
+            }
+          }
+          if (madeProgress) {
+            console.log(
+              'Implicit Condition via product of elimination',
+              { row },
+              rowCondition.numbers,
+            );
+            return madeProgress;
+          }
+        }
+      }
+    }
+  }
+  
+  // Get columns from board for easier access
+  const columns = getColumns(board);
+
+  // Process column suits
+  for (const [col, colCondition] of level.colConditions.entries()) {
+   if (colCondition.type === 'Contain') {
+    if (colCondition.suits.length === 0) {
+      const suitsRequiredInOtherColsCount = Object.fromEntries(allSuits.map(suit => {
+        return [
+          suit,
+          [...Array(4).keys()].filter(i => i !== col).map(i => {
+            return Math.max(
+              level.colConditions[i].suits?.filter((conditionSuit: Suit) => conditionSuit === suit).length || 0,
+              columns[i].filter(tile => tile && tile.suit === suit).length,
+            )
+          }).reduce((total, count) => total + count, 0),
+        ];
+      }));
+
+      if (allSuits.map(suit => suitsRequiredInOtherColsCount[suit]).reduce((a, x) => a + x, 0) === 12) {
+        const suitsRequiredInThisColCount = Object.fromEntries(
+          Object.entries(suitsRequiredInOtherColsCount).map(
+            ([suit, count]) => [suit, 4 - count]
+          )
+        );
+        for (const [suit, count] of Object.entries(suitsRequiredInThisColCount)) {
+          for (let i = 0; i < count; i++) {
+            madeProgress = true;
+            colCondition.suits.push(suit as Suit);
+          }
+        }
+        if (madeProgress) {
+          console.log(
+            'Implicit Condition via product of elimination',
+            { col },
+            colCondition.suits,
+          );
+          return madeProgress;
+        }
+      }
+    }
+    
+    // Process column numbers
+    if (colCondition.numbers.length === 0) {
+      const numbersRequiredInOtherColsCount = Object.fromEntries(allNumbers.map(number => {
+        return [
+          number,
+          [...Array(4).keys()].filter(i => i !== col).map(i => {
+            return Math.max(
+              level.colConditions[i].numbers?.filter((conditionNumber: TileValue) => conditionNumber === number).length || 0,
+              columns[i].filter(tile => tile && tile.value === number).length,
+            )
+          }).reduce((total, count) => total + count, 0),
+        ];
+      }));
+
+      if (allNumbers.map(number => numbersRequiredInOtherColsCount[number]).reduce((a, x) => a + x, 0) === 12) {
+        const numbersRequiredInThisColCount = Object.fromEntries(
+          Object.entries(numbersRequiredInOtherColsCount).map(
+            ([number, count]) => [number, 4 - count]
+          )
+        );
+        for (const [number, count] of Object.entries(numbersRequiredInThisColCount)) {
+          for (let i = 0; i < count; i++) {
+            madeProgress = true;
+            colCondition.numbers.push(parseInt(number) as TileValue);
+          }
+        }
+        if (madeProgress) {
+          console.log(
+            'Implicit Condition via product of elimination',
+            { col },
+            colCondition.numbers,
+          );
+          return madeProgress;
+        }
+      }
+    }
+   }
+  }
+
+  return madeProgress;
+}
+
 // If a single tile must be in a particular group, that group's condition can be updated to include
 // the attributes of that tile. For example, assume a column has a 2 already placed, and we know
 // that there is another 2 tile that must be in that column. If that column only contains one 2, we
@@ -613,7 +784,6 @@ function interchangableOptions(
                   level.colConditions[spaces[otherSpaceIndex].col],
                 ]
                 if (conditions.some(condition => !tilesAreEquivalentForCondition(firstTile, secondTile, condition))) {
-                  //console.log('!!!!!', firstTile, secondTile, conditions.filter(condition => !tilesAreEquivalentForCondition(firstTile, secondTile, condition)));
                   areInterchangeable = false;
                   break spaces_loop;
                 }
@@ -875,11 +1045,6 @@ function multiColLockOut(
       const existingMatchingTiles = colCombo.map(
         column => column.filter(tile => tileMatches(tile, criteria)).length
       ).reduce((a, b) => a + b);
-
-      if (colIndexes[0] === 1 && colIndexes[1] === 3 && criteria.value === 2) {
-        console.log(conditions);
-        console.log(requiredMatchingTiles, existingMatchingTiles, unplacedMatchingTiles);
-      }
 
       if (requiredMatchingTiles - existingMatchingTiles >= unplacedMatchingTiles) {
         for (const [rowOptionsIndex, _] of options.entries()) {
