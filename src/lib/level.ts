@@ -10,63 +10,9 @@ export type Level = {
 };
 
 export const levels = [
-  {
-    id: 'GBLEws4vY5',
-    name: 'New Easy?',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 1, 1, 1]},
-      {type: 'Contain', suits: [red, red, red, blue ], numbers: []},
-      {type: 'Contain', suits: [green, green, green, blue ], numbers: []},
-      {type: 'Contain', suits: [white, white, white, blue ], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [blue], numbers: [2, 2, 2]},
-      {type: 'Contain', suits: [blue], numbers: [3, 3, 3]},
-      {type: 'Contain', suits: [blue], numbers: [4, 4, 4]},
-      {type: 'Contain', suits: [blue], numbers: [2, 3, 4]},
-    ]
-  },
-
-  {
-    id: 'egHNiuQKmq',
-    name: 'New Medium?',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [blue, blue, white, white, ], numbers: []},
-      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
-      {type: 'Contain', suits: [blue, green, red, white, ], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [red, red, white, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3,]},
-    ]
-  },
-
-  {
-    id: 'mYt1sYy17n',
-    name: 'New Hard?',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [green, red, red, red, ], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
-      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
-      {type: 'Contain', suits: [red, blue, blue, blue], numbers: []},
-      {type: 'Contain', suits: [green, green, red, red], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4,]},
-    ]
-  },
-
-
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
+    name: 'Squares',
     section: 'Tutorial',
     rowConditions: [
       {type: 'Contain', suits: [red, red, green, green ], numbers: []},
@@ -100,7 +46,8 @@ export const levels = [
   },
 
   {
-    id: 'Elements Only Hard',
+    id: 'f7Kc3UQNkU',
+    name: 'Elements Only Hard',
     section: 'Tutorial',
     rowConditions: [
       {type: 'Contain', suits: [red, red, green, white], numbers: [ ]},
@@ -167,9 +114,46 @@ export const levels = [
     ]
   },
 
+  {
+    id: 'GBLEws4vY5',
+    name: 'New Easy?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 1]},
+      {type: 'Contain', suits: [red, red, red, blue ], numbers: []},
+      {type: 'Contain', suits: [green, green, green, blue ], numbers: []},
+      {type: 'Contain', suits: [white, white, white, blue ], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue], numbers: [2, 2, 2]},
+      {type: 'Contain', suits: [blue], numbers: [3, 3, 3]},
+      {type: 'Contain', suits: [blue], numbers: [4, 4, 4]},
+      {type: 'Contain', suits: [blue], numbers: [2, 3, 4]},
+    ]
+  },
+
+  {
+    id: 'fR6e3GmG8F',
+    name: 'Ups and Downs',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [green, green, green, green], numbers: []},
+    ]
+  },
+
   // Pretty easy
   {
-    id: 'Corner1s',
+    id: 'YldmuQfL1r',
+    name: 'Corner1s',
     section: 'Floral',
     rowConditions: [
       {type: 'Contain', suits: [blue, white ], numbers: [1, 1]},
@@ -185,8 +169,113 @@ export const levels = [
     ]
   },
 
+  {
+    id: 'QO8t6YqATT',
+    name: 'Each Flower in Each Row',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 2]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 3, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 3]},
+    ]
+  },
 
-  // ^ Need slightly easier level(s) between these two
+  {
+    id: '0kKNFtv8Y9',
+    name: '',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [green, green, red, red], numbers: []},
+      {type: 'Contain', suits: [blue, blue, white, white], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+      {type: 'Contain', suits: [blue, blue, red, red], numbers: []},
+    ]
+  },
+
+  {
+    id: 'JIxJytBjnI',
+    name: 'Medium difficulty?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [green, green, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [green, green, red, red], numbers: []},
+      {type: 'Contain', suits: [green, green, red, red], numbers: []},
+    ]
+  },
+
+  {
+    id: 't3PsMt2Qkl',
+    name: '',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, green, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 2, 3]},
+      {type: 'Contain', suits: [blue, red, red, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 3, 4, 4]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
+      {type: 'Contain', suits: [green, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+    ]
+  },
+
+  {
+    id: 'egHNiuQKmq',
+    name: 'New Medium?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue, white, white, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [blue, green, red, white, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [red, red, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3,]},
+    ]
+  },
+
+  {
+    id: 'WEpuQDm7kY',
+    name: '',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
+      {type: 'Contain', suits: [green, green, white, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [3, 4, 4, 4]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue, blue, white, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
+      {type: 'Contain', suits: [green, red, red, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+    ]
+  },
 
   {
     id: 'yY2LEE4eO0',
@@ -205,9 +294,47 @@ export const levels = [
     ]
   },
 
+  {
+    id: 'mYt1sYy17n',
+    name: 'New Hard?',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [green, red, red, red, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [red, blue, blue, blue], numbers: []},
+      {type: 'Contain', suits: [green, green, red, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4,]},
+    ]
+  },
+
+  {
+    id: '7yQA1MLZtN',
+    name: '',
+    section: 'Floral',
+    rowConditions: [
+      {type: 'Contain', suits: [green, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, blue, white ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+    ]
+  },
+
+
   // Wild Lawn! This is the a challenging one that I generated randomly
   {
-    id: 'asdf',
+    id: 'YqyBmu49zb',
+    name: 'Wild Lawn',
     section: 'Floral',
     rowConditions: [
       {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
@@ -226,6 +353,7 @@ export const levels = [
   // Need many easier levels between these two
   //{
   //  section: 'Celestial',
+  //  id: '5AebAwMKZ2',
   //  rowConditions: [
   //    {type: 'SumGreaterThan', amount: 11},
   //    {type: 'OddOrSuit', suit: blue},
@@ -242,7 +370,8 @@ export const levels = [
 
   // Challenging and fun
   //{
-  //  id: 'Fireplace',
+  //  id: 'UroBskL0wy',
+  //  name: 'Fireplace',
   //  section: 'Celestial',
   //  rowConditions: [
   //    {type: 'EvenOrSuit', suit: blue},
@@ -338,16 +467,4 @@ export const levels = [
     //id: 'xI3biukHY2',
     //id: 'fFe5qMFksF',
     //id: 'zDv1aYel1v',
-    //id: 'JIxJytBjnI',
-    //id: 'WEpuQDm7kY',
-    //id: 'QO8t6YqATT',
-    //id: 'fR6e3GmG8F',
-    //id: '0kKNFtv8Y9',
     //id: 'qovSEigDq9',
-    //id: 't3PsMt2Qkl',
-    //id: '7yQA1MLZtN',
-    //id: '5AebAwMKZ2',
-    //id: 'YqyBmu49zb',
-    //id: 'UroBskL0wy',
-    //id: 'YldmuQfL1r',
-    //id: 'f7Kc3UQNkU',
