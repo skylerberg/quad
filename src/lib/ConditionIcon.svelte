@@ -1,5 +1,4 @@
 <script lang="ts">
-  import xIcon from '../assets/x.svg';
   import checkIcon from '../assets/check.svg';
   import { onMount } from 'svelte';
   import type { Condition } from './condition.ts';
@@ -120,8 +119,6 @@
 
   {#if status}
     <img class="status succeeded" src={checkIcon} />
-  {:else if status === false}
-    <img class="status failed" src={xIcon} />
   {/if}
 </div>
 <div class="tooltip" bind:this={tooltipDiv} role="tooltip">
