@@ -10,6 +10,24 @@ export type Level = {
 };
 
 export const levels = [
+  {
+    section: 'Floral',
+    id: 'qovSEigDq9',
+    name: 'Product of Elimination lesson',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 3]},
+      {type: 'Contain', suits: [], numbers: [2, 2, 2, 3]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 3]},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [green, green, blue, red], numbers: []},
+      {type: 'Contain', numbers: [], suits: [blue, blue, blue, green,]},
+      {type: 'Contain', numbers: [], suits: [green, red, red, red]},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+    ]
+  },
+
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
     name: 'Squares',
@@ -467,4 +485,3 @@ export const levels = [
     //id: 'xI3biukHY2',
     //id: 'fFe5qMFksF',
     //id: 'zDv1aYel1v',
-    //id: 'qovSEigDq9',
