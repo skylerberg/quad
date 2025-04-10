@@ -144,7 +144,7 @@ function solveInner(level: Level, board: Array<Array<Tile | null>>, tiles: Array
 export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boolean | null {
   let result: boolean | null = true;
   for (const [index, row] of board.entries()) {
-    const evaluation = evaluate(level.rowConditions[index], row);
+    const evaluation = evaluate(level.rowConditions[index], row, 'row', index, board);
     if (evaluation === false) {
       return false;
     }
@@ -160,7 +160,7 @@ export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boo
     [board[0][3], board[1][3], board[2][3], board[3][3]],
   ];
   for (const [index, column] of columns.entries()) {
-    const evaluation = evaluate(level.colConditions[index], column);
+    const evaluation = evaluate(level.colConditions[index], column, 'column', index, board);
     if (evaluation === false) {
       return false;
     }

@@ -19,7 +19,7 @@
 
 <div class='board'>
   {#each board as row, rowIndex}
-    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} />
+    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} board={board} />
     {#each row as tile, colIndex}
       {#key tile}
         <div
@@ -37,7 +37,7 @@
 
   <div></div>
   {#each level.colConditions as condition, index}
-    <ConditionIcon level={level} tiles={cols[index]} condition={condition} type='column' position={index} />
+    <ConditionIcon level={level} tiles={cols[index]} condition={condition} type='column' position={index} board={board} />
   {/each}
 </div>
 

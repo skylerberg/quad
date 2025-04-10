@@ -1,6 +1,9 @@
 import type { Condition } from './condition';
 import { red, blue, green, white } from './suit';
 
+let same = 'similar'
+let different = 'dissimilar'
+
 export type Level = {
   rowConditions: Array<Condition>,
   colConditions: Array<Condition>,
@@ -330,6 +333,7 @@ export const levels = [
     ]
   },
 
+  // Jacob's dad's wife really liked this level
   {
     id: '7yQA1MLZtN',
     name: '',
@@ -364,6 +368,24 @@ export const levels = [
       {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
       {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
       {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
+    ]
+  },
+
+  {
+    id: '0fmwXQHU8w',
+    name: '',
+    section: 'Elemental',
+    rowConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Similarities', similarities: {above: same, below: different}},
+      {type: 'Contain', suits: [blue, blue, green, red], numbers: []},
+      {type: 'Similarities', similarities: {above: different}},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Similarities', similarities: {left: same}},
       {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
     ]
   },
@@ -407,7 +429,6 @@ export const levels = [
 ];
 
 // Unused ids for your convenience
-    //id: '0fmwXQHU8w',
     //id: 'FN2geIQ2yV',
     //id: 'Xc8dddTBWt',
     //id: 'kwbp3lTt7H',

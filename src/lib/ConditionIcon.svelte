@@ -1,5 +1,7 @@
 <script lang="ts">
   import checkIcon from '../assets/check.svg';
+  import similarSvg from '../assets/similar.svg';
+  import dissimilarSvg from '../assets/dissimilar.svg';
   import { onMount } from 'svelte';
   import type { Condition } from './condition.ts';
   import { evaluate, getTitle } from './condition';
@@ -12,15 +14,16 @@
   let tooltipDiv;
   let arrowElement;
 
-  let { tiles, condition, type, position, level }: {
+  let { tiles, condition, type, position, level, board }: {
+    level: Level,
     tiles: Array<Tile | undefined>,
     condition: Condition,
-    type: 'row' | 'column',
-    position: number,
-    level: Level,
+    type: 'row' | 'column' | undefined,
+    position: number | undefined,
+    board: Array<Array<Tile | undefined>> | undefined,
   } = $props();
 
-  let status = $derived(evaluate(condition, tiles));
+  let status = $derived(evaluate(condition, tiles, type, position, board));
 
   const title = getTitle(level, condition, type);
 
@@ -98,6 +101,12 @@
   });
 </script>
 
+{#snippet similarIcon()}
+  <img class="matching-symbol" src={similarSvg} />
+{/snippet}
+{#snippet dissimilarIcon()}
+  <img class="matching-symbol" src={dissimilarSvg} />
+{/snippet}
 
 <div bind:this={conditionDiv} class={classes.join(' ')}>
   {#if condition.type === 'SumGreaterThan'}
@@ -110,6 +119,44 @@
       {#each condition.suits as suit}
         <img class='suit-requirement' src={getSuitIcon(suit)} alt='Requires {suitSymbolToName(suit)}' />
       {/each}
+    </div>
+  {:else if condition.type === 'Similarities'}
+    <div class='three-by-three'>
+      <div class:mini-space={condition.similarities.aboveLeft} />
+      <div class:mini-space={condition.similarities.above}>
+        {#if condition.similarities.above === 'similar'}
+          {@render similarIcon()}
+        {:else if condition.similarities.above === 'dissimilar'}
+          {@render dissimilarIcon()}
+        {/if}
+      </div>
+      <div class:mini-space={condition.similarities.aboveRight} />
+
+      <div class:mini-space={condition.similarities.left}>
+        {#if condition.similarities.left === 'similar'}
+          {@render similarIcon()}
+        {:else if condition.similarities.left === 'dissimilar'}
+          {@render dissimilarIcon()}
+        {/if}
+      </div>
+      <div class="mini-space mini-space-middle" />
+      <div class:mini-space={condition.similarities.right}>
+        {#if condition.similarities.right === 'similar'}
+          {@render similarIcon()}
+        {:else if condition.similarities.right === 'dissimilar'}
+          {@render dissimilarIcon()}
+        {/if}
+      </div>
+
+      <div class:mini-space={condition.similarities.belowLeft} />
+      <div class:mini-space={condition.similarities.below}>
+        {#if condition.similarities.below === 'similar'}
+          {@render similarIcon()}
+        {:else if condition.similarities.below === 'dissimilar'}
+          {@render dissimilarIcon()}
+        {/if}
+      </div>
+      <div class:mini-space={condition.similarities.belowRight} />
     </div>
   {:else if condition.type === 'OddOrSuit'}
     Odd OR {condition.suit}
@@ -149,6 +196,37 @@
     margin: auto;
     font-size: round(calc(var(--tile-width) / 2.4), 1px);
     line-height: 0.8;
+  }
+
+  .three-by-three {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    margin: auto;
+    aspect-ratio: 1 / 1;
+    width: 90%;
+    height: 90%;
+  }
+
+  .mini-space {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    aspect-ratio: 1 / 1;
+    border-radius: 20%;
+    border: 1px solid var(--border-color);
+  }
+
+  .mini-space-middle {
+    background-color: #242424;
+  }
+
+  .matching-symbol {
+    max-height: 70%;
+    max-width: 70%;
+    filter: invert();
   }
 
   .row-condition {
