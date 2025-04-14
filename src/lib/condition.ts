@@ -72,7 +72,7 @@ export function evaluate(
   }
 
   if (condition.type === 'Similarities') {
-    if (!type || !position || !board) {
+    if (!type || position === undefined || !board) {
       throw Error('type, position, and board must all be provided to evaluate similarity conditions');
     }
     for (let [i, tile] of spaces.entries()) {

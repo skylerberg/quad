@@ -13,6 +13,7 @@ export type Level = {
 };
 
 export const levels = [
+  /*
   {
     section: 'Floral',
     id: 'qovSEigDq9',
@@ -30,6 +31,7 @@ export const levels = [
       {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
     ]
   },
+  */
 
   { // Condition Based Elimination
     id: 'ozFxjyqX4h',
@@ -373,6 +375,25 @@ export const levels = [
   },
 
   {
+    id: 'fFe5qMFksF',
+    name: 'Similarities introduction',
+    section: 'Elemental',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue, blue, blue], numbers: []},
+      {type: 'Similarities', similarities: {above: same}},
+      {type: 'Similarities', similarities: {below: same}},
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 1]},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+      {type: 'Contain', suits: [], numbers: [2, 3, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [2, 4, 4, 4]},
+    ]
+  },
+
+
+  {  // Extremely hard
     id: '0fmwXQHU8w',
     name: '',
     section: 'Elemental',
@@ -383,10 +404,28 @@ export const levels = [
       {type: 'Similarities', similarities: {above: different}},
     ],
     colConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
       {type: 'Contain', suits: [], numbers: [1, 2, 2, 4]},
       {type: 'Similarities', similarities: {left: same}},
       {type: 'Contain', suits: [blue, blue, green, white], numbers: []},
+    ]
+  },
+
+  {  // Currently impossible
+    id: 'zDv1aYel1v',
+    name: '',
+    section: 'Elemental',
+    rowConditions: [
+      {type: 'Similarities', similarities: {below: same}},
+      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 3, 4, 4]},
+      {type: 'Contain', suits: [red, green, green, green], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 2, 2]},
+      {type: 'Contain', suits: [green, white, white, white], numbers: []},
+      {type: 'Contain', suits: [green, green, blue, red], numbers: []},
+      {type: 'Similarities', similarities: {left: same}},
     ]
   },
 
@@ -504,5 +543,3 @@ export const levels = [
     //id: '0nNGtQvRy9',
     //id: 'ldwoFxCuGN',
     //id: 'xI3biukHY2',
-    //id: 'fFe5qMFksF',
-    //id: 'zDv1aYel1v',
