@@ -36,8 +36,10 @@
     });
 
     draggable.on('drag:move', (event) => {
-      draggedOverSpace = event.sensorEvent.target.closest('.space');
-      tileInDraggedOverSpace = event.sensorEvent.target.closest('.tile-token');
+      if (event.sensorEvent.target) {
+        draggedOverSpace = event.sensorEvent.target.closest('.space');
+        tileInDraggedOverSpace = event.sensorEvent.target.closest('.tile-token');
+      }
     });
 
     draggable.on('drag:stop', (event) => {
