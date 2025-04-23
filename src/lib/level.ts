@@ -1,8 +1,8 @@
 import type { Condition } from './condition';
 import { red, blue, green, white } from './suit';
 
-let same = 'similar'
-let different = 'dissimilar'
+export const same = 'similar'
+export const different = 'dissimilar'
 
 export type Level = {
   rowConditions: Array<Condition>,
@@ -120,23 +120,6 @@ export const levels = [
     ]
   },
 
-  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
-    id: '94phGRw1A1',
-    section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
-      {type: 'Contain', suits: [blue, white, green, white], numbers: []},
-      {type: 'Contain', suits: [blue, white, green, blue], numbers: []},
-      {type: 'Contain', suits: [red, red, red, red], numbers: []},
-    ],
-    colConditions: [
-      {type: 'Contain', suits: [green, green, green, red], numbers: []},
-      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
-      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
-      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
-    ]
-  },
-
   {
     id: 'GBLEws4vY5',
     name: 'New Easy?',
@@ -151,29 +134,48 @@ export const levels = [
       {type: 'Contain', suits: [blue], numbers: [2, 2, 2]},
       {type: 'Contain', suits: [blue], numbers: [3, 3, 3]},
       {type: 'Contain', suits: [blue], numbers: [4, 4, 4]},
-      {type: 'Contain', suits: [blue], numbers: [2, 3, 4]},
+      {type: 'Contain', suits: [blue, green, red, red], numbers: []},
     ]
   },
 
-  {
-    id: 'fR6e3GmG8F',
-    name: 'Ups and Downs',
+
+  {  // Single Group Outer Lockout; Multi Group Outer Lockout; Single Group Inner Lockout
+    id: '94phGRw1A1',
     section: 'Floral',
     rowConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 1, 4, 4]},
-      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
-      {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', numbers: [4, 4, 4, 3], suits: []},
+      {type: 'Contain', suits: [blue, green, red, red], numbers: []},
+      {type: 'Contain', suits: [blue, red, green, green, ], numbers: []},
+      {type: 'Contain', suits: [white, white, white, white], numbers: []},
     ],
     colConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-      {type: 'Contain', suits: [green, green, green, green], numbers: []},
+      {type: 'Contain', suits: [blue, blue, blue, white], numbers: []},
+      {type: 'Contain', numbers: [1, 2, 3, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 4, 4], suits: []},
+      {type: 'Contain', numbers: [1, 2, 3, 3], suits: []},
     ]
   },
 
+  //{
+  //  id: 'fR6e3GmG8F',
+  //  name: 'Ups and Downs',
+  //  section: 'Floral',
+  //  rowConditions: [
+  //    {type: 'Contain', suits: [], numbers: [1, 1, 4, 4]},
+  //    {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+  //    {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
+  //    {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+  //  ],
+  //  colConditions: [
+  //    {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+  //    {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+  //    {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+  //    {type: 'Contain', suits: [green, green, green, green], numbers: []},
+  //  ]
+  //},
+
   // Pretty easy
+  // Intersection counting argument
   {
     id: 'YldmuQfL1r',
     name: 'Corner1s',
@@ -203,10 +205,10 @@ export const levels = [
       {type: 'Contain', suits: [blue, green, red, white], numbers: []},
     ],
     colConditions: [
-      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 3, 3, 4]},
-      {type: 'Contain', suits: [], numbers: [1, 1, 2, 4]},
+      {type: 'Contain', suits: [], numbers: [2, 4, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 3, 3, 3]},
       {type: 'Contain', suits: [], numbers: [1, 2, 2, 3]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
     ]
   },
 
@@ -254,13 +256,13 @@ export const levels = [
       {type: 'Contain', suits: [blue, green, white, white], numbers: []},
       {type: 'Contain', suits: [], numbers: [2, 2, 2, 3]},
       {type: 'Contain', suits: [blue, red, red, red], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 3, 4, 4]},
+      {type: 'Contain', suits: [red], numbers: [4, 4, 4]},
     ],
     colConditions: [
-      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
-      {type: 'Contain', suits: [green, green, red, white], numbers: []},
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 2, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 3]},
+      {type: 'Contain', suits: [green, green, green, red, ], numbers: []},
+      {type: 'Contain', suits: [blue, blue, white, red], numbers: []},
+      {type: 'Contain', suits: [blue], numbers: [1, 4, 4]},
     ]
   },
 
@@ -388,6 +390,25 @@ export const levels = [
       {type: 'Contain', suits: [], numbers: [1, 1, 1, 1]},
       {type: 'Contain', suits: [], numbers: [2, 2, 3, 3]},
       {type: 'Contain', suits: [], numbers: [2, 3, 3, 4]},
+      {type: 'Contain', suits: [], numbers: [2, 4, 4, 4]},
+    ]
+  },
+
+  // Very hard, but actually pretty good; should keep
+  {
+    id: 'xI3biukHY2',
+    name: 'Double Similarities',
+    section: 'Elemental',
+    rowConditions: [
+      {type: 'Contain', suits: [blue, blue, blue, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 2, 4]},
+      {type: 'Contain', suits: [white, white, white, red], numbers: []},
+      {type: 'Contain', suits: [green, green, green, red], numbers: []},
+    ],
+    colConditions: [
+      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+      {type: 'Similarities', similarities: {left: same, right: same}},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
       {type: 'Contain', suits: [], numbers: [2, 4, 4, 4]},
     ]
   },
@@ -542,4 +563,3 @@ export const levels = [
     //id: 'jaXkZmOvpe',
     //id: '0nNGtQvRy9',
     //id: 'ldwoFxCuGN',
-    //id: 'xI3biukHY2',
