@@ -17,6 +17,7 @@
     completedLevels,
     runTacticalSolver,
     runBacktrackingSolver,
+    countSolutions,
     resetLevel,
     goToLevel,
     generateRandomLevel,
@@ -27,6 +28,7 @@
     levelNumber: number,
     levelCount: number,
     runBacktrackingSolver: () => undefined,
+    countSolutions: () => undefined,
     runTacticalSolver: () => undefined,
     goToLevel: (level: number) => undefined,
     resetLevel: () => undefined,
@@ -203,6 +205,7 @@
         <button class="menu-item" onclick={unlockAllLevels}>Unlock All Levels</button>
         <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
         <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
+        <button class="menu-item" onclick={countSolutions}>Count Solutions</button>
         <button class="menu-item" onclick={generateRandomLevel}>Generate Random Level</button>
       </div>
     </div>

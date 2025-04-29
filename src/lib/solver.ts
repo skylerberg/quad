@@ -141,6 +141,45 @@ function solveInner(level: Level, board: Array<Array<Tile | null>>, tiles: Array
   }
 }
 
+export function countSolutions(level: Level, board: Array<Array<Tile | null>>): number {
+  // TODO refactor this into an independent function
+  const tiles = [];
+  for (const suit of allSuits) {
+    for (const value of allNumbers) {
+      const tile = {suit, value};
+      if (!board.some(row => row.some(tileOnBoard => tileOnBoard && tilesAreEqual(tileOnBoard, tile)))) {
+        tiles.push(tile);
+      }
+    }
+  }
+
+  const currentStatus = checkPuzzle(level, board);
+  if (currentStatus === true) {
+    return 1;
+  }
+  else if (currentStatus === false) {
+    return 0;
+  }
+
+  let count = 0;
+  const tile = tiles.pop() as Tile;
+  if (tile === undefined) {
+    console.log('Error, somehow there are 0 tiles')
+    return 0;
+  }
+
+  for (const [rowIndex, row] of board.entries()) {
+    for (const [colIndex, space] of row.entries()) {
+      if (space === null) {
+        board[rowIndex][colIndex] = tile;
+        count += countSolutions(level, board);
+        board[rowIndex][colIndex] = null;
+      }
+    }
+  }
+  return count;
+}
+
 export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boolean | null {
   let result: boolean | null = true;
   for (const [index, row] of board.entries()) {

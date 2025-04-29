@@ -7,7 +7,7 @@
   import StorageHandler from './lib/StorageHandler.svelte';
   import { levels } from './lib/level.ts';
   import type { Tile } from './tile';
-  import { checkPuzzle, solve, tacticalSolver } from './lib/solver';
+  import { checkPuzzle, solve, tacticalSolver, countSolutions } from './lib/solver';
   import { randomLevel } from './lib/generator';
 
   let board: Array<Array<Tile | null>> = $state([
@@ -72,6 +72,10 @@
     }
   }
 
+  const runCountSolutions = () => {
+    console.log('Solutions:', countSolutions(level, board));
+  }
+
   const generateRandomLevel = () => {
     const level = randomLevel();
     levels.unshift(level);
@@ -101,6 +105,7 @@
     resetLevel={resetLevel}
     levelNumber={levelNumber}
     runBacktrackingSolver={runBacktrackingSolver}
+    countSolutions={runCountSolutions}
     runTacticalSolver={runTacticalSolver}
     goToLevel={goToLevel}
     levelCount={levels.length}

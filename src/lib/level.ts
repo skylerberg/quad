@@ -268,20 +268,20 @@ export const levels = [
 
   {
     id: 'egHNiuQKmq',
-    name: 'New Medium?',
+    name: '',
     section: 'Floral',
-    rowConditions: [
-      {type: 'Contain', suits: [blue, blue, white, white, ], numbers: []},
-      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
-      {type: 'Contain', suits: [blue, green, red, white, ], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3]},
-    ],
     colConditions: [
       {type: 'Contain', suits: [red, red, white, white], numbers: []},
       {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
-      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 2, 3,]},
-    ]
+      {type: 'Contain', suits: [green, red, red], numbers: [4]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 2,]},
+    ],
+    rowConditions: [
+      {type: 'Contain', suits: [blue, white, white, white, ], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 3, 4, 4]},
+      {type: 'Contain', suits: [blue, blue, white], numbers: [3]},
+      {type: 'Contain', suits: [], numbers: [1, 1, 1, 3]},
+    ],
   },
 
   {

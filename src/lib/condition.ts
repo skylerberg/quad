@@ -1,4 +1,5 @@
 import type { Level } from './level.ts';
+import { same } from './level';
 import type { Tile, TileValue } from './tile.ts';
 import type { Suit } from './suit.ts';
 
@@ -7,13 +8,9 @@ const directionCoordinates: Record<Direction, [number, number]> = {
   below: [1, 0],
   right: [0, 1],
   left: [0, -1],
-  aboveRight: [-1, 1],
-  aboveLeft: [-1, -1],
-  belowRight: [1, 1],
-  belowLeft: [1, -1],
 }
 
-type Direction = 'above' | 'below' | 'right' | 'left' | 'aboveLeft' | 'aboveRight' | 'belowLeft' | 'belowRight';
+type Direction = 'above' | 'below' | 'right' | 'left';
 type Similarity = 'similar' | 'dissimilar';
 
 export type Condition = (
@@ -184,10 +181,10 @@ export function getTitle(level: Level, condition: Condition, type: 'row' | 'colu
   if (condition.type === 'Similarities') {
     if (Object.keys(condition.similarities).length === 1) {
       if (condition.similarities.above && condition.similarities.above === 'similar') {
-        return `Each tile in this ${type} must have the same number or ${symbolName} as the tile above it`;
+        return `Each tile in this ${type} must match the number or ${symbolName} of the tile above it`;
       }
       else if (condition.similarities.above && condition.similarities.above === 'dissimilar') {
-        return `Each tile in this ${type} must not have the same number or ${symbolName} as the tile above it`;
+        return `Each tile in this ${type} must not match number or ${symbolName} as the tile above it`;
       }
 
       else if (condition.similarities.below && condition.similarities.below === 'similar') {
@@ -213,15 +210,15 @@ export function getTitle(level: Level, condition: Condition, type: 'row' | 'colu
     }
     else if (Object.keys(condition.similarities).length === 2) {
       if (condition.similarities.above && condition.similarities.below) {
-        let aboveCondition = condition.similarities.above ? 'have' : 'not have';
-        let belowCondition = condition.similarities.below ? 'have' : 'not have';
-        let explainationClause = `the same number or ${symbolName} as the tile`;
+        let aboveCondition = condition.similarities.above === same ? 'match' : 'not match';
+        let belowCondition = condition.similarities.below === same ? 'match' : 'not match';
+        let explainationClause = `the number or ${symbolName} of the tile`;
         return `Each tile in this ${type} must ${aboveCondition} ${explainationClause} above it and ${belowCondition} ${explainationClause} below it`;
       }
       if (condition.similarities.left && condition.similarities.right) {
-        let leftCondition = condition.similarities.left ? 'have' : 'not have';
-        let rightCondition = condition.similarities.right ? 'have' : 'not have';
-        let explainationClause = `the same number or ${symbolName} as the tile`;
+        let leftCondition = condition.similarities.left === same ? 'match' : 'not match';
+        let rightCondition = condition.similarities.right === same ? 'match' : 'not match';
+        let explainationClause = `the number or ${symbolName} of the tile`;
         return `Each tile in this ${type} must ${leftCondition} ${explainationClause} to the left of it and ${rightCondition} ${explainationClause} to the right of it`;
       }
     }
