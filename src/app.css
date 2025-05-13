@@ -27,6 +27,7 @@
   --board-width: calc(var(--tile-width) * 5);
 
   --border-color: #666;
+  --tile-border-color: #999;
   --tile-border-radius: 10px;
   --success: #109030;
   --success-hover: #20a040;

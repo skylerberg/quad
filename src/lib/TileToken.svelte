@@ -30,7 +30,7 @@
     display: flex;
     width: var(--tile-width);
     aspect-ratio: 1 / 1;
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--tile-border-color);
     border-radius: var(--tile-border-radius);
     justify-content: center;
     align-items: center;
@@ -42,6 +42,7 @@
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
+    filter: drop-shadow(5px 5px 2px black);
   }
 
   .hide-numbers {
