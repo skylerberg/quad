@@ -9,10 +9,13 @@
   import type { Tile } from './tile.ts';
   import type { Level } from './level.ts';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
+  import { red, blue, green, white } from './suit';
+  import type { Suit } from './suit';
+  import type { TileValue } from './tile';
 
-  let conditionDiv;
-  let tooltipDiv;
-  let arrowElement;
+  let conditionDiv: HTMLElement;
+  let tooltipDiv: HTMLElement;
+  let arrowElement: HTMLElement;
 
   let { tiles, condition, type, position, level, board }: {
     level: Level,
@@ -26,6 +29,60 @@
   let status = $derived(evaluate(condition, tiles, type, position, board));
 
   const title = getTitle(level, condition, type);
+
+  const suitCounts = $derived.by(() => {
+    let result: Record<Suit, number> = {};
+    result[blue] = 0
+    result[green] = 0
+    result[red] = 0
+    result[white] = 0
+    for (let tile of tiles) {
+      if (tile) {
+        result[tile.suit] += 1;
+      }
+    }
+    return result;
+  });
+  const rankCounts = $derived.by(() => {
+    let result: Record<TileValue, number> = {};
+    result[1] = 0;
+    result[2] = 0;
+    result[3] = 0;
+    result[4] = 0;
+    for (let tile of tiles) {
+      if (tile) {
+        result[tile.value] += 1;
+      }
+    }
+    return result;
+  });
+  const satisfiedRanks = $derived.by(() => {
+    const copiedRankCounts = Object.assign({}, rankCounts) as Record<TileValue, number>;
+    const result = [false, false, false, false];
+    if (condition.type === 'Contain') {
+      for (let i = 0; i < 4; i++) {
+        if (copiedRankCounts[condition.numbers[i]]) {
+          result[i] = true;
+          copiedRankCounts[condition.numbers[i]] -= 1;
+        }
+      }
+    }
+    return result;
+  });
+
+  const satisfiedSuits = $derived.by(() => {
+    const copiedSuitCounts = Object.assign({}, suitCounts) as Record<Suit, number>;
+    const result = [false, false, false, false];
+    if (condition.type === 'Contain') {
+      for (let i = 0; i < 4; i++) {
+        if (copiedSuitCounts[condition.suits[i]]) {
+          result[i] = true;
+          copiedSuitCounts[condition.suits[i]] -= 1;
+        }
+      }
+    }
+    return result;
+  });
 
   let classes = ['tile', 'condition'];
   if (type === 'row') {
@@ -113,11 +170,11 @@
     Σ &gt; {condition.amount}
   {:else if condition.type === 'Contain'}
     <div class='two-by-two'>
-      {#each condition.numbers as number}
-        <div class='number-requirement'>{number}</div>
+      {#each condition.numbers as number, i}
+        <div class="number-requirement {satisfiedRanks[i] ? 'satisfied' : ''}">{number}</div>
       {/each}
-      {#each condition.suits as suit}
-        <img class='suit-requirement' src={getSuitIcon(suit)} alt='Requires {suitSymbolToName(suit)}' />
+      {#each condition.suits as suit, i}
+        <img class="suit-requirement {satisfiedSuits[i] ? 'satisfied' : ''}" src={getSuitIcon(suit)} alt="Requires {suitSymbolToName(suit)}" />
       {/each}
     </div>
   {:else if condition.type === 'Similarities'}
@@ -196,6 +253,10 @@
     margin: auto;
     font-size: round(calc(var(--tile-width) / 2.4), 1px);
     line-height: 0.8;
+  }
+
+  .satisfied {
+    opacity: 40%;
   }
 
   .three-by-three {
@@ -280,7 +341,7 @@
   .succeeded {
     filter: invert(53%) sepia(79%) saturate(2879%) hue-rotate(85deg) brightness(121%) contrast(122%);
     width: 90%;
-    opacity: 0.8;
+    opacity: 0.6;
   }
 
   .tooltip {
