@@ -2,17 +2,17 @@
   "name": "Quad",
   "icons": [
     {
-      "src": "/quad/favicon.png",
+      "src": "/favicon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/quad/favicon-512.png",
+      "src": "/favicon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "display": "standalone",
-  "start_url": "/quad"
+  "start_url": "/"
 }
 
