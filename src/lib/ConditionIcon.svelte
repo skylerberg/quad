@@ -258,7 +258,7 @@
     line-height: 0.8;
   }
 
-  .suit-requirement.satisfied {
+  .satisfied {
     opacity: 40%;
   }
 
