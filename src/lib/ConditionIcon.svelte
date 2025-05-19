@@ -246,6 +246,9 @@
     margin: auto;
     max-height: 90%;
     max-width: 90%;
+  }
+
+  .suit-requirement:not(.satisfied) {
     filter: drop-shadow(0px 0px 7px white);
   }
 
@@ -255,7 +258,7 @@
     line-height: 0.8;
   }
 
-  .satisfied {
+  .suit-requirement.satisfied {
     opacity: 40%;
   }
 
