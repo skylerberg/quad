@@ -1,5 +1,7 @@
 import type { Condition } from './condition';
 import { red, blue, green, white } from './suit';
+import type { TileValue } from './tile.ts';
+import type { Suit } from './suit.ts';
 
 export const same = 'similar'
 export const different = 'dissimilar'
@@ -11,6 +13,53 @@ export type Level = {
   section: 'Tutorial' | 'Floral' | 'Elemental' | 'Celestial',
   name: string | undefined,
 };
+
+export const levelFromString = (str: string): Level => {
+  return {
+    id: str,
+    name: str,
+    section: 'Floral',
+    colConditions: [
+      goalFromString(str.slice(0, 4)),
+      goalFromString(str.slice(4, 8)),
+      goalFromString(str.slice(8, 12)),
+      goalFromString(str.slice(12, 16)),
+    ],
+    rowConditions: [
+      goalFromString(str.slice(16, 20)),
+      goalFromString(str.slice(20, 24)),
+      goalFromString(str.slice(24, 28)),
+      goalFromString(str.slice(28, 32)),
+    ],
+  }
+}
+
+const goalFromString = (str: string): Condition => {
+  let suits: Array<Suit> = [];
+  let ranks: Array<TileValue> = [];
+  for (let char of str) {
+    const goalPart = goalPartFromString(char);
+    if (goalPart == blue || goalPart == green || goalPart == red || goalPart == white) {
+      suits.push(goalPart as Suit);
+    }
+    else {
+      ranks.push(goalPart as TileValue);
+    }
+  }
+  return { type: 'Contain', suits, numbers: ranks}
+}
+
+const goalPartFromString = (str: string): TileValue | Suit => {
+  if (str == 'b') return blue;
+  if (str == 'g') return green;
+  if (str == 'r') return red;
+  if (str == 'w') return white;
+  if (str == '1') return 1;
+  if (str == '2') return 2;
+  if (str == '3') return 3;
+  if (str == '4') return 4;
+  throw new Error("invalid character for goal part");
+}
 
 export const levels = [
   /*
@@ -268,7 +317,7 @@ export const levels = [
 
   {
     id: 'egHNiuQKmq',
-    name: '',
+    name: 'One solution',
     section: 'Floral',
     colConditions: [
       {type: 'Contain', suits: [red, red, white, white], numbers: []},
@@ -288,20 +337,37 @@ export const levels = [
     id: 'WEpuQDm7kY',
     name: '',
     section: 'Floral',
+    colConditions: [
+      {type: 'Contain', suits: [blue, blue, blue, red], numbers: []},
+      {type: 'Contain', suits: [], numbers: [2, 2, 3, 4]},
+      {type: 'Contain', suits: [blue, green, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [3, 3, 4, 4]},
+    ],
     rowConditions: [
       {type: 'Contain', suits: [blue, blue, red, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
-      {type: 'Contain', suits: [green, green, white, red], numbers: []},
-      {type: 'Contain', suits: [], numbers: [3, 4, 4, 4]},
+      {type: 'Contain', suits: [], numbers: [2, 2, 4, 4]},
+      {type: 'Contain', suits: [green, red, red, white], numbers: []},
+      {type: 'Contain', suits: [], numbers: [1, 1, 2, 4]},
     ],
-    colConditions: [
-      {type: 'Contain', suits: [blue, blue, white, white], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
-      {type: 'Contain', suits: [green, red, red, red], numbers: []},
-      {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
-    ]
   },
 
+  //{
+  //  id: 'WEpuQDm7kY',
+  //  name: '',
+  //  section: 'Floral',
+  //  rowConditions: [
+  //    {type: 'Contain', suits: [blue, blue, red, white], numbers: []},
+  //    {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
+  //    {type: 'Contain', suits: [green, green, white, red], numbers: []},
+  //    {type: 'Contain', suits: [], numbers: [3, 4, 4, 4]},
+  //  ],
+  //  colConditions: [
+  //    {type: 'Contain', suits: [blue, blue, white, white], numbers: []},
+  //    {type: 'Contain', suits: [], numbers: [1, 1, 3, 3]},
+  //    {type: 'Contain', suits: [green, red, red, red], numbers: []},
+  //    {type: 'Contain', suits: [], numbers: [1, 2, 3, 4]},
+  //  ]
+  //},
   {
     id: 'yY2LEE4eO0',
     section: 'Floral',
@@ -486,6 +552,10 @@ export const levels = [
   //    {type: 'Contain', suits: [white, white, blue, blue], numbers: [ ]},
   //  ]
   //},
+  levelFromString('bggggbwb23123344b1444222wwgbbrrw'),
+  levelFromString('w1221333rbbbwgwgbgrrwgrw41414343'),
+  levelFromString('bbrw3334rrrg1121rgwww2232334bggw'),
+  levelFromString('gbbggwrrwwrr1143wgwr242231334344'),
 ];
 
 // Unused ids for your convenience
