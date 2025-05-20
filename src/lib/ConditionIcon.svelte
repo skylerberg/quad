@@ -134,28 +134,6 @@
       });
     });
   }
-
-  onMount(() => {
-    function showTooltip() {
-      tooltipDiv.style.display = 'block';
-      updateToolTip();
-    }
-     
-    function hideTooltip() {
-      tooltipDiv.style.display = '';
-    }
-     
-    [
-      ['mouseenter', showTooltip],
-      ['mouseleave', hideTooltip],
-      ['focus', showTooltip],
-      ['blur', hideTooltip],
-    ].forEach(([event, listener]) => {
-      conditionDiv.addEventListener(event, listener);
-    });
-
-    updateToolTip();
-  });
 </script>
 
 {#snippet similarIcon()}
