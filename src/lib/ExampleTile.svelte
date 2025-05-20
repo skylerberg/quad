@@ -1,32 +1,41 @@
 <script lang="ts">
-  import type { Suit } from './suit';
+  import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './suit';
 
-  let { suit }: {
-    suit: Suit,
+  let { tile }: {
+    tile: Tile,
   } = $props();
 
-  const tileClasses = `tile-token ${suitSymbolToName(suit)}`;
+  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)}`;
 </script>
 
 <div
     class={tileClasses}
     role="button"
-    style="background-image: url({getSuitIcon(suit)});"
+    style="background-image: url({getSuitIcon(tile.suit)});"
 >
+  <span>{tile.value}</span>
 </div>
 
 <style>
   .tile-token {
     box-sizing: border-box;
+    display: flex;
     aspect-ratio: 1 / 1;
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--tile-border-color);
     border-radius: var(--tile-border-radius);
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    font-size: round(calc(var(--tile-width) / 3.8), 1px);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
+    filter: drop-shadow(5px 5px 2px black);
   }
-
   .red {
     color: black;
     background-color: rgb(155, 95, 53);

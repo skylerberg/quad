@@ -75,10 +75,10 @@
     [null, null, null, null],
     [{suit: white, value: 1}, null, null, null],
     [{suit: white, value: 1}, {suit: green, value: 1}, null, null],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, null],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 1}, {suit: red, value: 1}],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, null],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
+    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
   ];
   const exampleCondition = {type: 'Contain', suits: [green, red, red, white], numbers: [ ]};
 
@@ -233,13 +233,12 @@
     <div class="space {tile ? "" : "empty"}">
             
       {#if tile}
-        <ExampleTile suit={tile.suit} />
+        <ExampleTile tile={tile} />
       {/if}
     </div>
     {/each}
   </div>
   <br />
-  Tap or mouse over a goal for more details
   <hr />
   <form method="dialog">
     <button>Got It</button>
