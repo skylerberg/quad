@@ -1,7 +1,13 @@
+@font-face {
+  font-family: 'Krub';
+  src: url('/fonts/Krub-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Krub;
   line-height: 1.5;
-  font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -72,4 +78,6 @@ button:hover {
 
 .draggable-mirror {
   z-index: 1;
+  cursor: grabbing;
+  border: 100px solid var(--border-color);
 }

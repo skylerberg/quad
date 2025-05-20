@@ -29,10 +29,7 @@ jobs:
         run: npm run build
 
       - name: Copy public files
-        run: cp --verbose public/* dist/
-
-      - name: Debug
-        run: cat dist/manifest.json
+        run: cp --verbose -r public/* dist/
 
       - name: Deploy
         uses: reggionick/s3-deploy@v4
