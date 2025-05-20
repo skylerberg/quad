@@ -15,22 +15,24 @@ export type Level = {
 };
 
 export const levelFromString = (str: string): Level => {
+  const colConditions = [
+    goalFromString(str.slice(0, 4)),
+    goalFromString(str.slice(4, 8)),
+    goalFromString(str.slice(8, 12)),
+    goalFromString(str.slice(12, 16)),
+  ];
+  const rowConditions = [
+    goalFromString(str.slice(16, 20)),
+    goalFromString(str.slice(20, 24)),
+    goalFromString(str.slice(24, 28)),
+    goalFromString(str.slice(28, 32)),
+  ];
   return {
     id: str,
     name: str,
     section: 'Floral',
-    colConditions: [
-      goalFromString(str.slice(0, 4)),
-      goalFromString(str.slice(4, 8)),
-      goalFromString(str.slice(8, 12)),
-      goalFromString(str.slice(12, 16)),
-    ],
-    rowConditions: [
-      goalFromString(str.slice(16, 20)),
-      goalFromString(str.slice(20, 24)),
-      goalFromString(str.slice(24, 28)),
-      goalFromString(str.slice(28, 32)),
-    ],
+    colConditions,
+    rowConditions,
   }
 }
 
@@ -46,6 +48,8 @@ const goalFromString = (str: string): Condition => {
       ranks.push(goalPart as TileValue);
     }
   }
+  ranks.sort();
+  suits.sort();
   return { type: 'Contain', suits, numbers: ranks}
 }
 
