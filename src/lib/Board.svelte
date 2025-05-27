@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ConditionIcon from './ConditionIcon.svelte';
+  import GoalIcon from './GoalIcon.svelte';
   import TileToken from './TileToken.svelte';
   import type { Tile } from './tile';
   import type { Level } from './level';
@@ -19,12 +19,12 @@
 
 <div class='board'>
   <div></div>
-  {#each level.colConditions as condition, index}
-    <ConditionIcon level={level} tiles={cols[index]} condition={condition} type='column' position={index} board={board} />
+  {#each level.colGoals as goal, index}
+    <GoalIcon {level} tiles={cols[index]} {goal} type='column' position={index} />
   {/each}
 
   {#each board as row, rowIndex}
-    <ConditionIcon level={level} tiles={row} condition={level.rowConditions[rowIndex]} type='row' position={rowIndex} board={board} />
+    <GoalIcon {level} tiles={row} goal={level.rowGoals[rowIndex]} type='row' position={rowIndex} />
     {#each row as tile, colIndex}
       {#key tile}
         <div

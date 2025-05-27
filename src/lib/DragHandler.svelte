@@ -1,6 +1,7 @@
 <script lang="ts">
   import Draggable from '@shopify/draggable/build/esm/Draggable/Draggable';
   import { onMount } from 'svelte';
+  import type { Tile } from './tile';
 
   let { level, board }: {
     level: Level,

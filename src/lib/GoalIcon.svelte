@@ -1,34 +1,28 @@
 <script lang="ts">
   import checkIcon from '../assets/check.svg';
-  import similarSvg from '../assets/similar.svg';
-  import dissimilarSvg from '../assets/dissimilar.svg';
-  import { onMount } from 'svelte';
-  import type { Condition } from './condition.ts';
-  import { evaluate, getTitle } from './condition';
-  import { getSuitIcon, suitSymbolToName } from './suit';
+  import type { Goal } from './goal.ts';
+  import { evaluate, getTitle } from './goal';
   import type { Tile } from './tile.ts';
   import type { Level } from './level.ts';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
-  import { red, blue, green, white } from './suit';
-  import type { Suit } from './suit';
-  import type { TileValue } from './tile';
+  import type { Rank, Suit } from './tile';
+  import { getSuitIcon, suitSymbolToName, red, blue, green, white} from './tile';
 
-  let conditionDiv: HTMLElement;
+  let goalDiv: HTMLElement;
   let tooltipDiv: HTMLElement;
   let arrowElement: HTMLElement;
 
-  let { tiles, condition, type, position, level, board }: {
+  let { tiles, goal, type, position, level }: {
     level: Level,
-    tiles: Array<Tile | undefined>,
-    condition: Condition,
-    type: 'row' | 'column' | undefined,
+    tiles: Array<Tile | null>,
+    goal: Goal,
+    type: 'row' | 'column',
     position: number | undefined,
-    board: Array<Array<Tile | undefined>> | undefined,
   } = $props();
 
-  let status = $derived(evaluate(condition, tiles, type, position, board));
+  let status = $derived(evaluate(goal, tiles));
 
-  const title = getTitle(level, condition, type);
+  const title = getTitle(level, goal, type);
 
   const suitCounts = $derived.by(() => {
     let result: Record<Suit, number> = {};
@@ -44,27 +38,25 @@
     return result;
   });
   const rankCounts = $derived.by(() => {
-    let result: Record<TileValue, number> = {};
+    let result: Record<Rank, number> = {};
     result[1] = 0;
     result[2] = 0;
     result[3] = 0;
     result[4] = 0;
     for (let tile of tiles) {
       if (tile) {
-        result[tile.value] += 1;
+        result[tile.rank] += 1;
       }
     }
     return result;
   });
   const satisfiedRanks = $derived.by(() => {
-    const copiedRankCounts = Object.assign({}, rankCounts) as Record<TileValue, number>;
+    const copiedRankCounts = Object.assign({}, rankCounts) as Record<Rank, number>;
     const result = [false, false, false, false];
-    if (condition.type === 'Contain') {
-      for (let i = 0; i < 4; i++) {
-        if (copiedRankCounts[condition.numbers[i]]) {
-          result[i] = true;
-          copiedRankCounts[condition.numbers[i]] -= 1;
-        }
+    for (let i = 0; i < 4; i++) {
+      if (copiedRankCounts[goal.ranks[i]]) {
+        result[i] = true;
+        copiedRankCounts[goal.ranks[i]] -= 1;
       }
     }
     return result;
@@ -73,23 +65,21 @@
   const satisfiedSuits = $derived.by(() => {
     const copiedSuitCounts = Object.assign({}, suitCounts) as Record<Suit, number>;
     const result = [false, false, false, false];
-    if (condition.type === 'Contain') {
-      for (let i = 0; i < 4; i++) {
-        if (copiedSuitCounts[condition.suits[i]]) {
-          result[i] = true;
-          copiedSuitCounts[condition.suits[i]] -= 1;
-        }
+    for (let i = 0; i < 4; i++) {
+      if (copiedSuitCounts[goal.suits[i]]) {
+        result[i] = true;
+        copiedSuitCounts[goal.suits[i]] -= 1;
       }
     }
     return result;
   });
 
-  let classes = ['tile', 'condition'];
+  let classes = ['tile', 'goal'];
   if (type === 'row') {
-    classes.push('row-condition')
+    classes.push('row-goal')
   }
   else {
-    classes.push('column-condition')
+    classes.push('column-goal')
   }
   if (position === 0) {
     classes.push('first');
@@ -101,7 +91,7 @@
 
   function updateToolTip() {
     const placement = type === 'row' ? 'left' : 'top';
-    computePosition(conditionDiv, tooltipDiv, {
+    computePosition(goalDiv, tooltipDiv, {
       placement,
       middleware: [
         offset(6),
@@ -136,68 +126,15 @@
   }
 </script>
 
-{#snippet similarIcon()}
-  <img class="matching-symbol" src={similarSvg} />
-{/snippet}
-{#snippet dissimilarIcon()}
-  <img class="matching-symbol" src={dissimilarSvg} />
-{/snippet}
-
-<div bind:this={conditionDiv} class={classes.join(' ')}>
-  {#if condition.type === 'SumGreaterThan'}
-    Σ &gt; {condition.amount}
-  {:else if condition.type === 'Contain'}
-    <div class='two-by-two'>
-      {#each condition.numbers as number, i}
-        <div class="number-requirement {satisfiedRanks[i] ? 'satisfied' : ''}">{number}</div>
-      {/each}
-      {#each condition.suits as suit, i}
-        <img class="suit-requirement {satisfiedSuits[i] ? 'satisfied' : ''}" src={getSuitIcon(suit)} alt="Requires {suitSymbolToName(suit)}" />
-      {/each}
-    </div>
-  {:else if condition.type === 'Similarities'}
-    <div class='three-by-three'>
-      <div class:mini-space={condition.similarities.aboveLeft} />
-      <div class:mini-space={condition.similarities.above}>
-        {#if condition.similarities.above === 'similar'}
-          {@render similarIcon()}
-        {:else if condition.similarities.above === 'dissimilar'}
-          {@render dissimilarIcon()}
-        {/if}
-      </div>
-      <div class:mini-space={condition.similarities.aboveRight} />
-
-      <div class:mini-space={condition.similarities.left}>
-        {#if condition.similarities.left === 'similar'}
-          {@render similarIcon()}
-        {:else if condition.similarities.left === 'dissimilar'}
-          {@render dissimilarIcon()}
-        {/if}
-      </div>
-      <div class="mini-space mini-space-middle" />
-      <div class:mini-space={condition.similarities.right}>
-        {#if condition.similarities.right === 'similar'}
-          {@render similarIcon()}
-        {:else if condition.similarities.right === 'dissimilar'}
-          {@render dissimilarIcon()}
-        {/if}
-      </div>
-
-      <div class:mini-space={condition.similarities.belowLeft} />
-      <div class:mini-space={condition.similarities.below}>
-        {#if condition.similarities.below === 'similar'}
-          {@render similarIcon()}
-        {:else if condition.similarities.below === 'dissimilar'}
-          {@render dissimilarIcon()}
-        {/if}
-      </div>
-      <div class:mini-space={condition.similarities.belowRight} />
-    </div>
-  {:else if condition.type === 'OddOrSuit'}
-    Odd OR {condition.suit}
-  {:else if condition.type === 'EvenOrSuit'}
-    Even OR {condition.suit}
-  {/if}
+<div bind:this={goalDiv} class={classes.join(' ')}>
+  <div class='two-by-two'>
+    {#each goal.ranks as rank, i}
+      <div class="rank-requirement {satisfiedRanks[i] ? 'satisfied' : ''}">{rank}</div>
+    {/each}
+    {#each goal.suits as suit, i}
+      <img class="suit-requirement {satisfiedSuits[i] ? 'satisfied' : ''}" src={getSuitIcon(suit)} alt="Requires {suitSymbolToName(suit)}" />
+    {/each}
+  </div>
 
   {#if status}
     <img class="status succeeded" src={checkIcon} />
@@ -230,7 +167,7 @@
     filter: drop-shadow(0px 0px 7px white);
   }
 
-  .number-requirement {
+  .rank-requirement {
     margin: auto;
     font-size: round(calc(var(--tile-width) / 2.4), 1px);
     line-height: 0.8;
@@ -271,29 +208,29 @@
     filter: invert();
   }
 
-  .row-condition {
+  .row-goal {
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
   }
 
-  .row-condition.first {
+  .row-goal.first {
     border-top: none;
   }
 
-  .row-condition.last {
+  .row-goal.last {
     border-bottom: none;
   }
 
-  .column-condition {
+  .column-goal {
     border-right: 1px solid var(--border-color);
     border-left: 1px solid var(--border-color);
   }
 
-  .column-condition.first {
+  .column-goal.first {
     border-left: none;
   }
 
-  .column-condition.last {
+  .column-goal.last {
     border-right: none;
   }
 
@@ -356,7 +293,7 @@
     position: absolute;
   }
 
-  .condition {
+  .goal {
     position: relative;
   }
 </style>

@@ -1,8 +1,7 @@
 <script lang="ts">
   import TileToken from './TileToken.svelte';
-  import type { Tile } from './tile.ts';
-  import { tilesAreEqual, allNumbers } from './tile.ts';
-  import { allSuits } from './suit';
+  import type { Tile } from './tile';
+  import { tilesAreEqual, allRanks, allSuits } from './tile';
 
   let { board }: {
     board: Array<Array<Tile | undefined>>
@@ -11,8 +10,8 @@
   const tilesNotOnBoard = () => {
     const tiles = [];
     for (const suit of allSuits) {
-      for (const value of allNumbers) {
-        const tile = {suit, value};
+      for (const rank of allRanks) {
+        const tile = {suit, rank};
         if (!board.some(row => row.some(tileOnBoard => tileOnBoard && tilesAreEqual(tileOnBoard, tile)))) {
           tiles.push(tile);
         }
@@ -36,9 +35,9 @@
   <div class="tile-bag">
     {#each Object.entries(tilesBySuit) as [suit, tilesOfSuit]}
       <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
-        {#each allNumbers as number}
-          {#if tilesOfSuit.some(tile => tile.value === number)}
-            <TileToken tile={tilesOfSuit.find(t => t.value === number)} location="bag" />
+        {#each allRanks as rank}
+          {#if tilesOfSuit.some(tile => tile.rank === rank)}
+            <TileToken tile={tilesOfSuit.find(t => t.rank === rank)} location="bag" />
           {:else}
             <div class="blank-tile"></div>
           {/if}

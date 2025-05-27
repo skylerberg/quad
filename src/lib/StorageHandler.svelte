@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { levels } from './level.ts';
+  import { levels } from './level';
   import type { Level } from './level';
   import type { Tile } from './tile';
 

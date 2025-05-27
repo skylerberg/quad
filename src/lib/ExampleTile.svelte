@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Tile } from './tile';
-  import { getSuitIcon, suitSymbolToName } from './suit';
+  import { getSuitIcon, suitSymbolToName } from './tile';
 
   let { tile }: {
     tile: Tile,
@@ -14,7 +14,7 @@
     role="button"
     style="background-image: url({getSuitIcon(tile.suit)});"
 >
-  <span>{tile.value}</span>
+  <span>{tile.rank}</span>
 </div>
 
 <style>

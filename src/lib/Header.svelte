@@ -1,53 +1,27 @@
 <script lang="ts">
   import helpCircleOutlineUri from '../assets/help-circle-outline.svg';
-  import lockUri from '../assets/lock.svg';
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
   import goalArrowUri from '../assets/goal-arrow.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
-  import { getSuitIcon, allSuits } from './suit';
   import { levels } from './level';
-  import ConditionIcon from './ConditionIcon.svelte';
-  import { red, blue, green, white } from './suit';
+  import GoalIcon from './GoalIcon.svelte';
+  import { getSuitIcon, allSuits, red, green, white } from './tile';
   import ExampleTile from './ExampleTile.svelte';
 
   let {
     levelNumber,
-    levelCount,
-    completedLevels,
-    runTacticalSolver,
-    runBacktrackingSolver,
-    countSolutions,
     resetLevel,
     goToLevel,
-    generateRandomLevel,
-    unlockAllLevels,
-    lockAllLevels,
   }: {
-    completedLevels: Array<string>
     levelNumber: number,
-    levelCount: number,
-    runBacktrackingSolver: () => undefined,
-    countSolutions: () => undefined,
-    runTacticalSolver: () => undefined,
     goToLevel: (level: number) => undefined,
     resetLevel: () => undefined,
-    generateRandomLevel: () => undefined,
-    unlockAllLevels: () => undefined,
-    lockAllLevels: () => undefined,
   } = $props();
 
   let menuButton: HTMLElement;
   let menu: HTMLElement;
   let isMenuOpen = false;
-
-  let highestUnlockedLevel = $state(0);
-
-  $effect(() => {
-    highestUnlockedLevel = Math.max(-1, ...completedLevels.map(
-      id => levels.findIndex(level => level.id === id)
-    )) + 1;
-  });
 
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
@@ -59,11 +33,6 @@
     menu.style.display = 'none';
   }
   
-  function openMenu() {
-    isMenuOpen = true;
-    menu.style.display = 'block';
-  }
-
   function handleClickOutside(event: MouseEvent) {
     if (isMenuOpen && !menuButton.contains(event.target as Node) && !menu.contains(event.target as Node)) {
       closeMenu();
@@ -73,14 +42,14 @@
   let exampleRowSequenceIndex = $state(0);
   const exampleRowSequence = [
     [null, null, null, null],
-    [{suit: white, value: 1}, null, null, null],
-    [{suit: white, value: 1}, {suit: green, value: 1}, null, null],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, null],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
-    [{suit: white, value: 1}, {suit: green, value: 1}, {suit: red, value: 4}, {suit: red, value: 3}],
+    [{suit: white, rank: 1}, null, null, null],
+    [{suit: white, rank: 1}, {suit: green, rank: 1}, null, null],
+    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, null],
+    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
+    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
+    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
   ];
-  const exampleCondition = {type: 'Contain', suits: [green, red, red, white], numbers: [ ]};
+  const exampleGoal = {type: 'Contain', suits: [green, red, red, white], ranks: [ ]};
 
   function runResetLevel() {
     resetLevel();
@@ -90,7 +59,6 @@
 
   function clearGameState() {
     resetLevel();
-    lockAllLevels();
     localStorage.clear();
     goToLevel(1);
     const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
@@ -199,14 +167,6 @@
         <button class="menu-item" onclick={() => showDialog('level-select-dialog')}>Go To Level</button>
         <button class="menu-item" onclick={() => showDialog('reset-level-dialog')}>Reset Level</button>
         <button class="menu-item" onclick={() => showDialog('reset-game-dialog')}>Reset Game</button>
-        <button class="menu-item">💝 Donate</button>
-        <hr />
-        <span>Developer Options</span>
-        <button class="menu-item" onclick={unlockAllLevels}>Unlock All Levels</button>
-        <button class="menu-item" onclick={runTacticalSolver}>Tactical Solver</button>
-        <button class="menu-item" onclick={runBacktrackingSolver}>Backtracking Solver</button>
-        <button class="menu-item" onclick={countSolutions}>Count Solutions</button>
-        <button class="menu-item" onclick={generateRandomLevel}>Generate Random Level</button>
       </div>
     </div>
   </div>
@@ -220,11 +180,11 @@
     <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
   </div>
   <div class="example-row">
-    <div class="condition">
-      <ConditionIcon
+    <div class="goal">
+      <GoalIcon
         level={{type: 'Tutorial'}}
         tiles={exampleRowSequence[exampleRowSequenceIndex]}
-        condition={exampleCondition}
+        goal={exampleGoal}
         type='row'
         position={1}
       />
@@ -233,7 +193,7 @@
     <div class="space {tile ? "" : "empty"}">
             
       {#if tile}
-        <ExampleTile tile={tile} />
+        <ExampleTile {tile} />
       {/if}
     </div>
     {/each}
@@ -252,12 +212,8 @@
   <div class="level-grid">
     {#each levels as level, i}
       {#if level.section === 'Tutorial'}
-        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
-          {#if i > highestUnlockedLevel}
-            <img class='level-lock-icon' src={lockUri} />
-          {:else}
-            Level {i + 1}
-          {/if}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
+          Level {i + 1}
         </button>
       {/if}
     {/each}
@@ -272,44 +228,31 @@
   <div class="level-grid">
     {#each levels as level, i}
       {#if level.section === 'Floral'}
-        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
-          {#if i > highestUnlockedLevel}
-            <img class='level-lock-icon' src={lockUri} />
-          {:else}
-            Level {i + 1}
-          {/if}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
+          Level {i + 1}
         </button>
       {/if}
     {/each}
   </div>
   <div class="level-section">
-    <img class='section-icon' src={lockUri} />&nbsp;&nbsp;<h2>Locked</h2>
   </div>
   <div class="level-grid">
     {#each levels as level, i}
       {#if level.section === 'Elemental'}
-        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
-          {#if i > highestUnlockedLevel}
-            <img class='section-icon' src={lockUri} />
-          {:else}
-            Level {i + 1}
-          {/if}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
+          Level {i + 1}
         </button>
       {/if}
     {/each}
   </div>
   <div class="level-section">
-    <img class='section-icon' src={lockUri} />&nbsp;&nbsp;<h2>Locked</h2>
+    <img class='section-icon'/>&nbsp;&nbsp;<h2>Celestial</h2>
   </div>
   <div class="level-grid">
     {#each levels as level, i}
       {#if level.section === 'Celestial'}
-        <button class="level-button" disabled='{i > highestUnlockedLevel}' onclick={() => handleLevelSelect(i + 1)}>
-          {#if i > highestUnlockedLevel}
-            <img class='level-lock-icon' src={lockUri} />
-          {:else}
-            Level {i + 1}
-          {/if}
+        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
+          Level {i + 1}
         </button>
       {/if}
     {/each}
@@ -510,14 +453,7 @@
     margin-top: -2px;
   }
 
-  .level-lock-icon {
-    height: 1.1em;
-    filter: invert(95%);
-    margin-right: 0.25em;
-    margin-top: -2px;
-  }
-
-  .condition {
+  .goal {
     box-sizing: border-box;
     width: calc(var(--tile-width) / 1.3);
     aspect-ratio: 1 / 1;
@@ -541,14 +477,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .condition-example {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    width: var(--tile-width);
   }
 
   .goal-arrow {

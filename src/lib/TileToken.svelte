@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
   import type { Tile } from './tile';
-  import { getSuitIcon, suitSymbolToName } from './suit';
+  import { getSuitIcon, suitSymbolToName } from './tile';
 
   let { tile }: {
     tile: Tile,
   } = $props();
-
-  let numberVisibility: { hidden: boolean } = getContext('numberVisibility');
 
   let element: HTMLElement;
 
@@ -21,7 +18,7 @@
     data-tile={JSON.stringify(tile)}
     style="background-image: url({getSuitIcon(tile.suit)});"
 >
-  <span>{tile.value}</span>
+  <span>{tile.rank}</span>
 </div>
 
 <style>
@@ -43,10 +40,6 @@
     background-position: center;
     background-repeat: no-repeat;
     filter: drop-shadow(5px 5px 2px black);
-  }
-
-  .hide-numbers {
-    display: none;
   }
 
   .red {
