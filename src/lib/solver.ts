@@ -270,8 +270,8 @@ export function tacticalSolver(level: Level, board: undefined | Array<Array<Tile
     attributeLockin,
 
     // Interchangability
-    interchangableOptions,
-    identicalConditionSpaces,
+    //interchangableOptions,
+    //identicalConditionSpaces,
 
     // Row + Col Condition Segregation
     // NOTE: I currently only have these for up to 2x2 rows and columns
