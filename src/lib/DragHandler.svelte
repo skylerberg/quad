@@ -43,6 +43,12 @@
       ghostClass: '.being-dragged',
     });
 
+    draggable.on('drag:start', (event) => {
+      if (draggable.isDragging()) {
+        event.cancel();
+      }
+    });
+
     draggable.on('drag:move', (event) => {
       if (event.sensorEvent.target) {
         draggedOverSpace = event.sensorEvent.target.closest('.space');
