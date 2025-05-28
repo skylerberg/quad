@@ -4,10 +4,14 @@
   import DragHandler from './lib/DragHandler.svelte';
   import Header from './lib/Header.svelte';
   import StorageHandler from './lib/StorageHandler.svelte';
-  import type { Level } from './lib/level';
-  import { levels } from './lib/level';
+  import type { Level, Difficulty } from './lib/level';
   import type { Tile } from './lib/tile';
   import { checkPuzzle } from './lib/checker';
+  import casualLevels from './lib/levels/casual';
+  import challengeLevels from './lib/levels/challenge';
+  import extremeLevels from './lib/levels/extreme';
+  import { currentDayIndex } from './lib/date';
+  import Title from './lib/Title.svelte';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
@@ -16,13 +20,31 @@
     [null, null, null, null],
   ]);
 
-  let options = $state(undefined);
+  let difficulty: Difficulty | null = $state(null);
 
-  let levelIndex: number = $state(0);
-  let level: Level = $derived(levels[levelIndex] || levels[0]);
-  let levelNumber: number = $derived(levelIndex + 1);
+  const setDifficulty = (newDifficulty: Difficulty | null) => {
+    difficulty = newDifficulty;
+  }
 
-  let solved: boolean | null = $derived.by(() => checkPuzzle(level, board));
+  let level: Level | null = $derived.by(() => {
+    if (difficulty === 'Casual') {
+      return casualLevels[currentDayIndex()];
+    }
+    if (difficulty === 'Challenge') {
+      return challengeLevels[currentDayIndex()];
+    }
+    if (difficulty === 'Extreme') {
+      return extremeLevels[currentDayIndex()];
+    }
+    return null;
+  });
+
+  let solved: boolean | null = $derived.by(() => {
+    if (level) {
+      checkPuzzle(level, board)
+    }
+    return null;
+  });
 
   let completedLevels = $state([]);
 
@@ -31,24 +53,22 @@
   }
 
   $effect(() => {
-    if (solved && !completedLevels.some(id => id === level.id)) {
+    if (level && solved && !completedLevels.some(id => id === level.id)) {
       completedLevels.push(level.id);
     }
   })
 
   $effect(() => {
-    for (let [rowIndex, row] of level.hints.entries()) {
-      for (let [colIndex, space] of row.entries()) {
-        if (space) {
-          board[rowIndex][colIndex] = space;
+    if (level) {
+      for (let [rowIndex, row] of level.hints.entries()) {
+        for (let [colIndex, space] of row.entries()) {
+          if (space) {
+            board[rowIndex][colIndex] = space;
+          }
         }
       }
     }
   })
-
-  const goToNextLevel = () => {
-    levelIndex += 1;
-  }
 
   const resetLevel = () => {
     board = [
@@ -59,50 +79,66 @@
     ];
   }
 
-  const goToLevel = (level: number) => {
-    levelIndex = level - 1;
-  }
-
   const setBoard = (newBoard: Array<Array<Tile | null>>) => {
     board = newBoard;
   }
 </script>
 
+{#if level}
 <Header
+    returnToMainMenu={() => setDifficulty(null)}
     {resetLevel}
-    {levelNumber}
-    {goToLevel}
 />
+{/if}
 
 <main>
   <StorageHandler
       {level}
       {board}
       {completedLevels}
-      {goToLevel}
       {setBoard}
       {setCompletedLevels}
   />
-  <!-- TODO figure out how to get the board to clear without needing this key -->
   {#if level}
-    {#key levelIndex}
-      <Board {options} {board} {level} />
-      <TileBag {board} />
-      <DragHandler bind:board {level} />
-    {/key}
+    <Board {board} {level} />
+    <TileBag {board} />
+    <DragHandler bind:board {level} />
+  {:else}
+    <div class="welcome-screen">
+      <h2>Welcome to </h2>
+      <Title />
+      <br>
+      <h3>Pick your puzzle</h3>
+      <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
+      <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
+      <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>
+      </div>
+      <p>New puzzles daily</p>
   {/if}
   {#if solved}
-    {#if levelIndex + 1=== levels.length}
-      <h1>Thank you for playing!</h1>
-    {:else}
-      <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
-    {/if}
+    <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
   {/if}
 </main>
 
 <style>
-  h1 {
+  h1, h2 {
     margin: 0;
+  }
+
+  .welcome-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(min(100vh, 800px));
+  }
+
+  .difficulty-button {
+    font-size: 16pt;
+    width: 200px;
+    padding: 10px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
   main {

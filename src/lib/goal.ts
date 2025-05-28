@@ -1,5 +1,5 @@
-import type { Level } from './level.ts';
-import type { Tile, Rank, Suit } from './tile.ts';
+import type { Level } from './level';
+import type { Tile, Rank, Suit } from './tile';
 
 export type Goal = {
   suits: Array<Suit>,

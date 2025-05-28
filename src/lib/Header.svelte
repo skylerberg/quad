@@ -4,19 +4,18 @@
   import goalArrowUri from '../assets/goal-arrow.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
-  import { levels } from './level';
   import GoalIcon from './GoalIcon.svelte';
-  import { getSuitIcon, allSuits, red, green, white } from './tile';
+  import { red, green, white } from './tile';
   import ExampleTile from './ExampleTile.svelte';
+  import TileToken from './TileToken.svelte';
+  import Title from './Title.svelte';
 
   let {
-    levelNumber,
+    returnToMainMenu,
     resetLevel,
-    goToLevel,
   }: {
-    levelNumber: number,
-    goToLevel: (level: number) => undefined,
-    resetLevel: () => undefined,
+    returnToMainMenu: () => void,
+    resetLevel: () => void,
   } = $props();
 
   let menuButton: HTMLElement;
@@ -144,12 +143,8 @@
 
 
 <nav class='navbar'>
-  <span class='title'>
-    <nobr>
-      <span class='title-letter'>Q</span><span class='title-letter'>U</span><span class='title-letter'>A</span><span class='title-letter'>D</span>
-    </nobr>
-  </span>
-  <span class='level'>Level {levelNumber}</span>
+  <Title />
+  <span class='level'></span> <!-- TODO remove this line -->
   <div class="nav-buttons">
     <button
       class="menu-button"
@@ -164,9 +159,8 @@
         <img src={menuImageUri} class='icon' alt="Menu icon" />
       </button>
       <div bind:this={menu} class="menu">
-        <button class="menu-item" onclick={() => showDialog('level-select-dialog')}>Go To Level</button>
+        <button class="menu-item" onclick={() => returnToMainMenu()}>Switch Difficulty</button>
         <button class="menu-item" onclick={() => showDialog('reset-level-dialog')}>Reset Level</button>
-        <button class="menu-item" onclick={() => showDialog('reset-game-dialog')}>Reset Game</button>
       </div>
     </div>
   </div>
@@ -200,69 +194,14 @@
   </div>
   <br />
   <hr />
+  <div class="locked-example">
+    <TileToken tile={{suit: green, rank: 4}} locked={true} />
+    <span>Tiles without backgrounds <br /> cannot be moved</span>
+  </div>
+  <hr />
   <form method="dialog">
     <button>Got It</button>
   </form>
-</dialog>
-
-<dialog id="level-select-dialog" onclick={handleDialogClick}>
-  <div class="level-section">
-    <h2>Tutorial</h2>
-  </div>
-  <div class="level-grid">
-    {#each levels as level, i}
-      {#if level.section === 'Tutorial'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
-          Level {i + 1}
-        </button>
-      {/if}
-    {/each}
-  </div>
-
-  <div class="level-section">
-    <h2>Floral</h2>&nbsp;&nbsp;
-    {#each allSuits as suit}
-      <img class='suit-icon' src={getSuitIcon(suit)} />
-    {/each}
-  </div>
-  <div class="level-grid">
-    {#each levels as level, i}
-      {#if level.section === 'Floral'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
-          Level {i + 1}
-        </button>
-      {/if}
-    {/each}
-  </div>
-  <div class="level-section">
-  </div>
-  <div class="level-grid">
-    {#each levels as level, i}
-      {#if level.section === 'Elemental'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
-          Level {i + 1}
-        </button>
-      {/if}
-    {/each}
-  </div>
-  <div class="level-section">
-    <img class='section-icon'/>&nbsp;&nbsp;<h2>Celestial</h2>
-  </div>
-  <div class="level-grid">
-    {#each levels as level, i}
-      {#if level.section === 'Celestial'}
-        <button class="level-button" onclick={() => handleLevelSelect(i + 1)}>
-          Level {i + 1}
-        </button>
-      {/if}
-    {/each}
-  </div>
-
-  <div style="float: right">
-  <form method="dialog">
-    <button>Cancel</button>
-  </form>
-  </div>
 </dialog>
 
 <dialog id="reset-level-dialog" onclick={handleDialogClick}>
@@ -273,18 +212,6 @@
       <button>Cancel</button>
     </form>
     <button onclick={runResetLevel} class="destructive">Reset Level</button>
-  </div>
-</dialog>
-
-<dialog id="reset-game-dialog" onclick={handleDialogClick}>
-  <h2>Reset Game</h2>
-  <p>Are you sure you want to clear all game data?</p>
-  <p>This will reset all progress and return you to level 1.</p>
-  <div class="dialog-buttons">
-    <form method="dialog">
-      <button>Cancel</button>
-    </form>
-    <button onclick={clearGameState} class="destructive">Clear All Data</button>
   </div>
 </dialog>
 
@@ -302,24 +229,10 @@
     align-items: center;
   }
 
-  .title {
-    font-size: 24px;
-    align-self: center;
-  }
-
-  .title-letter {
-    display: inline-flex;
-    box-sizing: border-box;
-    width: 35px;
-    aspect-ratio: 1 / 1;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    justify-content: center;
+  .locked-example {
+    display: flex;
     align-items: center;
-    line-height: 1;
-    font-size: 20pt;
-    align-self: center;
-    text-align: center;
+    justify-content: space-evenly;
   }
 
   .level {

@@ -4,7 +4,7 @@
   import { tilesAreEqual, allRanks, allSuits } from './tile';
 
   let { board }: {
-    board: Array<Array<Tile | undefined>>
+    board: Array<Array<Tile | null>>
   } = $props();
 
   const tilesNotOnBoard = () => {

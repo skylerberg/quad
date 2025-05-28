@@ -2,8 +2,8 @@
   import checkIcon from '../assets/check.svg';
   import type { Goal } from './goal.ts';
   import { evaluate, getTitle } from './goal';
-  import type { Tile } from './tile.ts';
-  import type { Level } from './level.ts';
+  import type { Tile } from './tile';
+  import type { Level } from './level';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
   import type { Rank, Suit } from './tile';
   import { getSuitIcon, suitSymbolToName, red, blue, green, white} from './tile';

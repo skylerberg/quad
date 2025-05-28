@@ -1,5 +1,5 @@
-import type { Tile } from './tile.ts';
-import type { Level } from './level.ts';
+import type { Tile } from './tile';
+import type { Level } from './level';
 import { evaluate } from './goal';
 
 export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boolean | null {

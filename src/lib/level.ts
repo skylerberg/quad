@@ -2,9 +2,6 @@ import type { Goal } from './goal';
 import { red, blue, green, white } from './tile';
 import type { Tile, Rank, Suit } from './tile';
 
-export const same = 'similar'
-export const different = 'dissimilar'
-
 export type Level = {
   rowGoals: Array<Goal>,
   colGoals: Array<Goal>,
@@ -13,6 +10,8 @@ export type Level = {
   name: string | undefined,
   hints: Array<Array<Tile | null>>,
 };
+
+export type Difficulty = 'Casual' | 'Challenge' | 'Extreme';
 
 export const levelFromString = (goals: string, hintString: string | undefined): Level => {
   const colGoals = [
@@ -85,43 +84,8 @@ const goalPartFromString = (str: string): Rank | Suit => {
 
 export const levels = [
   levelFromString('4rbb4344g1123rrr1311g433ggbgwrww', '01B313R323G220B2'),
+  levelFromString('gw4wbbggw2222333rbbb1brr1132wr31'),
   // New crop with only 1 solution
-  levelFromString('33433bwwrbrb4114b441www4rrrb4121'),
-  levelFromString('www4ggwb44431222rb21rbrrwbgw3212'),
-  levelFromString('23114124bgbb44ww43143322gr3grrrg'),
-  levelFromString('grrw4444bggb11122224brwrr33rggww'),
-  levelFromString('wrwwwg11bbbr2121wrgg44321313rr44'),
-  levelFromString('b311wgww32133rggb44bwgbggrrr1144'),
-  levelFromString('bgg43211rbbb412433134222w44grwww'),
-  levelFromString('21224334rbww2rrrb4br444rggbb3331'),
-  levelFromString('4242gggbwbwwb44122233ggr4334bgww'),
-  levelFromString('2322rr32ggrg4434rwbw3433bgrrbb44'),
-  levelFromString('4w4wrbbbgwgw44233433rg41grrr1114'),
-  levelFromString('wgggwg122121bbbwwwrb31343bww2232'),
-  levelFromString('g221r4ggrbbr311134bgbwgw2bbw4344'),
-  levelFromString('3242bwwbrrrw444wrrbb34341113rb14'),
-  levelFromString('gbgg1421r4144rbgrr3rrbwww4223342'),
-  levelFromString('3334gwrrg113bgbg4424ww4wg232grrr'),
-  levelFromString('bbw413314434gwgw1143wwgrbwbbg311'),
-  levelFromString('g4144brg2242rwggbwbbwgwrw2313332'),
-  levelFromString('4g4r22421411rwwrbwww1134b4bggw23'),
-  levelFromString('r332rwbw1114r4r43343bb4w2414gbgg'),
-  levelFromString('gwww14112bbb23224bgrg434bbgg3432'),
-  levelFromString('wbgwr322rrrw2211bwbbww1313332444'),
-  levelFromString('w44w2212rrwggwgbrrwrbb113331ww34'),
-  levelFromString('bbrr4133wwbwb4413rrr33442224rgbg'),
-  levelFromString('33341441bggbb3rbwwgr44rr4wwg2214'),
-  levelFromString('43333rbwrbbb4411rwww4141r133r4gw'),
-  levelFromString('rwwr11412r4r4222wggw4223w4rgg44r'),
-  levelFromString('44211bg4gggbrr11ww4r3334bb34rbrb'),
-  levelFromString('w334rbrr4111wwwgrbb3444133134rwr'),
-  levelFromString('4211bb44rb4gggbrwwrw444233233rgr'),
-  levelFromString('4g4g1222wbbr4b4brgwg111231343wwg'),
-  levelFromString('21412grggrrr32313bw42424gbbb1333'),
-  levelFromString('11224441bb4rggbgrbbr222144wwgr21'),
-  levelFromString('22441333wwwb3rrw4141bggwrgrbbg44'),
-  levelFromString('brwr1343444bgggb3wwg1113grrr4433'),
-  levelFromString('b34bgrbb323324121ggg4131wgwwr424'),
 
 
   // Crop from when I visited jacob, 1 to 8 solutions
