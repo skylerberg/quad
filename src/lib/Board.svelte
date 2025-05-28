@@ -33,7 +33,7 @@
             data-col={colIndex}
         >
           {#if tile}
-            <TileToken tile={tile}/>
+            <TileToken {tile} locked={!!level.hints[rowIndex][colIndex]}/>
           {/if}
         </div>
       {/key}

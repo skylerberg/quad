@@ -2,10 +2,11 @@
   import Draggable from '@shopify/draggable/build/esm/Draggable/Draggable';
   import { onMount } from 'svelte';
   import type { Tile } from './tile';
+  import type { Level } from './level';
 
   let { level, board }: {
     level: Level,
-    board: Array<Array<Tile | undefined>>
+    board: Array<Array<Tile | null>>
   } = $props();
 
   let draggable = $state(undefined);
@@ -13,23 +14,29 @@
   let tileInDraggedOverSpace = undefined;
 
   const removeFromBoard = (row: number, col: number) => {
-    board[row][col] = null;
+    if (!level.hints[row][col]) {
+      board[row][col] = null;
+    }
   }
 
   const placeOnBoard = (row: number, col: number, tile: Tile) => {
-    board[row][col] = tile;
+    if (!level.hints[row][col]) {
+      board[row][col] = tile;
+    }
   }
 
   const swapBoardSpaces = (first: {row: number, col: number}, second: {row: number, col: number}) => {
-    const fromTile = board[first.row][first.col];
-    board[first.row][first.col] = board[second.row][second.col];
-    board[second.row][second.col] = fromTile;
+    if (!level.hints[second.row][second.col]) {
+      const fromTile = board[first.row][first.col];
+      board[first.row][first.col] = board[second.row][second.col];
+      board[second.row][second.col] = fromTile;
+    }
   }
 
   onMount(() => {
     const containers = document.querySelectorAll('.board, .tile-bag');
     draggable = new Draggable(containers, {
-      draggable: '.tile-token',
+      draggable: '.unlocked',
       delay: {
         touch: 0,
       },

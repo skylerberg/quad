@@ -5,41 +5,52 @@ import type { Tile, Rank, Suit } from './tile';
 export const same = 'similar'
 export const different = 'dissimilar'
 
-export type Hint = {
-  row: number,
-  col: number,
-  tile: Tile,
-}
-
 export type Level = {
   rowGoals: Array<Goal>,
   colGoals: Array<Goal>,
   id: string,  // An unchanging ID we use to uniquely identify levels for sessionStorage
   section: 'Tutorial' | 'Floral' | 'Elemental' | 'Celestial',
   name: string | undefined,
-  hints: Array<Hint>,
+  hints: Array<Array<Tile | null>>,
 };
 
-export const levelFromString = (str: string): Level => {
+export const levelFromString = (goals: string, hintString: string | undefined): Level => {
   const colGoals = [
-    goalFromString(str.slice(0, 4)),
-    goalFromString(str.slice(4, 8)),
-    goalFromString(str.slice(8, 12)),
-    goalFromString(str.slice(12, 16)),
+    goalFromString(goals.slice(0, 4)),
+    goalFromString(goals.slice(4, 8)),
+    goalFromString(goals.slice(8, 12)),
+    goalFromString(goals.slice(12, 16)),
   ];
   const rowGoals = [
-    goalFromString(str.slice(16, 20)),
-    goalFromString(str.slice(20, 24)),
-    goalFromString(str.slice(24, 28)),
-    goalFromString(str.slice(28, 32)),
+    goalFromString(goals.slice(16, 20)),
+    goalFromString(goals.slice(20, 24)),
+    goalFromString(goals.slice(24, 28)),
+    goalFromString(goals.slice(28, 32)),
   ];
+  const hints: Array<Array<Tile | null>> = [];
+  for (let row = 0; row < 4; row++) {
+    hints.push([]);
+    for (let col = 0; col < 4; col++) {
+      hints[row].push(null);
+    }
+  }
+  if (hintString) {
+    for (let i = 0; i < hintString.length; i += 4) {
+      let hint = hintString.slice(i, i + 4);
+      let row = Number.parseInt(hint[0]);
+      let col = Number.parseInt(hint[1]);
+      let suit = hint[2] as Suit;
+      let rank = Number.parseInt(hint[3]) as Rank;
+      hints[row][col] = { suit, rank };
+    }
+  }
   return {
-    id: str,
-    name: str,
+    id: goals,
+    name: goals,
     section: 'Floral',
     colGoals: colGoals,
     rowGoals: rowGoals,
-    hints: [],
+    hints,
   }
 }
 
@@ -73,7 +84,7 @@ const goalPartFromString = (str: string): Rank | Suit => {
 }
 
 export const levels = [
-  levelFromString('4rbb4344g1123rrr1311g433ggbgwrww'),
+  levelFromString('4rbb4344g1123rrr1311g433ggbgwrww', '01B313R323G220B2'),
   // New crop with only 1 solution
   levelFromString('33433bwwrbrb4114b441www4rrrb4121'),
   levelFromString('www4ggwb44431222rb21rbrrwbgw3212'),

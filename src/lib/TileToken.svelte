@@ -2,13 +2,14 @@
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './tile';
 
-  let { tile }: {
+  let { tile, locked = false }: {
     tile: Tile,
+    locked: boolean,
   } = $props();
 
   let element: HTMLElement;
 
-  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)}`;
+  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)} ${locked ? 'locked' : 'unlocked'}`;
 </script>
 
 <div
@@ -40,6 +41,11 @@
     background-position: center;
     background-repeat: no-repeat;
     filter: drop-shadow(5px 5px 2px black);
+  }
+
+  .tile-token.locked {
+    background-color: unset;
+    cursor: unset;
   }
 
   .red {
