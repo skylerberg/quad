@@ -37,6 +37,7 @@
     cursor: grab;
     touch-action: none;
     user-select: none;
+    -webkit-user-select: none; /* needed for safari as of writing this app */
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;

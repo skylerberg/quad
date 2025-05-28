@@ -84,4 +84,6 @@ button:hover {
 
 .draggable-mirror {
   z-index: 1;
+  user-select: none;
+  -webkit-user-select: none; /* needed for safari as of writing this app */
 }
