@@ -52,6 +52,8 @@
     aspect-ratio: 1 / 1;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
+    user-select: none;
+    -webkit-user-select: none; /* Required for safari at time of writing */
   }
 
   .space {

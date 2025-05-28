@@ -78,7 +78,7 @@
     {#key levelIndex}
       <Board {options} {board} {level} />
       <TileBag {board} />
-      <DragHandler bind:board />
+      <DragHandler bind:board {level} />
     {/key}
   {/if}
   {#if solved}
