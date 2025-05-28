@@ -76,8 +76,12 @@ button:hover {
   opacity: .3;
 }
 
+/* draggable--is-dragging is applied to <body> while dragging */
+.draggable--is-dragging *,
+.draggable--is-dragging {
+  cursor: grabbing !important;
+}
+
 .draggable-mirror {
   z-index: 1;
-  cursor: grabbing;
-  border: 100px solid var(--border-color);
 }
