@@ -36,6 +36,16 @@
     }
   })
 
+  $effect(() => {
+    for (let [rowIndex, row] of level.hints.entries()) {
+      for (let [colIndex, space] of row.entries()) {
+        if (space) {
+          board[rowIndex][colIndex] = space;
+        }
+      }
+    }
+  })
+
   const goToNextLevel = () => {
     levelIndex += 1;
   }
