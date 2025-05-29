@@ -13,11 +13,12 @@
 </script>
 
 <div
-    bind:this={element}
-    class={tileClasses}
-    role="button"
-    data-tile={JSON.stringify(tile)}
-    style="background-image: url({getSuitIcon(tile.suit)});"
+  bind:this={element}
+  class={tileClasses}
+  role="button"
+  data-tile={JSON.stringify(tile)}
+  style="background-image: url({getSuitIcon(tile.suit)});"
+  tabindex="0"
 >
   <span>{tile.rank}</span>
 </div>
