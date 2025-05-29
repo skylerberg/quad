@@ -24,6 +24,7 @@
 
   const setDifficulty = (newDifficulty: Difficulty | null) => {
     difficulty = newDifficulty;
+    history.pushState({difficulty}, '');
   }
 
   let level: Level | null = $derived.by(() => {
@@ -82,6 +83,10 @@
   const setBoard = (newBoard: Array<Array<Tile | null>>) => {
     board = newBoard;
   }
+
+  addEventListener("popstate", (event) => {
+    difficulty = event.state && event.state.difficulty;
+  })
 </script>
 
 {#if level}
@@ -117,7 +122,7 @@
         <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>
       </div>
 
-      <p id="new-puzzles-notice">New puzzles daily</p>
+      <p>New puzzles daily</p>
     </div>
   {/if}
 </main>
