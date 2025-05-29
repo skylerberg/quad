@@ -105,18 +105,20 @@
     <DragHandler bind:board {level} />
   {:else}
     <div class="welcome-screen">
-      <h2>Welcome to </h2>
-      <Title />
-      <br>
-      <h3>Pick your puzzle</h3>
-      <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
-      <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
-      <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>
+      <span></span>
+      <div class="welcome-main">
+        <h2>Welcome to </h2>
+        <Title />
+        <br>
+        <h3>Pick your puzzle</h3>
+        <!-- <button class="difficulty-button" onclick={() => setDifficulty('Tutorial')}>Tutorial</button> -->
+        <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>
       </div>
-      <p>New puzzles daily</p>
-  {/if}
-  {#if solved}
-    <button class="next-level" onclick={() => goToNextLevel()}>Next Level</button>
+
+      <p id="new-puzzles-notice">New puzzles daily</p>
+    </div>
   {/if}
 </main>
 
@@ -128,14 +130,19 @@
   .welcome-screen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    height: calc(min(100vh, 800px));
+    justify-content: space-around;
+    height: 100dvh;
+  }
+
+  .welcome-main {
+    display: flex;
+    flex-direction: column;
   }
 
   .difficulty-button {
     font-size: 16pt;
     width: 200px;
-    padding: 10px;
+    padding: 15px;
     margin: auto;
     margin-top: 10px;
     margin-bottom: 10px;
