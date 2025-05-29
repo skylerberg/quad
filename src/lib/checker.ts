@@ -30,5 +30,9 @@ export function checkPuzzle(level: Level, board: Array<Array<Tile | null>>): boo
     }
   }
 
+  if (board.some(row => row.some(space => !space))) {
+    return null;
+  }
+
   return result;
 }
