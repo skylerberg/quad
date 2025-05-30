@@ -21,13 +21,6 @@
   --header-height: 50px;
   --header-margin: 20px;
 
-  /*
-  10 vh * 4 = 40
-
-  if in two rows, should be larger than 10vh; otherwise should be 10vh
-
-  */
-
   --board-max-width: 500px;
   --tile-width: min(max(8vmax, 10vmin), 18vw, calc(var(--board-max-width) / 5));
   --board-width: calc(var(--tile-width) * 5);
@@ -38,6 +31,27 @@
   --success: #109030;
   --success-hover: #20a040;
   --success-filter: invert(39%) sepia(82%) saturate(615%) hue-rotate(86deg) brightness(91%) contrast(91%);
+}
+
+.success-button {
+  font-size: 14pt;
+  font-weight: bold;
+  background-color: var(--success);
+  box-shadow: 0 0 5px 2px white;
+  animation: pulse 1.0s infinite alternate ease-in-out;
+}
+
+.success-button:hover {
+  background-color: var(--success-hover);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 5px 2px white;
+    }
+    100% {
+      box-shadow: 0 0 10px 7px rgba(255, 255, 255, 0.8);
+    }
 }
 
 body {
@@ -53,6 +67,7 @@ button {
   border: 1px solid var(--border-color);
   background: #333;
   cursor: pointer;
+  color: white;
 }
 
 button:disabled {

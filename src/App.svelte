@@ -4,6 +4,7 @@
   import DragHandler from './lib/DragHandler.svelte';
   import Header from './lib/Header.svelte';
   import StorageHandler from './lib/StorageHandler.svelte';
+  import ShareButton from './lib/ShareButton.svelte';
   import type { Level, Difficulty } from './lib/level';
   import type { Tile } from './lib/tile';
   import { checkPuzzle } from './lib/checker';
@@ -12,6 +13,7 @@
   import extremeLevels from './lib/levels/extreme';
   import { currentDayIndex } from './lib/date';
   import Title from './lib/Title.svelte';
+  import confetti from 'canvas-confetti';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
@@ -27,35 +29,50 @@
     history.pushState({difficulty}, '');
   }
 
+  const casualLevel = casualLevels[currentDayIndex()];
+  const challengeLevel = challengeLevels[currentDayIndex()];
+  const extremeLevel = extremeLevels[currentDayIndex()];
+
   let level: Level | null = $derived.by(() => {
     if (difficulty === 'Casual') {
-      return casualLevels[currentDayIndex()];
+      return casualLevel;
     }
     if (difficulty === 'Challenge') {
-      return challengeLevels[currentDayIndex()];
+      return challengeLevel;
     }
     if (difficulty === 'Extreme') {
-      return extremeLevels[currentDayIndex()];
+      return extremeLevel;
     }
     return null;
   });
 
   let solved: boolean | null = $derived.by(() => {
     if (level) {
-      checkPuzzle(level, board)
+      return checkPuzzle(level, board)
     }
     return null;
   });
 
-  let completedLevels = $state([]);
+  let completedLevels: Array<string> = $state([]);
 
   const setCompletedLevels = (levelIds: Array<string>) => {
     completedLevels = levelIds;
   }
 
+  let casualLevelSolved = $derived(completedLevels.some(id => id == casualLevel.id));
+  let challengeLevelSolved = $derived(completedLevels.some(id => id == challengeLevel.id));
+  let extremeLevelSolved = $derived(completedLevels.some(id => id == extremeLevel.id));
+
   $effect(() => {
     if (level && solved && !completedLevels.some(id => id === level.id)) {
       completedLevels.push(level.id);
+
+      confetti({
+        particleCount: 100,
+        disableForReducedMotion: true,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
     }
   })
 
@@ -84,6 +101,23 @@
     board = newBoard;
   }
 
+  const share = () => {
+    let shareText = "Check out today's Quad\n\nquad.skylerberg.com";
+    if (casualLevelSolved && challengeLevelSolved && extremeLevelSolved) {
+      shareText = "I solved every Quad today!\n\nquad.skylerberg.com";
+    }
+    else if (casualLevelSolved && extremeLevelSolved) {
+      shareText = "I solved today's casual and extreme Quad!\n\nquad.skylerberg.com";
+    }
+    else if (challengeLevelSolved && extremeLevelSolved) {
+      shareText = "I solved today's challenge and extreme Quad!\n\nquad.skylerberg.com";
+    }
+    else if (extremeLevelSolved) {
+      shareText = "I solved today's extreme Quad!\n\nquad.skylerberg.com";
+    }
+    navigator.clipboard.writeText(shareText);
+  }
+
   addEventListener("popstate", (event) => {
     difficulty = event.state && event.state.difficulty;
   })
@@ -108,6 +142,29 @@
     <Board {board} {level} />
     <TileBag {board} />
     <DragHandler bind:board {level} />
+
+    {#if solved}
+      {#if difficulty === 'Casual'}
+        {#if !challengeLevelSolved}
+          <button class="success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
+        {:else if !extremeLevelSolved}
+          <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
+        {:else}
+          <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+        {/if}
+      {/if}
+      {#if difficulty === 'Challenge'}
+        {#if !extremeLevelSolved}
+          <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
+        {:else}
+          <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+        {/if}
+      {/if}
+      {#if difficulty === 'Extreme'}
+        <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+      {/if}
+
+    {/if}
   {:else}
     <div class="welcome-screen">
       <span></span>
@@ -157,26 +214,5 @@
     max-width: 1280px;
     margin: 0 auto;
     text-align: center;
-  }
-
-  .next-level {
-    font-size: 14pt;
-    font-weight: bold;
-    background-color: var(--success);
-    box-shadow: 0 0 5px 2px white;
-    animation: pulse 1.0s infinite alternate ease-in-out;
-  }
-
-  .next-level:hover {
-    background-color: var(--success-hover);
-  }
-
-  @keyframes pulse {
-      0% {
-          box-shadow: 0 0 5px 2px white;
-      }
-      100% {
-        box-shadow: 0 0 10px 7px rgba(255, 255, 255, 0.8);
-      }
   }
 </style>
