@@ -247,7 +247,7 @@
 
 <dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
-  <p>Drag tiles onto the board to match the flowers in each row and column's goal.</p>
+  <p>Drag tiles onto the board to match the flowers each row's and column's goal.</p>
   <h3>Example</h3>
   <div class="example-row">
     <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
@@ -312,10 +312,10 @@
 <dialog class="help-dialog" id="tutorial-3-dialog" onclick={handleDialogClick}>
   <div class="locked-example">
     <span>
-      <TileToken tile={{suit: green, rank: 4}} locked={true} />
+      <TileToken tile={{suit: red, rank: 4}} locked={true} />
     </span>
     <span>
-      We put some tiles on the board to help you out.
+      Some puzzles have tiles already on the board to help you out!
       <br />
       These tiles cannot be moved.
     </span>
