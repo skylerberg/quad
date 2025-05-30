@@ -2,8 +2,9 @@
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './tile';
 
-  let { tile }: {
+  let { tile, showNumber = true }: {
     tile: Tile,
+    hideNumber: boolean,
   } = $props();
 
   const tileClasses = `tile-token ${suitSymbolToName(tile.suit)}`;
@@ -14,7 +15,11 @@
     role="button"
     style="background-image: url({getSuitIcon(tile.suit)});"
 >
-  <span>{tile.rank}</span>
+  <span>
+    {#if showNumber}
+      {tile.rank}
+    {/if}
+  </span>
 </div>
 
 <style>

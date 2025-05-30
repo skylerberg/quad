@@ -11,7 +11,7 @@ export type Level = {
   hints: Array<Array<Tile | null>>,
 };
 
-export type Difficulty = 'Casual' | 'Challenge' | 'Extreme';
+export type Difficulty = 'Tutorial1' | 'Tutorial2' | 'Tutorial3' | 'Casual' | 'Challenge' | 'Extreme';
 
 export const levelFromString = (goals: string, hintString: string | undefined): Level => {
   const colGoals = [

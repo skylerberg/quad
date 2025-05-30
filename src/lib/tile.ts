@@ -12,7 +12,7 @@ export const blue: Suit = 'B';
 export const white: Suit = 'W';
 export const green: Suit = 'G';
 
-export const allSuits = [red, blue, white, green];
+export const allSuits = [blue, green, red, white];
 
 export function suitSymbolToName(suit: Suit): string {
   if (suit === red) {

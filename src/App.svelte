@@ -8,12 +8,14 @@
   import type { Level, Difficulty } from './lib/level';
   import type { Tile } from './lib/tile';
   import { checkPuzzle } from './lib/checker';
+  import tutorialLevels from './lib/levels/tutorial';
   import casualLevels from './lib/levels/casual';
   import challengeLevels from './lib/levels/challenge';
   import extremeLevels from './lib/levels/extreme';
   import { currentDayIndex } from './lib/date';
   import Title from './lib/Title.svelte';
   import confetti from 'canvas-confetti';
+  import { setContext } from 'svelte';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
@@ -23,6 +25,17 @@
   ]);
 
   let difficulty: Difficulty | null = $state(null);
+
+  let tutorialSettings: {hideNumbers: boolean} = $state({hideNumbers: false});
+  $effect(() => {
+    if (difficulty === 'Tutorial1') {
+      tutorialSettings.hideNumbers = true;
+    }
+    else {
+      tutorialSettings.hideNumbers = false;
+    }
+  })
+  setContext('tutorialSettings', tutorialSettings);
 
   const setDifficulty = (newDifficulty: Difficulty | null) => {
     difficulty = newDifficulty;
@@ -34,6 +47,15 @@
   const extremeLevel = extremeLevels[currentDayIndex()];
 
   let level: Level | null = $derived.by(() => {
+    if (difficulty === 'Tutorial1') {
+      return tutorialLevels[0];
+    }
+    if (difficulty === 'Tutorial2') {
+      return tutorialLevels[1];
+    }
+    if (difficulty === 'Tutorial3') {
+      return tutorialLevels[2];
+    }
     if (difficulty === 'Casual') {
       return casualLevel;
     }
@@ -125,6 +147,7 @@
 
 {#if level}
 <Header
+    {difficulty}
     returnToMainMenu={() => setDifficulty(null)}
     {resetLevel}
 />
@@ -144,6 +167,15 @@
     <DragHandler bind:board {level} />
 
     {#if solved}
+      {#if difficulty === 'Tutorial1'}
+        <button class="success-button" onclick={() => setDifficulty('Tutorial2')}>Continue</button>
+      {/if}
+      {#if difficulty === 'Tutorial2'}
+        <button class="success-button" onclick={() => setDifficulty('Tutorial3')}>Continue</button>
+      {/if}
+      {#if difficulty === 'Tutorial3'}
+        <button class="success-button" onclick={() => setDifficulty(null)}>All Done!</button>
+      {/if}
       {#if difficulty === 'Casual'}
         {#if !challengeLevelSolved}
           <button class="success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
@@ -173,7 +205,7 @@
         <Title />
         <br>
         <h3>Pick your puzzle</h3>
-        <!-- <button class="difficulty-button" onclick={() => setDifficulty('Tutorial')}>Tutorial</button> -->
+        <button class="difficulty-button" onclick={() => setDifficulty('Tutorial1')}>Tutorial</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>

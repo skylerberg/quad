@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { getContext } from 'svelte';
   import type { Tile } from './tile';
   import { getSuitIcon, suitSymbolToName } from './tile';
+
+  let tutorialSettings: { hideNumbers: boolean } = getContext('tutorialSettings');
 
   let { tile, locked = false }: {
     tile: Tile,
@@ -20,7 +23,11 @@
   style="background-image: url({getSuitIcon(tile.suit)});"
   tabindex="0"
 >
-  <span>{tile.rank}</span>
+  <span>
+    {#if !tutorialSettings.hideNumbers}
+      {tile.rank}
+    {/if}
+  </span>
 </div>
 
 <style>

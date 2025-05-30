@@ -4,6 +4,7 @@
   import goalArrowUri from '../assets/goal-arrow.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
+  import type { Difficulty } from './level';
   import GoalIcon from './GoalIcon.svelte';
   import { red, green, white } from './tile';
   import ExampleTile from './ExampleTile.svelte';
@@ -13,9 +14,11 @@
   let {
     returnToMainMenu,
     resetLevel,
+    difficulty,
   }: {
     returnToMainMenu: () => void,
     resetLevel: () => void,
+    difficulty: Difficulty,
   } = $props();
 
   let menuButton: HTMLElement;
@@ -48,7 +51,8 @@
     [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
     [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
   ];
-  const exampleGoal = {type: 'Contain', suits: [green, red, red, white], ranks: [ ]};
+  const exampleGoal = {suits: [green, red, red, white], ranks: [ ]};
+  const exampleGoalNumbers = {suits: [], ranks: [1, 1, 3, 4]};
 
   function runResetLevel() {
     resetLevel();
@@ -67,8 +71,6 @@
   let howToPlayExampleSequenceIntervalId = null;
 
   function showHowToPlay() {
-    localStorage.setItem('seenHowToPlay', 'true');
-
     exampleRowSequenceIndex = 0;
     if (!howToPlayExampleSequenceIntervalId) {
       howToPlayExampleSequenceIntervalId = setInterval(() => {
@@ -80,6 +82,49 @@
     const dialog = document.getElementById('how-to-play-dialog') as HTMLDialogElement;
     dialog.showModal();
   }
+
+  function showTutorial1() {
+    exampleRowSequenceIndex = 0;
+    if (!howToPlayExampleSequenceIntervalId) {
+      howToPlayExampleSequenceIntervalId = setInterval(() => {
+        exampleRowSequenceIndex += 1;
+        exampleRowSequenceIndex %= exampleRowSequence.length;
+      }, 1500)
+    }
+
+    const dialog = document.getElementById('tutorial-1-dialog') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  function showTutorial2() {
+    exampleRowSequenceIndex = 0;
+    if (!howToPlayExampleSequenceIntervalId) {
+      howToPlayExampleSequenceIntervalId = setInterval(() => {
+        exampleRowSequenceIndex += 1;
+        exampleRowSequenceIndex %= exampleRowSequence.length;
+      }, 1500)
+    }
+
+    const dialog = document.getElementById('tutorial-2-dialog') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  function showTutorial3() {
+    const dialog = document.getElementById('tutorial-3-dialog') as HTMLDialogElement;
+    dialog.showModal();
+  }
+
+  $effect(() => {
+    if (difficulty === 'Tutorial1') {
+      showTutorial1();
+    }
+    if (difficulty === 'Tutorial2') {
+      showTutorial2();
+    }
+    if (difficulty === 'Tutorial3') {
+      showTutorial3();
+    }
+  });
 
   function clearExampleSequence() {
     exampleRowSequenceIndex = 0;
@@ -130,10 +175,6 @@
 
     document.addEventListener('click', handleClickOutside);
 
-    if (!localStorage.getItem('seenHowToPlay')) {
-      showHowToPlay();
-    }
-
     return () => {
       removeMenuEvents();
       document.removeEventListener('click', handleClickOutside);
@@ -166,7 +207,7 @@
   </div>
 </nav>
 
-<dialog id="how-to-play-dialog" onclick={handleDialogClick}>
+<dialog class="help-dialog" id="how-to-play-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
   <p>Drag tiles onto the board<br /> to fulfill all row and column goals</p>
   <h3>Example</h3>
@@ -197,6 +238,87 @@
   <div class="locked-example">
     <TileToken tile={{suit: green, rank: 4}} locked={true} />
     <span>Tiles without backgrounds <br /> cannot be moved</span>
+  </div>
+  <hr />
+  <form method="dialog">
+    <button>Got It</button>
+  </form>
+</dialog>
+
+<dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick}>
+  <h2>How To Play</h2>
+  <p>Drag tiles onto the board to match the flowers in each row and column's goal.</p>
+  <h3>Example</h3>
+  <div class="example-row">
+    <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
+  </div>
+  <div class="example-row">
+    <div class="goal">
+      <GoalIcon
+        level={{type: 'Tutorial'}}
+        tiles={exampleRowSequence[exampleRowSequenceIndex]}
+        goal={exampleGoal}
+        type='row'
+        position={1}
+      />
+    </div>
+    {#each exampleRowSequence[exampleRowSequenceIndex] as tile}
+    <div class="space {tile ? "" : "empty"}">
+      {#if tile}
+        <ExampleTile {tile} showNumber={false} />
+      {/if}
+    </div>
+    {/each}
+  </div>
+  <br />
+  <hr />
+  <form method="dialog">
+    <button>Got It</button>
+  </form>
+</dialog>
+
+<dialog class="help-dialog" id="tutorial-2-dialog" onclick={handleDialogClick}>
+  <p>We put numbers on the tiles! <br /> Goals can require you to match numbers.</p>
+  <h3>Example</h3>
+  <div class="example-row">
+    <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
+  </div>
+  <div class="example-row">
+    <div class="goal">
+      <GoalIcon
+        level={{type: 'Tutorial'}}
+        tiles={exampleRowSequence[exampleRowSequenceIndex]}
+        goal={exampleGoalNumbers}
+        type='row'
+        position={1}
+      />
+    </div>
+    {#each exampleRowSequence[exampleRowSequenceIndex] as tile}
+    <div class="space {tile ? "" : "empty"}">
+            
+      {#if tile}
+        <ExampleTile {tile} />
+      {/if}
+    </div>
+    {/each}
+  </div>
+  <br />
+  <hr />
+  <form method="dialog">
+    <button>Got It</button>
+  </form>
+</dialog>
+
+<dialog class="help-dialog" id="tutorial-3-dialog" onclick={handleDialogClick}>
+  <div class="locked-example">
+    <span>
+      <TileToken tile={{suit: green, rank: 4}} locked={true} />
+    </span>
+    <span>
+      We put some tiles on the board to help you out.
+      <br />
+      These tiles cannot be moved.
+    </span>
   </div>
   <hr />
   <form method="dialog">
@@ -289,12 +411,13 @@
     background: #2f2f2f;
   }
 
-  #how-to-play-dialog {
+  .help-dialog {
     position: absolute;
     top: 0;
     bottom: 0;
     margin: auto;
     text-align: center;
+    text-wrap: balance;
   }
   
   h2 {
