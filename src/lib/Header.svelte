@@ -247,7 +247,7 @@
 
 <dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
-  <p>Drag tiles onto the board to match the flowers each row's and column's goal.</p>
+  <p>Drag tiles onto the board to match the flowers for each row's and column's goal.</p>
   <h3>Example</h3>
   <div class="example-row">
     <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
