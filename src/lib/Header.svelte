@@ -184,7 +184,9 @@
 
 
 <nav class='navbar'>
-  <Title />
+  <a class="unstyled" href="" onclick={() => returnToMainMenu()}>
+    <Title />
+  </a>
   <span class='level'></span> <!-- TODO remove this line -->
   <div class="nav-buttons">
     <button
@@ -522,5 +524,11 @@
 
   h3 {
     margin-bottom: 0px;
+  }
+
+  .unstyled {
+    width: fit-content;
+    color: inherit;
+    text-decoration: inherit;
   }
 </style>
