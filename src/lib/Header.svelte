@@ -184,7 +184,7 @@
 
 
 <nav class='navbar'>
-  <a class="unstyled" href="" onclick={() => returnToMainMenu()}>
+  <a class="unstyled" href="#" onclick={(event) => {event.preventDefault(); returnToMainMenu()}}>
     <Title />
   </a>
   <span class='level'></span> <!-- TODO remove this line -->
