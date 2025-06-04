@@ -35,9 +35,6 @@ export class Puzzle {
   undoAvailable: boolean = $derived(this.historyPosition > 0)
 
   constructor({goals, hints}: {goals: string, hints: string}) {
-    //this.actionHistory = $state([]);
-    //this.historyPosition = $state(0);
-    //this.board = $state([])
     this.id = goals;
     this.section = 'Floral';
     this.colGoals = [
@@ -85,7 +82,12 @@ export class Puzzle {
   do(action: Action) {
     let actionSucceeded = false;
     if (action.type === 'swap') {
-      if (!this.isLocked(action.first.row, action.first.col) && !this.isLocked(action.second.row, action.second.col)) {
+      if (
+        !this.isLocked(action.first.row, action.first.col)
+          && !this.isLocked(action.second.row, action.second.col)
+          && (action.first.row !== action.second.row
+            || action.first.col !== action.second.col)
+      ) {
         this.swapBoardSpaces(action.first, action.second);
         actionSucceeded = true;
       }
