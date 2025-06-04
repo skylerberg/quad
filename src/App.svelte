@@ -123,6 +123,25 @@
       puzzle.selectedTile = undefined;
     }
   });
+
+  window.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (puzzle) {
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.key === 'z') {
+        if (puzzle.undoAvailable) {
+          puzzle.undo();
+        }
+      }
+      if (
+        ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'Z')
+        || ((event.ctrlKey || event.metaKey) && event.key === 'r')
+        || ((event.ctrlKey || event.metaKey) && event.key === 'y')
+      ) {
+        if (puzzle.redoAvailable) {
+          puzzle.redo();
+        }
+      }
+    }
+  });
 </script>
 
 {#if puzzle && difficulty}
