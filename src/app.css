@@ -74,6 +74,7 @@ button {
   background: #333;
   cursor: pointer;
   color: white;
+  font-family: inherit;
 }
 
 button:disabled {
