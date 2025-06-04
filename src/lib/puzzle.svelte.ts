@@ -83,24 +83,37 @@ export class Puzzle {
   }
 
   do(action: Action) {
-    console.log(action);
+    let actionSucceeded = false;
     if (action.type === 'swap') {
-      this.swapBoardSpaces(action.first, action.second);
-    }
-    else if (action.type === 'place') {
-      this.placeOnBoard(action.space.row, action.space.col, action.tile);
-    }
-    else if (action.type === 'remove') {
-      const tile = this.removeFromBoard(action.space.row, action.space.col);
-      if (tile) {
-        action.tile = tile;
+      if (!this.isLocked(action.first.row, action.first.col) && !this.isLocked(action.second.row, action.second.col)) {
+        this.swapBoardSpaces(action.first, action.second);
+        actionSucceeded = true;
       }
     }
-    if (this.actionHistory.length > this.historyPosition) {
-      this.actionHistory.splice(this.historyPosition);
+    else if (action.type === 'place') {
+      if (!this.isLocked(action.space.row, action.space.col)) {
+        this.placeOnBoard(action.space.row, action.space.col, action.tile);
+        actionSucceeded = true;
+      }
     }
-    this.actionHistory.push(action);
-    this.historyPosition += 1;
+    else if (action.type === 'remove') {
+      if (!this.isLocked(action.space.row, action.space.col)) {
+        const tile = this.removeFromBoard(action.space.row, action.space.col);
+        if (tile) {
+          action.tile = tile;
+        }
+        actionSucceeded = true;
+      }
+    }
+
+    if (actionSucceeded) {
+      if (this.actionHistory.length > this.historyPosition) {
+        this.actionHistory.splice(this.historyPosition);
+      }
+
+      this.actionHistory.push(action);
+      this.historyPosition += 1;
+    }
   }
 
   undo() {
@@ -139,25 +152,19 @@ export class Puzzle {
   }
 
   private removeFromBoard(row: number, col: number): Tile | null | undefined {
-    if (!this.isLocked(row, col)) {
-      const tile = this.board[row][col];
-      this.board[row][col] = null;
-      return tile;
-    }
+    const tile = this.board[row][col];
+    this.board[row][col] = null;
+    return tile;
   }
 
   private placeOnBoard(row: number, col: number, tile: Tile) {
-    if (!this.isLocked(row, col)) {
-      this.board[row][col] = tile;
-    }
+    this.board[row][col] = tile;
   }
 
   private swapBoardSpaces(first: {row: number, col: number}, second: {row: number, col: number}) {
-    if (!this.isLocked(first.row, first.col) && !this.isLocked(second.row, second.col)) {
-      const fromTile = this.board[first.row][first.col];
-      this.board[first.row][first.col] = this.board[second.row][second.col];
-      this.board[second.row][second.col] = fromTile;
-    }
+    const fromTile = this.board[first.row][first.col];
+    this.board[first.row][first.col] = this.board[second.row][second.col];
+    this.board[second.row][second.col] = fromTile;
   }
 
   check(): boolean | null {

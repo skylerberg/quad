@@ -15,7 +15,8 @@
   import Title from './lib/Title.svelte';
   import confetti from 'canvas-confetti';
   import { setContext } from 'svelte';
-  import { Puzzle, Difficulty } from './lib/puzzle.svelte';
+  import type { Difficulty } from './lib/puzzle.svelte';
+  import { Puzzle } from './lib/puzzle.svelte';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
