@@ -5,14 +5,13 @@
 
   let tutorialSettings: { hideNumbers: boolean } = getContext('tutorialSettings');
 
-  let { tile, locked = false }: {
+  let { tile }: {
     tile: Tile,
-    locked: boolean,
   } = $props();
 
   let element: HTMLElement;
 
-  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)} ${locked ? 'locked' : 'unlocked'}`;
+  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)} ${tile.locked ? 'locked' : 'unlocked'}`;
 </script>
 
 <div

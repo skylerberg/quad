@@ -1,4 +1,3 @@
-import type { Level } from './level';
 import type { Tile, Rank, Suit } from './tile';
 
 export type Goal = {
@@ -53,25 +52,4 @@ export function countUnmatchedRanks(
   }
 
   return unmatchedRanks.length;
-}
-
-export function getTitle(level: Level, goal: Goal, type: 'row' | 'column'): string {
-  let symbolName = 'flower';
-  let symbolNamePlural = 'flowers';
-  if (level.section === 'Celestial') {
-    symbolName = 'celestial object';
-    symbolNamePlural = 'celestial objects';
-  }
-  else if (level.section === 'Elemental') {
-    symbolName = 'element';
-    symbolNamePlural = 'elements';
-  }
-
-  if (goal.suits.length === 0) {
-    return `This ${type} must have these numbers`;
-  }
-  if (goal.ranks.length === 0) {
-    return `This ${type} must have these ${symbolNamePlural}`;
-  }
-  return `This ${type} must have these ${symbolNamePlural} and numbers`;
 }

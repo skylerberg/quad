@@ -5,7 +5,7 @@ import rose from '../assets/rose.svg';
 
 export type Suit = 'R' | 'B' | 'W' | 'G';
 export type Rank = 1 | 2 | 3 | 4;
-export type Tile = { rank: Rank, suit: Suit };
+export type Tile = { rank: Rank, suit: Suit, locked: boolean };
 
 export const red: Suit = 'R';
 export const blue: Suit = 'B';

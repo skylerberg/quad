@@ -1,61 +1,37 @@
 <script lang="ts">
-  import { levels } from './level';
-  import type { Level } from './level';
-  import type { Tile } from './tile';
+  import type { Puzzle } from './puzzle.svelte';
 
-  let { level, board, completedLevels, setBoard, goToLevel, setCompletedLevels}: {
-    level: Level | null,
-    board: Array<Array<Tile | null>>,
-    setBoard: (newBoard: Array<Array<Tile | null>>) => void,
-    goToLevel: (level: number) => void,
-    setCompletedLevels: (levelIds: Array<string>) => void,
-    completedLevels: Array<string>,
+  let { puzzle, completedPuzzles, setCompletedPuzzles }: {
+    puzzle: Puzzle | null,
+    setCompletedPuzzles: (puzzleIds: Array<string>) => void,
+    completedPuzzles: Array<string>,
   } = $props();
 
-  // Load your current level at startup
-  //const savedCurrentLevelId = localStorage.getItem('currentLevel');
-  //if (savedCurrentLevelId) {
-  //  const foundIndex = levels.findIndex(level => level.id === savedCurrentLevelId);
-  //  if (foundIndex !== -1) {
-  //    goToLevel(foundIndex + 1);
-  //  }
-  //}
-
-  const savedCompletedLevels = JSON.parse(localStorage.getItem('completedLevels'));
-  if (savedCompletedLevels && Array.isArray(savedCompletedLevels)) {
-    setCompletedLevels(savedCompletedLevels);
+  const savedCompletedPuzzles = JSON.parse(localStorage.getItem('completedPuzzles'));
+  if (savedCompletedPuzzles && Array.isArray(savedCompletedPuzzles)) {
+    setCompletedPuzzles(savedCompletedPuzzles);
   }
 
   $effect(() => {
-    localStorage.setItem('completedLevels', JSON.stringify(completedLevels));
+    localStorage.setItem('completedPuzzles', JSON.stringify(completedPuzzles));
   });
 
-  // Load you board if one exists when you go to a level
+  // Load you board if one exists when you go to a puzzle
   $effect(() => {
-    if (level) {
-      const levelKey = `level-${level.id}`;
-      const boardJson = localStorage.getItem(levelKey);
+    if (puzzle) {
+      const puzzleKey = `puzzle-${puzzle.id}`;
+      const boardJson = localStorage.getItem(puzzleKey);
       if (boardJson) {
-        setBoard(JSON.parse(boardJson));
+        puzzle.board = JSON.parse(boardJson);
       }
-      else {
-        setBoard([
-          [null, null, null, null],
-          [null, null, null, null],
-          [null, null, null, null],
-          [null, null, null, null],
-        ]);
-      }
-
-      localStorage.setItem('currentLevel', level.id);
     }
   })
 
   // Save your board whenever it changes
   $effect(() => {
-    if (level) {
-      const levelKey = `level-${level.id}`;
-      localStorage.setItem(levelKey, JSON.stringify(board));
+    if (puzzle) {
+      const puzzleKey = `puzzle-${puzzle.id}`;
+      localStorage.setItem(puzzleKey, JSON.stringify(puzzle.board));
     }
   });
 </script>

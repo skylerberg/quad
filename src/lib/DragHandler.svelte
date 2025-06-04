@@ -1,37 +1,15 @@
 <script lang="ts">
   import Draggable from '@shopify/draggable/build/esm/Draggable/Draggable';
   import { onMount } from 'svelte';
-  import type { Tile } from './tile';
-  import type { Level } from './level';
+  import type { Puzzle } from './puzzle.svelte';
 
-  let { level, board }: {
-    level: Level,
-    board: Array<Array<Tile | null>>
+  let { puzzle }: {
+    puzzle: Puzzle,
   } = $props();
 
   let draggable = $state(undefined);
   let draggedOverSpace = undefined;
   let tileInDraggedOverSpace = undefined;
-
-  const removeFromBoard = (row: number, col: number) => {
-    if (!level.hints[row][col]) {
-      board[row][col] = null;
-    }
-  }
-
-  const placeOnBoard = (row: number, col: number, tile: Tile) => {
-    if (!level.hints[row][col]) {
-      board[row][col] = tile;
-    }
-  }
-
-  const swapBoardSpaces = (first: {row: number, col: number}, second: {row: number, col: number}) => {
-    if (!level.hints[second.row][second.col]) {
-      const fromTile = board[first.row][first.col];
-      board[first.row][first.col] = board[second.row][second.col];
-      board[second.row][second.col] = fromTile;
-    }
-  }
 
   onMount(() => {
     const containers = document.querySelectorAll('.board, .tile-bag');
@@ -59,19 +37,30 @@
       if (droppedOnSpace && draggingFrom === 'bag') {
         const row = droppedOnSpace.dataset.row;
         const col = droppedOnSpace.dataset.col;
-        placeOnBoard(row, col, tile);
+        puzzle.do({
+          type: 'place',
+          space: { row, col },
+          tile,
+        });
       }
 
       else if (draggingFrom === 'board' && droppedOnSpace) {
         const from = { row: tileToken.parentNode.dataset.row, col: tileToken.parentNode.dataset.col };
         const to = { row: droppedOnSpace.dataset.row, col: droppedOnSpace.dataset.col };
-        swapBoardSpaces(from, to);
+        puzzle.do({
+          type: 'swap',
+          first: from,
+          second: to,
+        });
       }
 
       else if (draggingFrom === 'board' && !droppedOnSpace) {
-        const row = tileToken.parentNode.dataset.row;
-        const col = tileToken.parentNode.dataset.col;
-        removeFromBoard(row, col);
+        const row: number = tileToken.parentNode.dataset.row;
+        const col: number = tileToken.parentNode.dataset.col;
+        puzzle.do({
+          type: 'remove',
+          space: { row, col },
+        });
       }
 
       draggedOverSpace = undefined;

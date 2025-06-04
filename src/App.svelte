@@ -1,21 +1,21 @@
 <script lang="ts">
+
   import Board from './lib/Board.svelte';
   import TileBag from './lib/TileBag.svelte';
   import DragHandler from './lib/DragHandler.svelte';
   import Header from './lib/Header.svelte';
   import StorageHandler from './lib/StorageHandler.svelte';
   import ShareButton from './lib/ShareButton.svelte';
-  import type { Level, Difficulty } from './lib/level';
   import type { Tile } from './lib/tile';
-  import { checkPuzzle } from './lib/checker';
-  import tutorialLevels from './lib/levels/tutorial';
-  import casualLevels from './lib/levels/casual';
-  import challengeLevels from './lib/levels/challenge';
-  import extremeLevels from './lib/levels/extreme';
+  import tutorialPuzzles from './lib/puzzles/tutorial';
+  import casualPuzzles from './lib/puzzles/casual';
+  import challengePuzzles from './lib/puzzles/challenge';
+  import extremePuzzles from './lib/puzzles/extreme';
   import { currentDayIndex } from './lib/date';
   import Title from './lib/Title.svelte';
   import confetti from 'canvas-confetti';
   import { setContext } from 'svelte';
+  import { Puzzle, Difficulty } from './lib/puzzle.svelte';
 
   let board: Array<Array<Tile | null>> = $state([
     [null, null, null, null],
@@ -42,52 +42,58 @@
     history.pushState({difficulty}, '');
   }
 
-  const casualLevel = casualLevels[currentDayIndex()];
-  const challengeLevel = challengeLevels[currentDayIndex()];
-  const extremeLevel = extremeLevels[currentDayIndex()];
+  const tutorials = $state([
+    new Puzzle(tutorialPuzzles[0]),
+    new Puzzle(tutorialPuzzles[1]),
+    new Puzzle(tutorialPuzzles[2]),
+  ]);
 
-  let level: Level | null = $derived.by(() => {
+  const casualPuzzle = $state(new Puzzle(casualPuzzles[currentDayIndex()]));
+  const challengePuzzle = $state(new Puzzle(challengePuzzles[currentDayIndex()]));
+  const extremePuzzle = $state(new Puzzle(extremePuzzles[currentDayIndex()]));
+
+  let puzzle: Puzzle | null = $derived.by(() => {
     if (difficulty === 'Tutorial1') {
-      return tutorialLevels[0];
+      return tutorials[0];
     }
     if (difficulty === 'Tutorial2') {
-      return tutorialLevels[1];
+      return tutorials[1];
     }
     if (difficulty === 'Tutorial3') {
-      return tutorialLevels[2];
+      return tutorials[2];
     }
     if (difficulty === 'Casual') {
-      return casualLevel;
+      return casualPuzzle;
     }
     if (difficulty === 'Challenge') {
-      return challengeLevel;
+      return challengePuzzle;
     }
     if (difficulty === 'Extreme') {
-      return extremeLevel;
+      return extremePuzzle;
     }
     return null;
   });
 
   let solved: boolean | null = $derived.by(() => {
-    if (level) {
-      return checkPuzzle(level, board)
+    if (puzzle) {
+      return puzzle.check();
     }
     return null;
   });
 
-  let completedLevels: Array<string> = $state([]);
+  let completedPuzzles: Array<string> = $state([]);
 
-  const setCompletedLevels = (levelIds: Array<string>) => {
-    completedLevels = levelIds;
+  const setCompletedPuzzles = (puzzleIds: Array<string>) => {
+    completedPuzzles = puzzleIds;
   }
 
-  let casualLevelSolved = $derived(completedLevels.some(id => id == casualLevel.id));
-  let challengeLevelSolved = $derived(completedLevels.some(id => id == challengeLevel.id));
-  let extremeLevelSolved = $derived(completedLevels.some(id => id == extremeLevel.id));
+  let casualPuzzleSolved = $derived(completedPuzzles.some(id => id == casualPuzzle.id));
+  let challengePuzzleSolved = $derived(completedPuzzles.some(id => id == challengePuzzle.id));
+  let extremePuzzleSolved = $derived(completedPuzzles.some(id => id == extremePuzzle.id));
 
   $effect(() => {
-    if (level && solved && !completedLevels.some(id => id === level.id)) {
-      completedLevels.push(level.id);
+    if (puzzle && solved && !completedPuzzles.some(id => id === puzzle.id)) {
+      completedPuzzles.push(puzzle.id);
 
       confetti({
         particleCount: 100,
@@ -98,19 +104,7 @@
     }
   })
 
-  $effect(() => {
-    if (level) {
-      for (let [rowIndex, row] of level.hints.entries()) {
-        for (let [colIndex, space] of row.entries()) {
-          if (space) {
-            board[rowIndex][colIndex] = space;
-          }
-        }
-      }
-    }
-  })
-
-  const resetLevel = () => {
+  const resetPuzzle = () => {
     board = [
       [null, null, null, null],
       [null, null, null, null],
@@ -119,52 +113,30 @@
     ];
   }
 
-  const setBoard = (newBoard: Array<Array<Tile | null>>) => {
-    board = newBoard;
-  }
-
-  const share = () => {
-    let shareText = "Check out today's Quad\n\nquad.skylerberg.com";
-    if (casualLevelSolved && challengeLevelSolved && extremeLevelSolved) {
-      shareText = "I solved every Quad today!\n\nquad.skylerberg.com";
-    }
-    else if (casualLevelSolved && extremeLevelSolved) {
-      shareText = "I solved today's casual and extreme Quad!\n\nquad.skylerberg.com";
-    }
-    else if (challengeLevelSolved && extremeLevelSolved) {
-      shareText = "I solved today's challenge and extreme Quad!\n\nquad.skylerberg.com";
-    }
-    else if (extremeLevelSolved) {
-      shareText = "I solved today's extreme Quad!\n\nquad.skylerberg.com";
-    }
-    navigator.clipboard.writeText(shareText);
-  }
-
   addEventListener("popstate", (event) => {
     difficulty = event.state && event.state.difficulty;
   })
 </script>
 
-{#if level}
-<Header
+{#if puzzle && difficulty}
+  <Header
+    {puzzle}
     {difficulty}
     returnToMainMenu={() => setDifficulty(null)}
-    {resetLevel}
-/>
+    {resetPuzzle}
+  />
 {/if}
 
 <main>
   <StorageHandler
-      {level}
-      {board}
-      {completedLevels}
-      {setBoard}
-      {setCompletedLevels}
+    {puzzle}
+    {completedPuzzles}
+    {setCompletedPuzzles}
   />
-  {#if level}
-    <Board {board} {level} />
-    <TileBag {board} />
-    <DragHandler bind:board {level} />
+  {#if puzzle}
+    <Board {puzzle} />
+    <TileBag {puzzle} />
+    <DragHandler {puzzle} />
 
     {#if solved}
       {#if difficulty === 'Tutorial1'}
@@ -177,23 +149,23 @@
         <button class="success-button" onclick={() => setDifficulty(null)}>All Done!</button>
       {/if}
       {#if difficulty === 'Casual'}
-        {#if !challengeLevelSolved}
+        {#if !challengePuzzleSolved}
           <button class="success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
-        {:else if !extremeLevelSolved}
+        {:else if !extremePuzzleSolved}
           <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
         {:else}
-          <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
         {/if}
       {/if}
       {#if difficulty === 'Challenge'}
-        {#if !extremeLevelSolved}
+        {#if !extremePuzzleSolved}
           <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
         {:else}
-          <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
         {/if}
       {/if}
       {#if difficulty === 'Extreme'}
-        <ShareButton {casualLevelSolved} {challengeLevelSolved} {extremeLevelSolved}/>
+        <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
       {/if}
 
     {/if}

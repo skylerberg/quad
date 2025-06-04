@@ -3,10 +3,10 @@
   import checkIcon from '../assets/check.svg';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
 
-  let { casualLevelSolved, challengeLevelSolved, extremeLevelSolved }: {
-    casualLevelSolved: boolean,
-    challengeLevelSolved: boolean,
-    extremeLevelSolved: boolean,
+  let { casualPuzzleSolved, challengePuzzleSolved, extremePuzzleSolved }: {
+    casualPuzzleSolved: boolean,
+    challengePuzzleSolved: boolean,
+    extremePuzzleSolved: boolean,
   } = $props()
 
   let shareTooltip: HTMLElement;
@@ -18,16 +18,16 @@
 
   const share = () => {
     let shareText = "Check out today's Quad\n\nquad.skylerberg.com";
-    if (casualLevelSolved && challengeLevelSolved && extremeLevelSolved) {
+    if (casualPuzzleSolved && challengePuzzleSolved && extremePuzzleSolved) {
       shareText = "I solved every Quad today!\n\nquad.skylerberg.com";
     }
-    else if (casualLevelSolved && extremeLevelSolved) {
+    else if (casualPuzzleSolved && extremePuzzleSolved) {
       shareText = "I solved today's casual and extreme Quad!\n\nquad.skylerberg.com";
     }
-    else if (challengeLevelSolved && extremeLevelSolved) {
+    else if (challengePuzzleSolved && extremePuzzleSolved) {
       shareText = "I solved today's challenge and extreme Quad!\n\nquad.skylerberg.com";
     }
-    else if (extremeLevelSolved) {
+    else if (extremePuzzleSolved) {
       shareText = "I solved today's extreme Quad!\n\nquad.skylerberg.com";
     }
     navigator.clipboard.writeText(shareText);

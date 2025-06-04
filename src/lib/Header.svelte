@@ -2,23 +2,26 @@
   import helpCircleOutlineUri from '../assets/help-circle-outline.svg';
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
   import goalArrowUri from '../assets/goal-arrow.svg';
+  import undoIcon from '../assets/undo.svg';
   import { computePosition, autoUpdate, offset, shift } from '@floating-ui/dom';
   import { onMount } from 'svelte';
-  import type { Difficulty } from './level';
   import GoalIcon from './GoalIcon.svelte';
   import { red, green, white } from './tile';
   import ExampleTile from './ExampleTile.svelte';
   import TileToken from './TileToken.svelte';
   import Title from './Title.svelte';
+  import type { Puzzle, Difficulty } from './puzzle.svelte';
 
   let {
     returnToMainMenu,
-    resetLevel,
+    resetPuzzle,
     difficulty,
+    puzzle,
   }: {
     returnToMainMenu: () => void,
-    resetLevel: () => void,
+    resetPuzzle: () => void,
     difficulty: Difficulty,
+    puzzle: Puzzle,
   } = $props();
 
   let menuButton: HTMLElement;
@@ -54,34 +57,13 @@
   const exampleGoal = {suits: [green, red, red, white], ranks: [ ]};
   const exampleGoalNumbers = {suits: [], ranks: [1, 1, 3, 4]};
 
-  function runResetLevel() {
-    resetLevel();
-    const dialog = document.getElementById('reset-level-dialog') as HTMLDialogElement;
-    dialog.close();
-  }
-
-  function clearGameState() {
-    resetLevel();
-    localStorage.clear();
-    goToLevel(1);
-    const dialog = document.getElementById('reset-game-dialog') as HTMLDialogElement;
+  function runResetPuzzle() {
+    resetPuzzle();
+    const dialog = document.getElementById('reset-puzzle-dialog') as HTMLDialogElement;
     dialog.close();
   }
 
   let howToPlayExampleSequenceIntervalId = null;
-
-  function showHowToPlay() {
-    exampleRowSequenceIndex = 0;
-    if (!howToPlayExampleSequenceIntervalId) {
-      howToPlayExampleSequenceIntervalId = setInterval(() => {
-        exampleRowSequenceIndex += 1;
-        exampleRowSequenceIndex %= exampleRowSequence.length;
-      }, 1500)
-    }
-
-    const dialog = document.getElementById('how-to-play-dialog') as HTMLDialogElement;
-    dialog.showModal();
-  }
 
   function showTutorial1() {
     exampleRowSequenceIndex = 0;
@@ -138,12 +120,6 @@
     closeMenu();
   }
 
-  function handleLevelSelect(level: number) {
-    goToLevel(level);
-    const dialog = document.getElementById('level-select-dialog') as HTMLDialogElement;
-    dialog.close();
-  }
-
   function handleDialogClick(event: MouseEvent) {
     const dialog = event.currentTarget as HTMLDialogElement;
     const rect = dialog.getBoundingClientRect();
@@ -184,68 +160,39 @@
 
 
 <nav class='navbar'>
-  <a class="unstyled" href="#" onclick={(event) => {event.preventDefault(); returnToMainMenu()}}>
+  <a class="unstyled" href="/" onclick={(event) => {event.preventDefault(); returnToMainMenu()}}>
     <Title />
   </a>
-  <span class='level'></span> <!-- TODO remove this line -->
   <div class="nav-buttons">
     <button
-      class="menu-button"
-      aria-label="Help"
-      onclick={() => showHowToPlay()}
-      onclose={() => clearExampleSequence()}
+      class="menu-button undo"
+      aria-label="Undo"
+      disabled={!puzzle.undoAvailable}
+      onclick={() => puzzle.undo()}
+      title="Undo"
     >
-      <img src={helpCircleOutlineUri} class='icon' alt="Help icon" />
+      <img src={undoIcon} class='icon' alt="undo icon" />
+    </button>
+    <button
+      class="menu-button redo"
+      aria-label="Redo"
+      disabled={!puzzle.redoAvailable}
+      onclick={() => puzzle.redo()}
+      title="Redo"
+    >
+      <img src={undoIcon} class='icon' alt="Help icon" />
     </button>
     <div class="menu-container">
       <button bind:this={menuButton} onclick={toggleMenu} class="menu-button" aria-label="Menu">
-        <img src={menuImageUri} class='icon' alt="Menu icon" />
+        <img src={menuImageUri} class='icon' alt="redo icon" />
       </button>
       <div bind:this={menu} class="menu">
         <button class="menu-item" onclick={() => returnToMainMenu()}>Switch Difficulty</button>
-        <button class="menu-item" onclick={() => showDialog('reset-level-dialog')}>Reset Level</button>
+        <button class="menu-item" onclick={() => showDialog('reset-puzzle-dialog')}>Reset Puzzle</button>
       </div>
     </div>
   </div>
 </nav>
-
-<dialog class="help-dialog" id="how-to-play-dialog" onclick={handleDialogClick}>
-  <h2>How To Play</h2>
-  <p>Drag tiles onto the board<br /> to fulfill all row and column goals</p>
-  <h3>Example</h3>
-  <div class="example-row">
-    <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
-  </div>
-  <div class="example-row">
-    <div class="goal">
-      <GoalIcon
-        level={{type: 'Tutorial'}}
-        tiles={exampleRowSequence[exampleRowSequenceIndex]}
-        goal={exampleGoal}
-        type='row'
-        position={1}
-      />
-    </div>
-    {#each exampleRowSequence[exampleRowSequenceIndex] as tile}
-    <div class="space {tile ? "" : "empty"}">
-            
-      {#if tile}
-        <ExampleTile {tile} />
-      {/if}
-    </div>
-    {/each}
-  </div>
-  <br />
-  <hr />
-  <div class="locked-example">
-    <TileToken tile={{suit: green, rank: 4}} locked={true} />
-    <span>Tiles without backgrounds <br /> cannot be moved</span>
-  </div>
-  <hr />
-  <form method="dialog">
-    <button>Got It</button>
-  </form>
-</dialog>
 
 <dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick}>
   <h2>How To Play</h2>
@@ -257,7 +204,6 @@
   <div class="example-row">
     <div class="goal">
       <GoalIcon
-        level={{type: 'Tutorial'}}
         tiles={exampleRowSequence[exampleRowSequenceIndex]}
         goal={exampleGoal}
         type='row'
@@ -288,7 +234,6 @@
   <div class="example-row">
     <div class="goal">
       <GoalIcon
-        level={{type: 'Tutorial'}}
         tiles={exampleRowSequence[exampleRowSequenceIndex]}
         goal={exampleGoalNumbers}
         type='row'
@@ -328,14 +273,14 @@
   </form>
 </dialog>
 
-<dialog id="reset-level-dialog" onclick={handleDialogClick}>
-  <h2>Reset Level</h2>
-  <p>Are you sure you want to reset this level?</p>
+<dialog id="reset-puzzle-dialog" onclick={handleDialogClick}>
+  <h2>Reset Puzzle</h2>
+  <p>Are you sure you want to reset this puzzle?</p>
   <div class="dialog-buttons">
     <form method="dialog">
       <button>Cancel</button>
     </form>
-    <button onclick={runResetLevel} class="destructive">Reset Level</button>
+    <button onclick={runResetPuzzle} class="destructive">Reset Puzzle</button>
   </div>
 </dialog>
 
@@ -349,7 +294,7 @@
     padding-left: 10px;
     padding-right: 10px;
     box-sizing: border-box;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     align-items: center;
   }
 
@@ -359,7 +304,7 @@
     justify-content: space-evenly;
   }
 
-  .level {
+  .puzzle {
     margin-left: auto;
     margin-right: auto;
     font-size: 16pt;
@@ -387,6 +332,10 @@
     padding: 0;
     display: flex;
     align-items: center;
+  }
+
+  .menu-button:disabled {
+    filter: brightness(50%);
   }
 
   .menu {
@@ -426,24 +375,6 @@
     margin-top: 0;
   }
 
-  .level-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-
-  .level-button {
-    padding: 10px;
-    color: white;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    justify-content: center;
-  }
-
   dialog {
     width: min(400px, 80vw);
   }
@@ -469,26 +400,6 @@
 
   .destructive:hover {
     background: #ff2222;
-  }
-
-  .level-section {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .level-section > h2 {
-    margin-bottom: 0;
-  }
-
-  .suit-icon {
-    height: 2em;
-  }
-
-  .section-icon {
-    height: 1.5em;
-    filter: invert(100%);
-    margin-top: -2px;
   }
 
   .goal {
@@ -530,5 +441,16 @@
     width: fit-content;
     color: inherit;
     text-decoration: inherit;
+  }
+
+  .undo {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .redo {
+    transform: scaleX(-1);
+    margin-left: 5px;
+    margin-right: 5px;
   }
 </style>

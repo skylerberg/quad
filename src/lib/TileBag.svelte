@@ -1,18 +1,19 @@
 <script lang="ts">
   import TileToken from './TileToken.svelte';
+  import type { Puzzle } from './puzzle.svelte';
   import type { Tile } from './tile';
   import { tilesAreEqual, allRanks, allSuits } from './tile';
 
-  let { board }: {
-    board: Array<Array<Tile | null>>
+  let { puzzle }: {
+    puzzle: Puzzle,
   } = $props();
 
   const tilesNotOnBoard = () => {
     const tiles = [];
     for (const suit of allSuits) {
       for (const rank of allRanks) {
-        const tile = {suit, rank};
-        if (!board.some(row => row.some(tileOnBoard => tileOnBoard && tilesAreEqual(tileOnBoard, tile)))) {
+        const tile = {suit, rank, locked: false};
+        if (!puzzle.board.some(row => row.some(tileOnBoard => tileOnBoard && tilesAreEqual(tileOnBoard, tile)))) {
           tiles.push(tile);
         }
       }

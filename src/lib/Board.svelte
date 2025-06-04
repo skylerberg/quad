@@ -1,30 +1,28 @@
 <script lang="ts">
   import GoalIcon from './GoalIcon.svelte';
   import TileToken from './TileToken.svelte';
-  import type { Tile } from './tile';
-  import type { Level } from './level';
+  import type { Puzzle } from './puzzle.svelte';
 
-  let { level, board }: {
-    level: Level,
-    board: Array<Array<Tile | null>>
+  let { puzzle }: {
+    puzzle: Puzzle,
   } = $props();
 
-  const col0 = $derived([board[0][0], board[1][0], board[2][0], board[3][0]])
-  const col1 = $derived([board[0][1], board[1][1], board[2][1], board[3][1]])
-  const col2 = $derived([board[0][2], board[1][2], board[2][2], board[3][2]])
-  const col3 = $derived([board[0][3], board[1][3], board[2][3], board[3][3]])
+  const col0 = $derived([puzzle.board[0][0], puzzle.board[1][0], puzzle.board[2][0], puzzle.board[3][0]])
+  const col1 = $derived([puzzle.board[0][1], puzzle.board[1][1], puzzle.board[2][1], puzzle.board[3][1]])
+  const col2 = $derived([puzzle.board[0][2], puzzle.board[1][2], puzzle.board[2][2], puzzle.board[3][2]])
+  const col3 = $derived([puzzle.board[0][3], puzzle.board[1][3], puzzle.board[2][3], puzzle.board[3][3]])
 
   const cols = $derived([col0, col1, col2, col3]);
 </script>
 
 <div class='board'>
   <div></div>
-  {#each level.colGoals as goal, index}
-    <GoalIcon {level} tiles={cols[index]} {goal} type='column' position={index} />
+  {#each puzzle.colGoals as goal, index}
+    <GoalIcon tiles={cols[index]} {goal} type='column' position={index} />
   {/each}
 
-  {#each board as row, rowIndex}
-    <GoalIcon {level} tiles={row} goal={level.rowGoals[rowIndex]} type='row' position={rowIndex} />
+  {#each puzzle.board as row, rowIndex}
+    <GoalIcon tiles={row} goal={puzzle.rowGoals[rowIndex]} type='row' position={rowIndex} />
     {#each row as tile, colIndex}
       {#key tile}
         <div
@@ -33,7 +31,7 @@
             data-col={colIndex}
         >
           {#if tile}
-            <TileToken {tile} locked={!!level.hints[rowIndex][colIndex]}/>
+            <TileToken {tile} />
           {/if}
         </div>
       {/key}
