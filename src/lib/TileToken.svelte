@@ -1,33 +1,37 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { Tile } from './tile';
-  import { getSuitIcon, suitSymbolToName } from './tile';
+  import { getSuitIcon, suitSymbolToName, tilesAreEqual } from './tile';
+  import type { Puzzle } from './puzzle.svelte';
 
   let tutorialSettings: { hideNumbers: boolean } = getContext('tutorialSettings');
 
-  let { tile }: {
+  let { tile, puzzle }: {
     tile: Tile,
+    puzzle: Puzzle | undefined,
   } = $props();
 
-  let element: HTMLElement;
-
-  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)} ${tile.locked ? 'locked' : 'unlocked'}`;
+  const tileClasses = $derived(
+    [
+      'tile-token',
+      suitSymbolToName(tile.suit),
+      tile.locked ? 'locked' : 'unlocked',
+      (puzzle && tilesAreEqual(tile, puzzle.selectedTile)) ? 'selected' : '',
+    ].join(' ')
+  );
 </script>
 
-<div
-  bind:this={element}
+<button
   class={tileClasses}
-  role="button"
   data-tile={JSON.stringify(tile)}
   style="background-image: url({getSuitIcon(tile.suit)});"
-  tabindex="0"
 >
   <span>
     {#if !tutorialSettings.hideNumbers}
       {tile.rank}
     {/if}
   </span>
-</div>
+</button>
 
 <style>
   .tile-token {
@@ -54,6 +58,14 @@
   .tile-token.locked {
     background-color: unset;
     cursor: unset;
+  }
+
+  .tile-token.selected:not(.draggable-mirror) {
+    border-color: white;
+    box-shadow:
+      inset 0 0 1px 1px #666,
+      inset 0 0 5px 3px white
+    ;
   }
 
   .red {

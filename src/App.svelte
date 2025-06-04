@@ -114,9 +114,15 @@
     ];
   }
 
-  addEventListener("popstate", (event) => {
+  addEventListener('popstate', (event) => {
     difficulty = event.state && event.state.difficulty;
-  })
+  });
+
+  window.addEventListener('click', () => {
+    if (puzzle) {
+      puzzle.selectedTile = undefined;
+    }
+  });
 </script>
 
 {#if puzzle && difficulty}

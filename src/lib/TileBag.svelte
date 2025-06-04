@@ -30,23 +30,26 @@
     }
     return result;
   });
+
+  const handleClick = (event: Event) => {
+    event.stopPropagation();
+    puzzle.selectTileBag();
+  }
 </script>
 
-<main>
-  <div class="tile-bag">
-    {#each Object.entries(tilesBySuit) as [suit, tilesOfSuit]}
-      <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
-        {#each allRanks as rank}
-          {#if tilesOfSuit.some(tile => tile.rank === rank)}
-            <TileToken tile={tilesOfSuit.find(t => t.rank === rank)} location="bag" />
-          {:else}
-            <div class="blank-tile"></div>
-          {/if}
-        {/each}
-      </div>
-    {/each}
-  </div>
-</main>
+<div class="tile-bag" onclick={handleClick}>
+  {#each Object.entries(tilesBySuit) as [suit, tilesOfSuit]}
+    <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
+      {#each allRanks as rank}
+        {#if tilesOfSuit.some(tile => tile.rank === rank)}
+          <TileToken tile={tilesOfSuit.find(t => t.rank === rank)} {puzzle} />
+        {:else}
+          <div class="blank-tile"></div>
+        {/if}
+      {/each}
+    </div>
+  {/each}
+</div>
 
 <style>
   .tile-bag {
@@ -54,9 +57,9 @@
     flex-wrap: wrap;
     max-width: min(92vw, 900px);
     margin-left: auto;
-    margin-right:auto;
+    margin-right: auto;
     min-height: 50px;
-    margin-top: 20px;
+    padding-top: 20px;
     justify-content: center;
   }
 

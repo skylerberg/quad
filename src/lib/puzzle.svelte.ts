@@ -1,6 +1,6 @@
 import { evaluate, type Goal } from './goal';
 import type { Tile, Rank, Suit } from './tile';
-import { red, blue, green, white } from './tile';
+import { red, blue, green, white, tilesAreEqual } from './tile';
 
 export type Difficulty = 'Tutorial1' | 'Tutorial2' | 'Tutorial3' | 'Casual' | 'Challenge' | 'Extreme';
 
@@ -14,12 +14,17 @@ export type Action = {
   first: Space,
   second: Space,
 } | {
+  type: 'swap-bag',
+  boardTile?: Tile,
+  bagTile: Tile,
+  space: Space,
+} | {
   type: 'place',
   tile: Tile,
   space: Space,
 } | {
   type: 'remove',
-  tile: Tile | undefined,
+  tile?: Tile,
   space: Space,
 };
 
@@ -33,6 +38,7 @@ export class Puzzle {
   historyPosition: number = $state(0);
   redoAvailable: boolean = $derived(this.actionHistory.length > this.historyPosition)
   undoAvailable: boolean = $derived(this.historyPosition > 0)
+  selectedTile: Tile | undefined = $state(undefined)
 
   constructor({goals, hints}: {goals: string, hints: string}) {
     this.id = goals;
@@ -71,14 +77,6 @@ export class Puzzle {
     return !!this.board[row][col]?.locked;
   }
 
-  redoIsAvailable(): boolean {
-    return this.actionHistory.length > this.historyPosition;
-  }
-
-  undoIsAvailable(): boolean {
-    return this.historyPosition > 0;
-  }
-
   do(action: Action) {
     let actionSucceeded = false;
     if (action.type === 'swap') {
@@ -89,6 +87,16 @@ export class Puzzle {
             || action.first.col !== action.second.col)
       ) {
         this.swapBoardSpaces(action.first, action.second);
+        actionSucceeded = true;
+      }
+    }
+    if (action.type === 'swap-bag') {
+      if (!this.isLocked(action.space.row, action.space.col)) {
+        const tile = this.removeFromBoard(action.space.row, action.space.col);
+        this.placeOnBoard(action.space.row, action.space.col, action.bagTile);
+        if (tile) {
+          action.boardTile = tile;
+        }
         actionSucceeded = true;
       }
     }
@@ -115,6 +123,8 @@ export class Puzzle {
 
       this.actionHistory.push(action);
       this.historyPosition += 1;
+
+      this.selectedTile = undefined;
     }
   }
 
@@ -124,6 +134,10 @@ export class Puzzle {
 
     if (action.type === 'swap') {
       this.swapBoardSpaces(action.second, action.first);
+    }
+    if (action.type === 'swap-bag') {
+      this.removeFromBoard(action.space.row, action.space.col);
+      this.placeOnBoard(action.space.row, action.space.col, action.boardTile);
     }
     else if (action.type === 'place') {
       this.removeFromBoard(action.space.row, action.space.col);
@@ -142,14 +156,15 @@ export class Puzzle {
     if (action.type === 'swap') {
       this.swapBoardSpaces(action.first, action.second);
     }
+    if (action.type === 'swap-bag') {
+      this.removeFromBoard(action.space.row, action.space.col);
+      this.placeOnBoard(action.space.row, action.space.col, action.bagTile);
+    }
     else if (action.type === 'place') {
       this.placeOnBoard(action.space.row, action.space.col, action.tile);
     }
     else if (action.type === 'remove') {
-      const tile = this.removeFromBoard(action.space.row, action.space.col);
-      if (tile) {
-        action.tile = tile;
-      }
+      this.removeFromBoard(action.space.row, action.space.col);
     }
   }
 
@@ -167,6 +182,91 @@ export class Puzzle {
     const fromTile = this.board[first.row][first.col];
     this.board[first.row][first.col] = this.board[second.row][second.col];
     this.board[second.row][second.col] = fromTile;
+  }
+
+  selectTile(tile: Tile | undefined) {
+    if (this.selectedTile) {
+      if (tilesAreEqual(this.selectedTile, tile) || tile === undefined) {
+        this.selectedTile = undefined; // Toggle selection
+      }
+      else {
+        const clickedTileLocation = this.findTile(tile);
+        const currentlySelectedTileLocation = this.findTile(this.selectedTile);
+        if (currentlySelectedTileLocation === 'bag' && clickedTileLocation === 'bag') {
+          this.selectedTile = tile;
+        }
+        else if (currentlySelectedTileLocation === 'bag' && clickedTileLocation !== 'bag') {
+          this.do({
+            type: 'swap-bag',
+            space: clickedTileLocation,
+            bagTile: this.selectedTile,
+          });
+        }
+        else if (currentlySelectedTileLocation !== 'bag' && clickedTileLocation === 'bag') {
+          this.do({
+            type: 'swap-bag',
+            space: currentlySelectedTileLocation,
+            bagTile: tile,
+          });
+        }
+        else { // both are on the board
+          this.do({
+            type: 'swap',
+            first: currentlySelectedTileLocation,
+            second: clickedTileLocation,
+          });
+        }
+      }
+    }
+    else {
+      this.selectedTile = tile;
+    }
+  }
+
+  selectSpace(space: Space) {
+    if (this.selectedTile) {
+      const selectedTileLocation = this.findTile(this.selectedTile);
+      if (selectedTileLocation === 'bag') {
+        this.do({
+          type: 'place',
+          tile: this.selectedTile,
+          space,
+        });
+      }
+      else {
+        this.do({
+          type: 'swap',
+          first: selectedTileLocation,
+          second: space,
+        });
+      }
+    }
+  }
+
+  selectTileBag() {
+    if (this.selectedTile) {
+      const selectedTileLocation = this.findTile(this.selectedTile);
+      if (selectedTileLocation === 'bag') {
+        this.selectedTile = undefined;
+      }
+      else {
+        this.do({
+          type: 'remove',
+          space: selectedTileLocation,
+        });
+      }
+    }
+  }
+
+  private findTile(tile: Tile): Space | 'bag' {
+    for (let [rowIndex, row] of this.board.entries()) {
+      for (let [colIndex, space] of row.entries()) {
+        if (tilesAreEqual(tile, space)) {
+          return { row: rowIndex, col: colIndex };
+        }
+      }
+    }
+    return 'bag';
   }
 
   check(): boolean | null {

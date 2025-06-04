@@ -1,5 +1,4 @@
 <script lang="ts">
-  import helpCircleOutlineUri from '../assets/help-circle-outline.svg';
   import menuImageUri from '../assets/menu-burger-horizontal.svg';
   import goalArrowUri from '../assets/goal-arrow.svg';
   import undoIcon from '../assets/undo.svg';

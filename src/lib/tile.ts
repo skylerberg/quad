@@ -40,8 +40,8 @@ export function getSuitIcon(suit: Suit): string {
   return tulip;
 }
 
-export function tilesAreEqual(a: Tile | undefined, b: Tile | undefined) {
-  if (a === undefined || b === undefined) {
+export function tilesAreEqual(a: Tile | undefined | null, b: Tile | undefined | null) {
+  if (a === undefined || b === undefined || a === null || b === null) {
     return false;
   }
   return a.rank === b.rank && a.suit === b.suit;

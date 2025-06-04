@@ -7,6 +7,11 @@
     puzzle: Puzzle,
   } = $props();
 
+  const spaceClick = (event: Event, row: number, col: number) => {
+    event.stopPropagation();
+    puzzle.selectSpace({row, col});
+  }
+
   const col0 = $derived([puzzle.board[0][0], puzzle.board[1][0], puzzle.board[2][0], puzzle.board[3][0]])
   const col1 = $derived([puzzle.board[0][1], puzzle.board[1][1], puzzle.board[2][1], puzzle.board[3][1]])
   const col2 = $derived([puzzle.board[0][2], puzzle.board[1][2], puzzle.board[2][2], puzzle.board[3][2]])
@@ -26,12 +31,15 @@
     {#each row as tile, colIndex}
       {#key tile}
         <div
-            class="space {tile ? "" : "empty"}"
-            data-row={rowIndex}
-            data-col={colIndex}
+          class="space {tile ? "" : "empty"}"
+          data-row={rowIndex}
+          data-col={colIndex}
+          data-occupied={!!tile}
+          role="button"
+          onclick={() => !tile && spaceClick(event, rowIndex, colIndex)}
         >
           {#if tile}
-            <TileToken {tile} />
+            <TileToken {tile} {puzzle}/>
           {/if}
         </div>
       {/key}

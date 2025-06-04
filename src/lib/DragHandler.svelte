@@ -9,7 +9,7 @@
 
   let draggable = $state(undefined);
   let draggedOverSpace = undefined;
-  let tileInDraggedOverSpace = undefined;
+  let notDraggedFar = true;
 
   onMount(() => {
     const containers = document.querySelectorAll('.board, .tile-bag');
@@ -21,10 +21,14 @@
       ghostClass: '.being-dragged',
     });
 
+    draggable.on('drag:out', () => {
+      notDraggedFar = false;
+      puzzle.selectTile(undefined);
+    });
+
     draggable.on('drag:move', (event) => {
       if (event.sensorEvent.target) {
         draggedOverSpace = event.sensorEvent.target.closest('.space');
-        tileInDraggedOverSpace = event.sensorEvent.target.closest('.tile-token');
       }
     });
 
@@ -34,19 +38,34 @@
       const draggingFrom = event.sourceContainer.classList.contains('board') ? 'board' : 'bag';
       const droppedOnSpace = draggedOverSpace;
 
+      if (notDraggedFar) {
+        puzzle.selectTile(tile);
+        return;
+      }
+
       if (droppedOnSpace && draggingFrom === 'bag') {
-        const row = droppedOnSpace.dataset.row;
-        const col = droppedOnSpace.dataset.col;
-        puzzle.do({
-          type: 'place',
-          space: { row, col },
-          tile,
-        });
+        const row = JSON.parse(droppedOnSpace.dataset.row);
+        const col = JSON.parse(droppedOnSpace.dataset.col);
+        const occupied = JSON.parse(droppedOnSpace.dataset.occupied);
+        if (occupied) {
+          puzzle.do({
+            type: 'swap-bag',
+            space: { row, col },
+            bagTile: tile,
+          });
+        }
+        else {
+          puzzle.do({
+            type: 'place',
+            space: { row, col },
+            tile,
+          });
+        }
       }
 
       else if (draggingFrom === 'board' && droppedOnSpace) {
-        const from = { row: tileToken.parentNode.dataset.row, col: tileToken.parentNode.dataset.col };
-        const to = { row: droppedOnSpace.dataset.row, col: droppedOnSpace.dataset.col };
+        const from = { row: JSON.parse(tileToken.parentNode.dataset.row), col: JSON.parse(tileToken.parentNode.dataset.col) };
+        const to = { row: JSON.parse(droppedOnSpace.dataset.row), col: JSON.parse(droppedOnSpace.dataset.col) };
         puzzle.do({
           type: 'swap',
           first: from,
@@ -55,16 +74,16 @@
       }
 
       else if (draggingFrom === 'board' && !droppedOnSpace) {
-        const row: number = tileToken.parentNode.dataset.row;
-        const col: number = tileToken.parentNode.dataset.col;
+        const row: number = JSON.parse(tileToken.parentNode.dataset.row);
+        const col: number = JSON.parse(tileToken.parentNode.dataset.col);
         puzzle.do({
           type: 'remove',
           space: { row, col },
         });
       }
 
+      notDraggedFar = true;
       draggedOverSpace = undefined;
-      tileInDraggedOverSpace = undefined;
     });
 
     return () => {
