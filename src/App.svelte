@@ -1,12 +1,10 @@
 <script lang="ts">
-
   import Board from './lib/Board.svelte';
   import TileBag from './lib/TileBag.svelte';
   import DragHandler from './lib/DragHandler.svelte';
   import Header from './lib/Header.svelte';
   import StorageHandler from './lib/StorageHandler.svelte';
   import ShareButton from './lib/ShareButton.svelte';
-  import type { Tile } from './lib/tile';
   import tutorialPuzzles from './lib/puzzles/tutorial';
   import casualPuzzles from './lib/puzzles/casual';
   import challengePuzzles from './lib/puzzles/challenge';
@@ -17,6 +15,7 @@
   import { setContext } from 'svelte';
   import type { Difficulty } from './lib/puzzle.svelte';
   import { Puzzle } from './lib/puzzle.svelte';
+  import { makeUserId, logSolve } from './lib/analytics';
 
   let difficulty: Difficulty | null = $state(null);
 
@@ -75,6 +74,11 @@
     return null;
   });
 
+  let userId: string = $state(makeUserId());
+  const setUserId = (newId: string) => {
+    userId = newId;
+  }
+
   let completedPuzzles: Array<string> = $state([]);
 
   const setCompletedPuzzles = (puzzleIds: Array<string>) => {
@@ -88,6 +92,7 @@
   $effect(() => {
     if (puzzle && solved && !completedPuzzles.some(id => id === puzzle.id)) {
       completedPuzzles.push(puzzle.id);
+      logSolve({userId, puzzleId: puzzle.id, difficulty});
 
       confetti({
         particleCount: 100,
@@ -148,6 +153,8 @@
     {puzzle}
     {completedPuzzles}
     {setCompletedPuzzles}
+    {setUserId}
+    {userId}
   />
   {#if puzzle}
     <Board {puzzle} />

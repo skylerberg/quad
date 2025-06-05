@@ -1,15 +1,29 @@
 <script lang="ts">
   import type { Puzzle } from './puzzle.svelte';
 
-  let { puzzle, completedPuzzles, setCompletedPuzzles }: {
+  let { puzzle, completedPuzzles, userId, setCompletedPuzzles, setUserId }: {
     puzzle: Puzzle | null,
     setCompletedPuzzles: (puzzleIds: Array<string>) => void,
+    setUserId: (userId: string) => void,
     completedPuzzles: Array<string>,
+    userId: string,
   } = $props();
 
-  const savedCompletedPuzzles = JSON.parse(localStorage.getItem('completedPuzzles'));
-  if (savedCompletedPuzzles && Array.isArray(savedCompletedPuzzles)) {
-    setCompletedPuzzles(savedCompletedPuzzles);
+  const savedUserId = localStorage.getItem('userId');
+  if (savedUserId) {
+    setUserId(savedUserId);
+  }
+
+  $effect(() => {
+    localStorage.setItem('userId', userId);
+  });
+
+  const savedCompletedPuzzlesJson = localStorage.getItem('completedPuzzles');
+  if (savedCompletedPuzzlesJson) {
+    const savedCompletedPuzzles = JSON.parse(savedCompletedPuzzlesJson);
+    if (Array.isArray(savedCompletedPuzzles)) {
+      setCompletedPuzzles(savedCompletedPuzzles);
+    }
   }
 
   $effect(() => {
