@@ -43,7 +43,6 @@
     }
   }
 
-  let exampleRowSequenceIndex = $state(0);
   const exampleRowSequence = [
     [null, null, null, null],
     [{suit: white, rank: 1}, null, null, null],
@@ -62,12 +61,15 @@
     dialog.close();
   }
 
-  let howToPlayExampleSequenceIntervalId = null;
+  let exampleRowSequenceIndex = $state(0);
+  let tutorial1SequenceIntervalId: number | undefined = undefined;
+  let tutorial2SequenceIntervalId: number | undefined = undefined;
 
-  function showTutorial1() {
+  const showTutorial1 = () => {
     exampleRowSequenceIndex = 0;
-    if (!howToPlayExampleSequenceIntervalId) {
-      howToPlayExampleSequenceIntervalId = setInterval(() => {
+    if (!tutorial1SequenceIntervalId) {
+      tutorial1SequenceIntervalId = setInterval(() => {
+        console.log(exampleRowSequenceIndex);
         exampleRowSequenceIndex += 1;
         exampleRowSequenceIndex %= exampleRowSequence.length;
       }, 1500)
@@ -77,10 +79,17 @@
     dialog.showModal();
   }
 
-  function showTutorial2() {
+  const clearTutorial1Sequence = () => {
+    clearInterval(tutorial1SequenceIntervalId);
+    tutorial1SequenceIntervalId = undefined;
     exampleRowSequenceIndex = 0;
-    if (!howToPlayExampleSequenceIntervalId) {
-      howToPlayExampleSequenceIntervalId = setInterval(() => {
+  }
+
+  const showTutorial2 = () => {
+    exampleRowSequenceIndex = 0;
+    if (!tutorial2SequenceIntervalId) {
+      tutorial2SequenceIntervalId = setInterval(() => {
+      console.log(exampleRowSequenceIndex);
         exampleRowSequenceIndex += 1;
         exampleRowSequenceIndex %= exampleRowSequence.length;
       }, 1500)
@@ -88,6 +97,12 @@
 
     const dialog = document.getElementById('tutorial-2-dialog') as HTMLDialogElement;
     dialog.showModal();
+  }
+
+  const clearTutorial2Sequence = () => {
+    clearInterval(tutorial2SequenceIntervalId);
+    tutorial1SequenceIntervalId = undefined;
+    exampleRowSequenceIndex = 0;
   }
 
   function showTutorial3() {
@@ -106,12 +121,6 @@
       showTutorial3();
     }
   });
-
-  function clearExampleSequence() {
-    exampleRowSequenceIndex = 0;
-    clearInterval(howToPlayExampleSequenceIntervalId);
-    howToPlayExampleSequenceIntervalId = null;
-  }
 
   function showDialog(dialogId: string) {
     const dialog = document.getElementById(dialogId) as HTMLDialogElement;
@@ -193,7 +202,7 @@
   </div>
 </nav>
 
-<dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick}>
+<dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick} onclose={clearTutorial1Sequence}>
   <h2>How To Play</h2>
   <p>Drag tiles onto the board to match the flowers for each row's and column's goal.</p>
   <h3>Example</h3>
@@ -224,7 +233,7 @@
   </form>
 </dialog>
 
-<dialog class="help-dialog" id="tutorial-2-dialog" onclick={handleDialogClick}>
+<dialog class="help-dialog" id="tutorial-2-dialog" onclick={handleDialogClick} onclose={clearTutorial2Sequence}>
   <p>We put numbers on the tiles! <br /> Goals can require you to match numbers.</p>
   <h3>Example</h3>
   <div class="example-row">
