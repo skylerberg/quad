@@ -8,7 +8,7 @@
   import tutorialPuzzles from './lib/puzzles/tutorial';
   import casualPuzzles from './lib/puzzles/casual';
   import challengePuzzles from './lib/puzzles/challenge';
-  import extremePuzzles from './lib/puzzles/extreme';
+  import expertPuzzles from './lib/puzzles/expert';
   import { currentDayIndex } from './lib/date';
   import Title from './lib/Title.svelte';
   import confetti from 'canvas-confetti';
@@ -43,7 +43,7 @@
 
   const casualPuzzle = $state(new Puzzle(casualPuzzles[currentDayIndex()]));
   const challengePuzzle = $state(new Puzzle(challengePuzzles[currentDayIndex()]));
-  const extremePuzzle = $state(new Puzzle(extremePuzzles[currentDayIndex()]));
+  const expertPuzzle = $state(new Puzzle(expertPuzzles[currentDayIndex()]));
 
   let puzzle: Puzzle | null = $derived.by(() => {
     if (difficulty === 'Tutorial1') {
@@ -61,8 +61,8 @@
     if (difficulty === 'Challenge') {
       return challengePuzzle;
     }
-    if (difficulty === 'Extreme') {
-      return extremePuzzle;
+    if (difficulty === 'Expert') {
+      return expertPuzzle;
     }
     return null;
   });
@@ -87,7 +87,7 @@
 
   let casualPuzzleSolved = $derived(completedPuzzles.some(id => id == casualPuzzle.id));
   let challengePuzzleSolved = $derived(completedPuzzles.some(id => id == challengePuzzle.id));
-  let extremePuzzleSolved = $derived(completedPuzzles.some(id => id == extremePuzzle.id));
+  let expertPuzzleSolved = $derived(completedPuzzles.some(id => id == expertPuzzle.id));
 
   $effect(() => {
     if (puzzle && solved && !completedPuzzles.some(id => id === puzzle.id)) {
@@ -174,21 +174,21 @@
       {#if difficulty === 'Casual'}
         {#if !challengePuzzleSolved}
           <button class="success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
-        {:else if !extremePuzzleSolved}
-          <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
+        {:else if !expertPuzzleSolved}
+          <button class="success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
         {:else}
-          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
+          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} expertPuzzleSolved={expertPuzzleSolved} />
         {/if}
       {/if}
       {#if difficulty === 'Challenge'}
-        {#if !extremePuzzleSolved}
-          <button class="success-button" onclick={() => setDifficulty('Extreme')}>Try Extreme</button>
+        {#if !expertPuzzleSolved}
+          <button class="success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
         {:else}
-          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
+          <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} expertPuzzleSolved={expertPuzzleSolved} />
         {/if}
       {/if}
-      {#if difficulty === 'Extreme'}
-        <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} {extremePuzzleSolved} />
+      {#if difficulty === 'Expert'}
+        <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} expertPuzzleSolved={expertPuzzleSolved} />
       {/if}
 
     {/if}
@@ -203,7 +203,7 @@
         <button class="difficulty-button" onclick={() => setDifficulty('Tutorial1')}>Tutorial</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
-        <button class="difficulty-button" onclick={() => setDifficulty('Extreme')}>Extreme</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Expert')}>Expert</button>
       </div>
 
       <p>New puzzles daily</p>

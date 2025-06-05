@@ -3,10 +3,10 @@
   import checkIcon from '../assets/check.svg';
   import { computePosition, flip, shift, offset, arrow } from '@floating-ui/dom';
 
-  let { casualPuzzleSolved, challengePuzzleSolved, extremePuzzleSolved }: {
+  let { casualPuzzleSolved, challengePuzzleSolved, expertPuzzleSolved }: {
     casualPuzzleSolved: boolean,
     challengePuzzleSolved: boolean,
-    extremePuzzleSolved: boolean,
+    expertPuzzleSolved: boolean,
   } = $props()
 
   let shareTooltip: HTMLElement;
@@ -18,17 +18,17 @@
 
   const share = () => {
     let shareText = "Check out today's Quad\n\nquad.skylerberg.com";
-    if (casualPuzzleSolved && challengePuzzleSolved && extremePuzzleSolved) {
+    if (casualPuzzleSolved && challengePuzzleSolved && expertPuzzleSolved) {
       shareText = "I solved every Quad today!\n\nquad.skylerberg.com";
     }
-    else if (casualPuzzleSolved && extremePuzzleSolved) {
-      shareText = "I solved today's casual and extreme Quad!\n\nquad.skylerberg.com";
+    else if (casualPuzzleSolved && expertPuzzleSolved) {
+      shareText = "I solved today's casual and expert Quad!\n\nquad.skylerberg.com";
     }
-    else if (challengePuzzleSolved && extremePuzzleSolved) {
-      shareText = "I solved today's challenge and extreme Quad!\n\nquad.skylerberg.com";
+    else if (challengePuzzleSolved && expertPuzzleSolved) {
+      shareText = "I solved today's challenge and expert Quad!\n\nquad.skylerberg.com";
     }
-    else if (extremePuzzleSolved) {
-      shareText = "I solved today's extreme Quad!\n\nquad.skylerberg.com";
+    else if (expertPuzzleSolved) {
+      shareText = "I solved today's expert Quad!\n\nquad.skylerberg.com";
     }
     navigator.clipboard.writeText(shareText);
     shared = true;

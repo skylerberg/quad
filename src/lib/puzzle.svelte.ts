@@ -2,7 +2,7 @@ import { evaluate, type Goal } from './goal';
 import type { Tile, Rank, Suit } from './tile';
 import { red, blue, green, white, tilesAreEqual } from './tile';
 
-export type Difficulty = 'Tutorial1' | 'Tutorial2' | 'Tutorial3' | 'Casual' | 'Challenge' | 'Extreme';
+export type Difficulty = 'Tutorial1' | 'Tutorial2' | 'Tutorial3' | 'Casual' | 'Challenge' | 'Expert';
 
 export type Space = {
   row: number,
