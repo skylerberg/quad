@@ -303,6 +303,18 @@ export class Puzzle {
 
     return result;
   }
+
+  reset() {
+    for (const row of this.board) {
+      for (const [colIndex, tile] of row.entries()) {
+        if (tile && !tile.locked) {
+          row[colIndex] = null;
+        }
+      }
+    }
+    this.actionHistory = [];
+    this.historyPosition = 0;
+  }
 };
 
 const goalFromString = (str: string): Goal => {

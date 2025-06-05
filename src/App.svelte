@@ -18,13 +18,6 @@
   import type { Difficulty } from './lib/puzzle.svelte';
   import { Puzzle } from './lib/puzzle.svelte';
 
-  let board: Array<Array<Tile | null>> = $state([
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-  ]);
-
   let difficulty: Difficulty | null = $state(null);
 
   let tutorialSettings: {hideNumbers: boolean} = $state({hideNumbers: false});
@@ -106,12 +99,9 @@
   })
 
   const resetPuzzle = () => {
-    board = [
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-    ];
+    if (puzzle) {
+      puzzle.reset();
+    }
   }
 
   addEventListener('popstate', (event) => {
