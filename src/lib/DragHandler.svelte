@@ -64,7 +64,8 @@
       }
 
       else if (draggingFrom === 'board' && droppedOnSpace) {
-        const from = { row: JSON.parse(tileToken.parentNode.dataset.row), col: JSON.parse(tileToken.parentNode.dataset.col) };
+        const space = tileToken.closest('.space');
+        const from = { row: JSON.parse(space.dataset.row), col: JSON.parse(space.dataset.col) };
         const to = { row: JSON.parse(droppedOnSpace.dataset.row), col: JSON.parse(droppedOnSpace.dataset.col) };
         puzzle.do({
           type: 'swap',
@@ -74,8 +75,9 @@
       }
 
       else if (draggingFrom === 'board' && !droppedOnSpace) {
-        const row: number = JSON.parse(tileToken.parentNode.dataset.row);
-        const col: number = JSON.parse(tileToken.parentNode.dataset.col);
+        const space = tileToken.closest('.space');
+        const row: number = JSON.parse(space.dataset.row);
+        const col: number = JSON.parse(space.dataset.col);
         puzzle.do({
           type: 'remove',
           space: { row, col },

@@ -21,17 +21,26 @@
   );
 </script>
 
-<button
-  class={tileClasses}
-  data-tile={JSON.stringify(tile)}
-  style="background-image: url({getSuitIcon(tile.suit)});"
+<!--
+The draggable library blocks click events on the button but the click will still propagate.
+We catch it and stop it in this outer span so that dragging doesn't also count as clicking
+the space or the tile bag that the token is in.
+-->
+<span
+  onclick={(event) => event.stopPropagation()}
 >
-  <span>
-    {#if !tutorialSettings.hideNumbers}
-      {tile.rank}
-    {/if}
-  </span>
-</button>
+  <button
+    class={tileClasses}
+    data-tile={JSON.stringify(tile)}
+    style="background-image: url({getSuitIcon(tile.suit)});"
+  >
+    <span>
+      {#if !tutorialSettings.hideNumbers}
+        {tile.rank}
+      {/if}
+    </span>
+  </button>
+</span>
 
 <style>
   .tile-token {
