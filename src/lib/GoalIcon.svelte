@@ -5,12 +5,14 @@
   import type { Tile } from './tile';
   import type { Rank, Suit } from './tile';
   import { getSuitIcon, suitSymbolToName, red, blue, green, white} from './tile';
+  import type { Difficulty } from './puzzle.svelte';
 
-  let { tiles, goal, type, position }: {
+  let { tiles, goal, type, position, difficulty }: {
     tiles: Array<Tile | null>,
     goal: Goal,
     type: 'row' | 'column',
     position: number | undefined,
+    difficulty: Difficulty,
   } = $props();
 
   let status = $derived(evaluate(goal, tiles));
@@ -86,7 +88,7 @@
       <div class="rank-requirement {satisfiedRanks[i] ? 'satisfied' : ''}">{rank}</div>
     {/each}
     {#each goal.suits as suit, i}
-      <img class="suit-requirement {satisfiedSuits[i] ? 'satisfied' : ''}" src={getSuitIcon(suit)} alt="Requires {suitSymbolToName(suit)}" />
+      <img class="suit-requirement {satisfiedSuits[i] ? 'satisfied' : ''}" src={getSuitIcon(suit, difficulty)} alt="Requires {suitSymbolToName(suit)}" />
     {/each}
   </div>
 

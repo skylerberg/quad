@@ -1,10 +1,11 @@
 <script lang="ts">
   import GoalIcon from './GoalIcon.svelte';
   import TileToken from './TileToken.svelte';
-  import type { Puzzle } from './puzzle.svelte';
+  import type { Difficulty, Puzzle } from './puzzle.svelte';
 
-  let { puzzle }: {
+  let { puzzle, difficulty }: {
     puzzle: Puzzle,
+    difficulty: Difficulty,
   } = $props();
 
   const spaceClick = (event: Event, row: number, col: number) => {
@@ -23,11 +24,11 @@
 <div class='board'>
   <div></div>
   {#each puzzle.colGoals as goal, index}
-    <GoalIcon tiles={cols[index]} {goal} type='column' position={index} />
+    <GoalIcon tiles={cols[index]} {goal} type='column' position={index} {difficulty} />
   {/each}
 
   {#each puzzle.board as row, rowIndex}
-    <GoalIcon tiles={row} goal={puzzle.rowGoals[rowIndex]} type='row' position={rowIndex} />
+    <GoalIcon tiles={row} goal={puzzle.rowGoals[rowIndex]} type='row' position={rowIndex} {difficulty} />
     {#each row as tile, colIndex}
       {#key tile}
         <div
@@ -39,7 +40,7 @@
           onclick={() => !tile && spaceClick(event, rowIndex, colIndex)}
         >
           {#if tile}
-            <TileToken {tile} {puzzle}/>
+            <TileToken {tile} {puzzle} {difficulty}/>
           {/if}
         </div>
       {/key}

@@ -1,20 +1,69 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { Tile } from './tile';
-  import { getSuitIcon, suitSymbolToName, tilesAreEqual } from './tile';
-  import type { Puzzle } from './puzzle.svelte';
+  import { getSuitIcon, tilesAreEqual, blue, green, red, white  } from './tile';
+  import type { Puzzle, Difficulty } from './puzzle.svelte';
 
   let tutorialSettings: { hideNumbers: boolean } = getContext('tutorialSettings');
 
-  let { tile, puzzle }: {
+  let { tile, puzzle, difficulty }: {
     tile: Tile,
     puzzle: Puzzle | undefined,
+    difficulty: Difficulty
   } = $props();
+
+
+  let tileColor = $state('white');
+  let textColor = $state('black');
+
+  const releaseElements = false;
+
+  if (tile.suit === blue) {
+    if (releaseElements && difficulty === 'Challenge') {
+      tileColor = 'rgb(177, 213, 255)';
+      textColor = 'black';
+    }
+    else {
+      tileColor = 'rgb(135, 195, 255)';
+      textColor = 'white';
+    }
+  }
+  else if (tile.suit === green) {
+    if (releaseElements && difficulty === 'Challenge') {
+      tileColor = '#a9ff91';
+      textColor = 'black';
+    }
+    else {
+      tileColor = 'rgb(184, 255, 137)';
+      textColor = 'white';
+    }
+  }
+  else if (tile.suit === red) {  // Fire
+    if (releaseElements && difficulty === 'Challenge') {
+      tileColor = 'rgb(255, 119, 52)';
+    }
+    else {
+      tileColor = 'rgb(155, 95, 53)';
+      textColor = 'black';
+    }
+  }
+  else if (tile.suit === white) {
+    if (releaseElements && difficulty === 'Challenge') {
+      tileColor = '#353535';
+      textColor = 'black';
+    }
+    else {
+      tileColor = 'rgb(255, 230, 128)';
+      textColor = 'black';
+    }
+  }
+  if (tile.locked) {
+    tileColor = "unset";
+  }
 
   const tileClasses = $derived(
     [
       'tile-token',
-      suitSymbolToName(tile.suit),
       tile.locked ? 'locked' : 'unlocked',
       (puzzle && tilesAreEqual(tile, puzzle.selectedTile)) ? 'selected' : '',
     ].join(' ')
@@ -32,7 +81,7 @@ the space or the tile bag that the token is in.
   <button
     class={tileClasses}
     data-tile={JSON.stringify(tile)}
-    style="background-image: url({getSuitIcon(tile.suit)});"
+    style="background-image: url({getSuitIcon(tile.suit, difficulty)}); background-color: {tileColor}; color: {textColor}"
   >
     <span>
       {#if !tutorialSettings.hideNumbers}
@@ -77,23 +126,5 @@ the space or the tile bag that the token is in.
     ;
   }
 
-  .red {
-    color: black;
-    background-color: rgb(155, 95, 53);
-  }
 
-  .blue {
-    color: white;
-    background-color: rgb(135, 195, 255);
-  }
-
-  .white {
-    background-color: rgb(255, 230, 128);
-    color: black;
-  }
-
-  .green {
-    color: white;
-    background-color: rgb(184, 255, 137);
-  }
 </style>

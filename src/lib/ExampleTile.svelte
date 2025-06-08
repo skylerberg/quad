@@ -13,7 +13,7 @@
 <div
     class={tileClasses}
     role="button"
-    style="background-image: url({getSuitIcon(tile.suit)});"
+    style="background-image: url({getSuitIcon(tile.suit, 'Casual')});"
 >
   <span>
     {#if showNumber}

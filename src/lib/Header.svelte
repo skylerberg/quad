@@ -216,6 +216,7 @@
         goal={exampleGoal}
         type='row'
         position={1}
+        difficulty="Casual"
       />
     </div>
     {#each exampleRowSequence[exampleRowSequenceIndex] as tile}
@@ -246,6 +247,7 @@
         goal={exampleGoalNumbers}
         type='row'
         position={1}
+        difficulty="Casual"
       />
     </div>
     {#each exampleRowSequence[exampleRowSequenceIndex] as tile}

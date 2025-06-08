@@ -156,9 +156,9 @@
     {setUserId}
     {userId}
   />
-  {#if puzzle}
-    <Board {puzzle} />
-    <TileBag {puzzle} />
+  {#if puzzle && difficulty}
+    <Board {puzzle} {difficulty} />
+    <TileBag {puzzle} {difficulty} />
     <DragHandler {puzzle} />
 
     {#if solved}

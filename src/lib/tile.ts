@@ -1,7 +1,12 @@
-import tulip from '../assets/tulip.svg';
-import daisy from '../assets/daisy.svg';
 import lotus from '../assets/lotus.svg';
+import tulip from '../assets/tulip.svg';
 import rose from '../assets/rose.svg';
+import daisy from '../assets/daisy.svg';
+import water from '../assets/water.svg?no-inline';
+import earth from '../assets/earth.svg?no-inline';
+import fire from '../assets/fire.svg?no-inline';
+import air from '../assets/air.svg?no-inline';
+import type { Difficulty } from './puzzle.svelte';
 
 export type Suit = 'R' | 'B' | 'W' | 'G';
 export type Rank = 1 | 2 | 3 | 4;
@@ -27,17 +32,34 @@ export function suitSymbolToName(suit: Suit): string {
   return 'green';
 }
 
-export function getSuitIcon(suit: Suit): string {
+const releaseElements = false;
+
+export function getSuitIcon(suit: Suit, difficulty: Difficulty): string {
+  console.log(difficulty);
   if (suit === red) {
+    if (releaseElements && difficulty === 'Challenge') {
+      return fire;
+    }
     return rose;
   }
   else if (suit === blue) {
+    if (releaseElements && difficulty === 'Challenge') {
+      return water;
+    }
     return lotus;
   }
   else if (suit === white) {
+    if (releaseElements && difficulty === 'Challenge') {
+      return air;
+    }
     return daisy;
   }
-  return tulip;
+  else {
+    if (releaseElements && difficulty === 'Challenge') {
+      return earth;
+    }
+    return tulip;
+  }
 }
 
 export function tilesAreEqual(a: Tile | undefined | null, b: Tile | undefined | null) {

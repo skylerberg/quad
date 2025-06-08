@@ -1,11 +1,12 @@
 <script lang="ts">
   import TileToken from './TileToken.svelte';
-  import type { Puzzle } from './puzzle.svelte';
+  import type { Difficulty, Puzzle } from './puzzle.svelte';
   import type { Tile } from './tile';
   import { tilesAreEqual, allRanks, allSuits } from './tile';
 
-  let { puzzle }: {
+  let { puzzle, difficulty }: {
     puzzle: Puzzle,
+    difficulty: Difficulty,
   } = $props();
 
   const tilesNotOnBoard = () => {
@@ -42,7 +43,7 @@
     <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
       {#each allRanks as rank}
         {#if tilesOfSuit.some(tile => tile.rank === rank)}
-          <TileToken tile={tilesOfSuit.find(t => t.rank === rank)} {puzzle} />
+          <TileToken tile={tilesOfSuit.find(t => t.rank === rank)} {puzzle} {difficulty} />
         {:else}
           <div class="blank-tile"></div>
         {/if}
