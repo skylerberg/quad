@@ -126,5 +126,12 @@ the space or the tile bag that the token is in.
     ;
   }
 
+  .tile-token.locked:active {
+    border-color: red;
+    box-shadow:
+      inset 0 0 1px 1px #666,
+      inset 0 0 5px 3px red
+    ;
+  }
 
 </style>
