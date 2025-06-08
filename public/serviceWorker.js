@@ -1,5 +1,15 @@
 const CACHE_NAME = 'static-cache';
 
+console.log('Service Worker Loading');
+
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', () => {
+  self.clients.claim();
+});
+
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
     return;
@@ -7,6 +17,9 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
       console.log(cachedResponse);
       const fetchPromise = fetch(event.request)
         .then((networkResponse) => {
