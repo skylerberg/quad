@@ -69,7 +69,6 @@
     exampleRowSequenceIndex = 0;
     if (!tutorial1SequenceIntervalId) {
       tutorial1SequenceIntervalId = setInterval(() => {
-        console.log(exampleRowSequenceIndex);
         exampleRowSequenceIndex += 1;
         exampleRowSequenceIndex %= exampleRowSequence.length;
       }, 1500)
@@ -89,7 +88,6 @@
     exampleRowSequenceIndex = 0;
     if (!tutorial2SequenceIntervalId) {
       tutorial2SequenceIntervalId = setInterval(() => {
-      console.log(exampleRowSequenceIndex);
         exampleRowSequenceIndex += 1;
         exampleRowSequenceIndex %= exampleRowSequence.length;
       }, 1500)

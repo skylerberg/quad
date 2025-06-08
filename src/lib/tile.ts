@@ -35,7 +35,6 @@ export function suitSymbolToName(suit: Suit): string {
 const releaseElements = false;
 
 export function getSuitIcon(suit: Suit, difficulty: Difficulty): string {
-  console.log(difficulty);
   if (suit === red) {
     if (releaseElements && difficulty === 'Challenge') {
       return fire;

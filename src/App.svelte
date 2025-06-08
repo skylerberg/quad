@@ -16,6 +16,9 @@
   import type { Difficulty } from './lib/puzzle.svelte';
   import { Puzzle } from './lib/puzzle.svelte';
   import { makeUserId, logSolve } from './lib/analytics';
+  import includeServiceWorker from './includeServiceWorker';
+
+  includeServiceWorker();
 
   let difficulty: Difficulty | null = $state(null);
 
