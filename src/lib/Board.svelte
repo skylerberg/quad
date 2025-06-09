@@ -27,7 +27,7 @@
   const cols = $derived([col0, col1, col2, col3]);
 </script>
 
-<div class='board' role="table">
+<div class='board' role="region" aria-label="Game board">
   <div></div>
   {#each puzzle.colGoals as goal, index}
     <GoalIcon tiles={cols[index]} {goal} type='column' position={index} {difficulty} />
@@ -53,7 +53,6 @@
             data-row={rowIndex}
             data-col={colIndex}
             data-occupied={!!tile}
-            role="cell"
             aria-label="empty space"
             onclick={(event) => !tile && spaceClick(event, rowIndex, colIndex)}
             onkeydown={(event) => keyHandler(event, rowIndex, colIndex)}

@@ -81,7 +81,7 @@
     classes.push('last');
   }
 
-  let title = `${type} ${position + 1}, goal, `;
+  let title = `${type} goal ${status ? 'fulfilled' : 'unfulfilled'}, `;
   for (let rank of goal.ranks) {
     title += ` ${rank}`
   }
@@ -93,8 +93,8 @@
 <div
   class={classes.join(' ')}
   role="{type === 'row' ? 'rowheader' : 'columnheader'}"
-  scope="{type === 'row' ? 'row' : 'col'}"
-  title={title}
+  aria-label={title}
+  tabindex="0"
 >
   <div class='two-by-two'>
     {#each goal.ranks as rank, i}

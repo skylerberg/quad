@@ -97,6 +97,7 @@
     if (puzzle && solved && !completedPuzzles.some(id => id === puzzle.id)) {
       completedPuzzles.push(puzzle.id);
       logSolve({userId, puzzleId: puzzle.id, difficulty});
+      screenReaderStatusDiv.innerText = 'Congratulations! Puzzle finished.';
 
       confetti({
         particleCount: 100,
@@ -269,10 +270,12 @@
     <div class="welcome-screen">
       <span></span>
       <div class="welcome-main">
-        <h2>Welcome to </h2>
-        <Title />
-        <br>
-        <h3>Pick your puzzle</h3>
+        <div role="heading" aria-level="1">
+          <h2 role="presentation">Welcome to </h2>
+          <Title />
+          <br>
+          <h3 role="presentation">Pick your puzzle</h3>
+        </div>
         <button class="difficulty-button" onclick={() => setDifficulty('Tutorial1')}>Tutorial</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
         <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
@@ -286,10 +289,11 @@
 
 <div
   aria-live="polite"
-  id="announcements"
   role="status"
   bind:this={screenReaderStatusDiv}
-></div>
+  id="announcement"
+>
+</div>
 
 <style>
   h2 {
@@ -321,5 +325,10 @@
     max-width: 1280px;
     margin: 0 auto;
     text-align: center;
+  }
+
+  #announcement {
+    text-indent: -9999em;
+    outline: 0;
   }
 </style>

@@ -4,10 +4,10 @@
 
   let { tile, showNumber = true }: {
     tile: Tile,
-    hideNumber: boolean,
+    showNumber: boolean,
   } = $props();
 
-  const tileClasses = `tile-token ${suitSymbolToName(tile.suit)}`;
+  const tileClasses = `tile-token ${suitSymbolToName(tile.suit, 'Casual')}`;
 </script>
 
 <div
@@ -41,22 +41,23 @@
     background-repeat: no-repeat;
     filter: drop-shadow(5px 5px 2px black);
   }
-  .red {
+
+  .rose {
     color: black;
     background-color: rgb(155, 95, 53);
   }
 
-  .blue {
+  .lotus {
     color: white;
     background-color: rgb(135, 195, 255);
   }
 
-  .white {
+  .daisy {
     background-color: rgb(255, 230, 128);
     color: black;
   }
 
-  .green {
+  .tulip {
     color: white;
     background-color: rgb(184, 255, 137);
   }

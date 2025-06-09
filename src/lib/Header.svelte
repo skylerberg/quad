@@ -45,12 +45,12 @@
 
   const exampleRowSequence = [
     [null, null, null, null],
-    [{suit: white, rank: 1}, null, null, null],
-    [{suit: white, rank: 1}, {suit: green, rank: 1}, null, null],
-    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, null],
-    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
-    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
-    [{suit: white, rank: 1}, {suit: green, rank: 1}, {suit: red, rank: 4}, {suit: red, rank: 3}],
+    [{suit: white, rank: 1, locked: false}, null, null, null],
+    [{suit: white, rank: 1, locked: false}, {suit: green, rank: 1, locked: false}, null, null],
+    [{suit: white, rank: 1, locked: false}, {suit: green, rank: 1, locked: false}, {suit: red, rank: 4, locked: false}, null],
+    [{suit: white, rank: 1, locked: false}, {suit: green, rank: 1, locked: false}, {suit: red, rank: 4, locked: false}, {suit: red, rank: 3, locked: false}],
+    [{suit: white, rank: 1, locked: false}, {suit: green, rank: 1, locked: false}, {suit: red, rank: 4, locked: false}, {suit: red, rank: 3, locked: false}],
+    [{suit: white, rank: 1, locked: false}, {suit: green, rank: 1, locked: false}, {suit: red, rank: 4, locked: false}, {suit: red, rank: 3, locked: false}],
   ];
   const exampleGoal = {suits: [green, red, red, white], ranks: [ ]};
   const exampleGoalNumbers = {suits: [], ranks: [1, 1, 3, 4]};
@@ -166,13 +166,14 @@
 
 
 <nav class='navbar'>
-  <a class="unstyled" href="/" onclick={(event) => {event.preventDefault(); returnToMainMenu()}}>
+  <a class="unstyled" href="/" onclick={(event) => {event.preventDefault(); returnToMainMenu()}} aria-label="Quad main menu">
     <Title />
   </a>
   <div class="nav-buttons">
     <button
       class="menu-button undo"
       aria-label="Undo"
+      aria-keyshortcuts="Control+Z"
       disabled={!puzzle.undoAvailable}
       onclick={() => puzzle.undo()}
       title="Undo"
@@ -185,6 +186,7 @@
       disabled={!puzzle.redoAvailable}
       onclick={() => puzzle.redo()}
       title="Redo"
+      aria-keyshortcuts="Control+Shift+Z"
     >
       <img src={undoIcon} class='icon' alt="Help icon" />
     </button>
@@ -200,10 +202,11 @@
   </div>
 </nav>
 
-<dialog class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick} onclose={clearTutorial1Sequence}>
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking got it) -->
+<dialog autofocus class="help-dialog" id="tutorial-1-dialog" onclick={handleDialogClick} onclose={clearTutorial1Sequence}>
   <h2>How To Play</h2>
   <p>Drag tiles onto the board to match the flowers for each row's and column's goal.</p>
-  <h3>Example</h3>
+  <h3 role="none">Example</h3>
   <div class="example-row">
     <img src={goalArrowUri} class='goal-arrow' alt="arrow labeled 'goal' pointing down"/>
   </div>
@@ -225,14 +228,15 @@
     </div>
     {/each}
   </div>
-  <br />
+  <div class="screen-reader-only" role="status">You may also move tiles by clicking or by using the keyboard. Use tab to navigate. Use space to select and place tiles.</div>
   <hr />
   <form method="dialog">
     <button>Got It</button>
   </form>
 </dialog>
 
-<dialog class="help-dialog" id="tutorial-2-dialog" onclick={handleDialogClick} onclose={clearTutorial2Sequence}>
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking got it) -->
+<dialog autofocus class="help-dialog" id="tutorial-2-dialog" onclick={handleDialogClick} onclose={clearTutorial2Sequence}>
   <p>We put numbers on the tiles! <br /> Goals can require you to match numbers.</p>
   <h3>Example</h3>
   <div class="example-row">
@@ -264,10 +268,11 @@
   </form>
 </dialog>
 
-<dialog class="help-dialog" id="tutorial-3-dialog" onclick={handleDialogClick}>
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking got it) -->
+<dialog autofocus class="help-dialog" id="tutorial-3-dialog" onclick={handleDialogClick}>
   <div class="locked-example">
     <span>
-      <TileToken tile={{suit: red, rank: 4}} locked={true} />
+      <TileToken tile={{suit: red, rank: 4, locked: true}} />
     </span>
     <span>
       Some puzzles have tiles already on the board to help you out!
@@ -281,6 +286,7 @@
   </form>
 </dialog>
 
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking got it) -->
 <dialog id="reset-puzzle-dialog" onclick={handleDialogClick}>
   <h2>Reset Puzzle</h2>
   <p>Are you sure you want to reset this puzzle?</p>
@@ -310,12 +316,6 @@
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-  }
-
-  .puzzle {
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 16pt;
   }
 
   .nav-buttons {
@@ -460,5 +460,10 @@
     transform: scaleX(-1);
     margin-left: 5px;
     margin-right: 5px;
+  }
+
+  .screen-reader-only {
+    text-indent: -9999em;
+    outline: 0;
   }
 </style>

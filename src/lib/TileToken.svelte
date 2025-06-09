@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { Tile } from './tile';
-  import { getSuitIcon, tilesAreEqual, blue, green, red, white  } from './tile';
+  import { getSuitIcon, suitSymbolToName, tilesAreEqual, blue, green, red, white  } from './tile';
   import type { Puzzle, Difficulty } from './puzzle.svelte';
 
   let tutorialSettings: { hideNumbers: boolean } = getContext('tutorialSettings');
@@ -15,7 +15,7 @@
 
   let tileColor = $state('white');
   let textColor = $state('black');
-  let symbolName = $state('unknown');
+  let symbolName = $state(suitSymbolToName(tile.suit, difficulty));
 
   const releaseElements = false;
 
@@ -23,47 +23,39 @@
     if (releaseElements && difficulty === 'Challenge') {
       tileColor = 'rgb(177, 213, 255)';
       textColor = 'black';
-      symbolName = 'water';
     }
     else {
       tileColor = 'rgb(135, 195, 255)';
       textColor = 'white';
-      symbolName = 'lotus';
     }
   }
   else if (tile.suit === green) {
     if (releaseElements && difficulty === 'Challenge') {
       tileColor = '#a9ff91';
       textColor = 'black';
-      symbolName = 'earth';
     }
     else {
       tileColor = 'rgb(184, 255, 137)';
       textColor = 'white';
-      symbolName = 'tulip';
     }
   }
   else if (tile.suit === red) {  // Fire
     if (releaseElements && difficulty === 'Challenge') {
       tileColor = 'rgb(255, 119, 52)';
-      symbolName = 'fire';
     }
     else {
       tileColor = 'rgb(155, 95, 53)';
       textColor = 'black';
-      symbolName = 'rose';
     }
   }
   else if (tile.suit === white) {
     if (releaseElements && difficulty === 'Challenge') {
       tileColor = '#353535';
       textColor = 'black';
-      symbolName = 'air';
     }
     else {
       tileColor = 'rgb(255, 230, 128)';
       textColor = 'black';
-      symbolName = 'daisy';
     }
   }
   if (tile.locked) {
@@ -102,7 +94,6 @@ the space or the tile bag that the token is in.
     style="background-image: url({getSuitIcon(tile.suit, difficulty)}); background-color: {tileColor}; color: {textColor}"
     onkeydown={handleEnter}
     aria-label="{symbolName} {tile.rank} {tile.locked ? 'immovable' : ''} {selected ? 'selected' : ''}"
-    role="cell"
   >
     <span aria-hidden="true">
       {#if !tutorialSettings.hideNumbers}

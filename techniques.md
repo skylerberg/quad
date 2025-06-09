@@ -104,6 +104,21 @@ with that attribute, then we can lock-in that attribute for that subset.
 
 ## Techniques
 
+### Techniques I want to include
+
+Something like Sue de Coq should be possible
+
+Requirement / intersection counting: If there are x tiles with an attribute and
+that attribute is required y times, and y > x, then y - x intersections of these
+requirements must have the attribute. If y - x is equal to the number of
+possible intersections, then all tiles without that attribute can be removed
+from the candidates list for those intersections.
+
+Disjoint set analysis: We need to assign n tiles to m groups. We can make sets
+that satisfy the group requirement for each group. We can rule out some of these
+sets if it is not possible to union solution sets for each group into a set of n
+tiles.
+
 ### Hidden Single
 
 This technique states that if a tile is only valid for one space, we must place
