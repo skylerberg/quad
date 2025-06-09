@@ -19,17 +19,29 @@ export const green: Suit = 'G';
 
 export const allSuits = [blue, green, red, white];
 
-export function suitSymbolToName(suit: Suit): string {
+export function suitSymbolToName(suit: Suit, difficulty: Difficulty): string {
   if (suit === red) {
-    return 'red';
+    if (difficulty === 'Challenge') {
+      return 'fire';
+    }
+    return 'rose';
   }
   else if (suit === blue) {
-    return 'blue';
+    if (difficulty === 'Challenge') {
+      return 'water';
+    }
+    return 'lotus';
   }
   else if (suit === white) {
-    return 'white';
+    if (difficulty === 'Challenge') {
+      return 'air';
+    }
+    return 'daisy';
   }
-  return 'green';
+  if (difficulty === 'Challenge') {
+    return 'earth';
+  }
+  return 'tulip';
 }
 
 const releaseElements = false;
@@ -59,6 +71,10 @@ export function getSuitIcon(suit: Suit, difficulty: Difficulty): string {
     }
     return tulip;
   }
+}
+
+export function getTileName(tile: Tile, difficulty: Difficulty): string {
+  return `${suitSymbolToName(tile.suit, difficulty)} ${tile.rank}${tile.locked ? ' immovable' : ''}`;
 }
 
 export function tilesAreEqual(a: Tile | undefined | null, b: Tile | undefined | null) {

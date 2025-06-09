@@ -38,7 +38,12 @@
   }
 </script>
 
-<div class="tile-bag" onclick={handleClick}>
+<div
+  class="tile-bag"
+  onclick={handleClick}
+  role="region"
+  aria-label="unplaced tiles"
+>
   {#each Object.entries(tilesBySuit) as [suit, tilesOfSuit]}
     <div class="suit-group" class:empty={tilesOfSuit.length === 0}>
       {#each allRanks as rank}

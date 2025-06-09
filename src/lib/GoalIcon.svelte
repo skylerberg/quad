@@ -80,9 +80,22 @@
   else if (position === 3) {
     classes.push('last');
   }
+
+  let title = `${type} ${position + 1}, goal, `;
+  for (let rank of goal.ranks) {
+    title += ` ${rank}`
+  }
+  for (let suit of goal.suits) {
+    title += ` ${suitSymbolToName(suit)}`
+  }
 </script>
 
-<div class={classes.join(' ')}>
+<div
+  class={classes.join(' ')}
+  role="{type === 'row' ? 'rowheader' : 'columnheader'}"
+  scope="{type === 'row' ? 'row' : 'col'}"
+  title={title}
+>
   <div class='two-by-two'>
     {#each goal.ranks as rank, i}
       <div class="rank-requirement {satisfiedRanks[i] ? 'satisfied' : ''}">{rank}</div>

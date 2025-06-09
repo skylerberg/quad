@@ -28,6 +28,22 @@ export type Action = {
   space: Space,
 };
 
+export type Change = Action | {
+  type: 'undo',
+  action: Action,
+} | {
+  type: 'redo',
+  action: Action,
+} | {
+  type: 'select',
+  tile: Tile,
+} | {
+  type: 'deselect',
+  tile: Tile,
+} | {
+  type: 'reset',
+}
+
 export class Puzzle {
   rowGoals: Array<Goal>;
   colGoals: Array<Goal>;
@@ -39,6 +55,7 @@ export class Puzzle {
   redoAvailable: boolean = $derived(this.actionHistory.length > this.historyPosition)
   undoAvailable: boolean = $derived(this.historyPosition > 0)
   selectedTile: Tile | undefined = $state(undefined)
+  changeListeners: Array<(change: Change) => void> = []
 
   constructor({goals, hints}: {goals: string, hints: string}) {
     this.id = goals;
@@ -117,6 +134,8 @@ export class Puzzle {
     }
 
     if (actionSucceeded) {
+      this.boardcastChange(action);
+
       if (this.actionHistory.length > this.historyPosition) {
         this.actionHistory.splice(this.historyPosition);
       }
@@ -147,6 +166,8 @@ export class Puzzle {
         this.placeOnBoard(action.space.row, action.space.col, action.tile);
       }
     }
+
+    this.boardcastChange({type: 'undo', action});
   }
 
   redo() {
@@ -166,6 +187,8 @@ export class Puzzle {
     else if (action.type === 'remove') {
       this.removeFromBoard(action.space.row, action.space.col);
     }
+
+    this.boardcastChange({type: 'redo', action});
   }
 
   private removeFromBoard(row: number, col: number): Tile | null | undefined {
@@ -187,6 +210,7 @@ export class Puzzle {
   selectTile(tile: Tile | undefined) {
     if (this.selectedTile) {
       if (tilesAreEqual(this.selectedTile, tile) || tile === undefined) {
+        this.boardcastChange({type: 'deselect', tile: this.selectedTile});
         this.selectedTile = undefined; // Toggle selection
       }
       else {
@@ -194,6 +218,7 @@ export class Puzzle {
         const currentlySelectedTileLocation = this.findTile(this.selectedTile);
         if (currentlySelectedTileLocation === 'bag' && clickedTileLocation === 'bag') {
           this.selectedTile = tile;
+          this.boardcastChange({type: 'select', tile: this.selectedTile});
         }
         else if (currentlySelectedTileLocation === 'bag' && clickedTileLocation !== 'bag') {
           this.do({
@@ -219,6 +244,12 @@ export class Puzzle {
       }
     }
     else {
+      if (tile) {
+        this.boardcastChange({type: 'select', tile});
+      }
+      else {
+        this.boardcastChange({type: 'deselect', tile: this.selectedTile});
+      }
       this.selectedTile = tile;
     }
   }
@@ -247,6 +278,7 @@ export class Puzzle {
     if (this.selectedTile) {
       const selectedTileLocation = this.findTile(this.selectedTile);
       if (selectedTileLocation === 'bag') {
+        this.boardcastChange({type: 'deselect', tile: this.selectedTile});
         this.selectedTile = undefined;
       }
       else {
@@ -314,6 +346,16 @@ export class Puzzle {
     }
     this.actionHistory = [];
     this.historyPosition = 0;
+  }
+
+  registerListener(callback: (change: Change) => void) {
+    this.changeListeners.push(callback);
+  }
+
+  boardcastChange(change: Change) {
+    for (let callback of this.changeListeners) {
+      callback(change);
+    }
   }
 };
 

@@ -13,6 +13,12 @@
     puzzle.selectSpace({row, col});
   }
 
+  const keyHandler = (event: KeyboardEvent, row: number, col: number) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      puzzle.selectSpace({row, col});
+    }
+  }
+
   const col0 = $derived([puzzle.board[0][0], puzzle.board[1][0], puzzle.board[2][0], puzzle.board[3][0]])
   const col1 = $derived([puzzle.board[0][1], puzzle.board[1][1], puzzle.board[2][1], puzzle.board[3][1]])
   const col2 = $derived([puzzle.board[0][2], puzzle.board[1][2], puzzle.board[2][2], puzzle.board[3][2]])
@@ -21,7 +27,7 @@
   const cols = $derived([col0, col1, col2, col3]);
 </script>
 
-<div class='board'>
+<div class='board' role="table">
   <div></div>
   {#each puzzle.colGoals as goal, index}
     <GoalIcon tiles={cols[index]} {goal} type='column' position={index} {difficulty} />
@@ -31,18 +37,30 @@
     <GoalIcon tiles={row} goal={puzzle.rowGoals[rowIndex]} type='row' position={rowIndex} {difficulty} />
     {#each row as tile, colIndex}
       {#key tile}
-        <div
-          class="space {tile ? "" : "empty"}"
-          data-row={rowIndex}
-          data-col={colIndex}
-          data-occupied={!!tile}
-          role="button"
-          onclick={() => !tile && spaceClick(event, rowIndex, colIndex)}
-        >
-          {#if tile}
+        {#if tile}
+          <div
+            class="space"
+            data-row={rowIndex}
+            data-col={colIndex}
+            data-occupied={!!tile}
+            role="button"
+          >
             <TileToken {tile} {puzzle} {difficulty}/>
-          {/if}
-        </div>
+          </div>
+        {:else}
+          <div
+            class="space empty"
+            data-row={rowIndex}
+            data-col={colIndex}
+            data-occupied={!!tile}
+            role="cell"
+            aria-label="empty space"
+            onclick={(event) => !tile && spaceClick(event, rowIndex, colIndex)}
+            onkeydown={(event) => keyHandler(event, rowIndex, colIndex)}
+            tabindex="0"
+          >
+          </div>
+        {/if}
       {/key}
     {/each}
   {/each}

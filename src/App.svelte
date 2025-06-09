@@ -13,9 +13,10 @@
   import Title from './lib/Title.svelte';
   import confetti from 'canvas-confetti';
   import { setContext } from 'svelte';
-  import type { Difficulty } from './lib/puzzle.svelte';
+  import type { Difficulty, Change } from './lib/puzzle.svelte';
   import { Puzzle } from './lib/puzzle.svelte';
   import { makeUserId, logSolve } from './lib/analytics';
+  import { getTileName } from './lib/tile';
   import includeServiceWorker from './includeServiceWorker';
 
   includeServiceWorker();
@@ -140,6 +141,75 @@
       }
     }
   });
+
+  let screenReaderStatusDiv: HTMLDivElement;
+
+  const getAnnouncementText = (change: Change): string => {
+    if (puzzle) {
+      if (change.type === 'select') {
+        return `Selected ${getTileName(change.tile, difficulty)}`;
+      }
+      else if (change.type === 'deselect') {
+        return `Deselected ${getTileName(change.tile, difficulty)}`;
+      }
+      else if (change.type === 'place') {
+        return `Placed ${getTileName(change.tile, difficulty)}`;
+      }
+      else if (change.type === 'remove') {
+        return `Removed ${getTileName(change.tile, difficulty)}`;
+      }
+      else if (change.type === 'swap') {
+        const firstTile = puzzle.board[change.first.row][change.first.col];
+        const secondTile = puzzle.board[change.second.row][change.second.col];
+        if (firstTile && secondTile) {
+          return `Swapped position of ${getTileName(firstTile, difficulty)} and ${getTileName(secondTile, difficulty)}`;
+        }
+        else if (firstTile) {
+          return `Moved ${getTileName(firstTile, difficulty)}`;
+        }
+        else if (secondTile) {
+          return `Moved ${getTileName(secondTile, difficulty)}`;
+        }
+        return '';
+      }
+      else if (change.type === 'swap-bag') {
+        return `Replaced ${getTileName(change.boardTile, difficulty)} with ${getTileName(change.bagTile, difficulty)}`;
+      }
+      else if (change.type === 'undo') {
+        if (change.action.type === 'place') {
+          return `Removed ${getTileName(change.action.tile, difficulty)}`;
+        }
+        else if (change.action.type === 'remove') {
+          return `Placed ${getTileName(change.action.tile, difficulty)}`;
+        }
+        else if (change.action.type === 'swap') {
+          return getAnnouncementText(change.action);
+        }
+        else if (change.action.type === 'swap-bag') {
+          return `Replaced ${getTileName(change.action.bagTile, difficulty)} with ${getTileName(change.action.boardTile, difficulty)}`;
+        }
+      }
+      else if (change.type === 'redo') {
+        return getAnnouncementText(change.action);
+      }
+      else if (change.type === 'reset') {
+        return 'Puzzle reset';
+      }
+    }
+    else {
+      throw Error('Attempted to make announcement but puzzle is not set');
+    }
+  }
+
+  const announceChanges = (change: Change) => {
+    screenReaderStatusDiv.innerText = getAnnouncementText(change);
+  };
+
+  $effect(() => {
+    if (puzzle && puzzle.changeListeners.length === 0) {
+      puzzle.registerListener(announceChanges);
+    }
+  })
 </script>
 
 {#if puzzle && difficulty}
@@ -214,8 +284,15 @@
   {/if}
 </main>
 
+<div
+  aria-live="polite"
+  id="announcements"
+  role="status"
+  bind:this={screenReaderStatusDiv}
+></div>
+
 <style>
-  h1, h2 {
+  h2 {
     margin: 0;
   }
 

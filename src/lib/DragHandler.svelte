@@ -1,5 +1,6 @@
 <script lang="ts">
   import Draggable from '@shopify/draggable/build/esm/Draggable/Draggable';
+  import Announcement from '@shopify/draggable/build/esm/Draggable/Plugins/Announcement';
   import { onMount } from 'svelte';
   import type { Puzzle } from './puzzle.svelte';
 
@@ -17,6 +18,13 @@
       draggable: '.unlocked',
       delay: {
         touch: 0,
+      },
+      //exclude: {
+      //  plugins: [Draggable.Plugins.Announcement,],
+      //},
+      announcements: {
+        'drag:start': '',
+        'drag:stop': '',
       },
     });
 
