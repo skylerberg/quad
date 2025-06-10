@@ -42,39 +42,16 @@
           data-row={rowIndex}
           data-col={colIndex}
           data-occupied={!!tile}
-          role="button"
-          onclick={() => !tile && spaceClick(event, rowIndex, colIndex)}
+          role={!tile ? "button" : ""}
+          onclick={(event) => !tile && spaceClick(event, rowIndex, colIndex)}
+          onkeydown={(event) => !tile && keyHandler(event, rowIndex, colIndex)}
+          tabindex={!tile ? 0 : -1}
+          aria-label={!tile ? "empty space" : ""}
         >
           {#if tile}
             <TileToken {tile} {puzzle} {difficulty}/>
           {/if}
         </div>
-
-        <!--
-        {#if tile}
-          <div
-            class="space"
-            data-row={rowIndex}
-            data-col={colIndex}
-            data-occupied={!!tile}
-            role="button"
-          >
-            <TileToken {tile} {puzzle} {difficulty}/>
-          </div>
-        {:else}
-          <div
-            class="space empty"
-            data-row={rowIndex}
-            data-col={colIndex}
-            data-occupied={!!tile}
-            aria-label="empty space"
-            onclick={(event) => !tile && spaceClick(event, rowIndex, colIndex)}
-            onkeydown={(event) => keyHandler(event, rowIndex, colIndex)}
-            tabindex="0"
-          >
-          </div>
-        {/if}
--->
       {/key}
     {/each}
   {/each}
