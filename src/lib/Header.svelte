@@ -231,7 +231,7 @@
   <div class="screen-reader-only" role="status">You may also move tiles by clicking or by using the keyboard. Use tab to navigate. Use space to select and place tiles.</div>
   <hr />
   <form method="dialog">
-    <button>Got It</button>
+    <button class="button">Got It</button>
   </form>
 </dialog>
 
@@ -264,7 +264,7 @@
   <br />
   <hr />
   <form method="dialog">
-    <button>Got It</button>
+    <button class="button">Got It</button>
   </form>
 </dialog>
 
@@ -282,7 +282,7 @@
   </div>
   <hr />
   <form method="dialog">
-    <button>Got It</button>
+    <button class="button">Got It</button>
   </form>
 </dialog>
 
@@ -292,9 +292,9 @@
   <p>Are you sure you want to reset this puzzle?</p>
   <div class="dialog-buttons">
     <form method="dialog">
-      <button>Cancel</button>
+      <button class="button">Cancel</button>
     </form>
-    <button onclick={runResetPuzzle} class="destructive">Reset Puzzle</button>
+    <button onclick={runResetPuzzle} class="button destructive">Reset Puzzle</button>
   </div>
 </dialog>
 
