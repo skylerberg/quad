@@ -37,6 +37,20 @@
     <GoalIcon tiles={row} goal={puzzle.rowGoals[rowIndex]} type='row' position={rowIndex} {difficulty} />
     {#each row as tile, colIndex}
       {#key tile}
+        <div
+          class="space {tile ? "" : "empty"}"
+          data-row={rowIndex}
+          data-col={colIndex}
+          data-occupied={!!tile}
+          role="button"
+          onclick={() => !tile && spaceClick(event, rowIndex, colIndex)}
+        >
+          {#if tile}
+            <TileToken {tile} {puzzle} {difficulty}/>
+          {/if}
+        </div>
+
+        <!--
         {#if tile}
           <div
             class="space"
@@ -60,6 +74,7 @@
           >
           </div>
         {/if}
+-->
       {/key}
     {/each}
   {/each}
