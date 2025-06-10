@@ -42,11 +42,6 @@
           data-row={rowIndex}
           data-col={colIndex}
           data-occupied={!!tile}
-          role={!tile ? "button" : ""}
-          onclick={(event) => !tile && spaceClick(event, rowIndex, colIndex)}
-          onkeydown={(event) => !tile && keyHandler(event, rowIndex, colIndex)}
-          tabindex={!tile ? 0 : -1}
-          aria-label={!tile ? "empty space" : ""}
         >
           {#if tile}
             <TileToken {tile} {puzzle} {difficulty}/>
