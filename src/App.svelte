@@ -237,26 +237,26 @@
 
     {#if solved}
       {#if difficulty === 'Tutorial1'}
-        <button class="button success-button" onclick={() => setDifficulty('Tutorial2')}>Continue</button>
+        <button class="success-button" onclick={() => setDifficulty('Tutorial2')}>Continue</button>
       {/if}
       {#if difficulty === 'Tutorial2'}
-        <button class="button success-button" onclick={() => setDifficulty('Tutorial3')}>Continue</button>
+        <button class="success-button" onclick={() => setDifficulty('Tutorial3')}>Continue</button>
       {/if}
       {#if difficulty === 'Tutorial3'}
-        <button class="button success-button" onclick={() => setDifficulty(null)}>All Done!</button>
+        <button class="success-button" onclick={() => setDifficulty(null)}>All Done!</button>
       {/if}
       {#if difficulty === 'Casual'}
         {#if !challengePuzzleSolved}
-          <button class="button success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
+          <button class="success-button" onclick={() => setDifficulty('Challenge')}>Try Challenge</button>
         {:else if !expertPuzzleSolved}
-          <button class="button success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
+          <button class="success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
         {:else}
           <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} expertPuzzleSolved={expertPuzzleSolved} />
         {/if}
       {/if}
       {#if difficulty === 'Challenge'}
         {#if !expertPuzzleSolved}
-          <button class="button success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
+          <button class="success-button" onclick={() => setDifficulty('Expert')}>Try Expert</button>
         {:else}
           <ShareButton casualPuzzleSolved={casualPuzzleSolved} {challengePuzzleSolved} expertPuzzleSolved={expertPuzzleSolved} />
         {/if}
@@ -276,10 +276,10 @@
           <br>
           <h3 role="presentation">Pick your puzzle</h3>
         </div>
-        <button class="button difficulty-button" onclick={() => setDifficulty('Tutorial1')}>Tutorial</button>
-        <button class="button difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
-        <button class="button difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
-        <button class="button difficulty-button" onclick={() => setDifficulty('Expert')}>Expert</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Tutorial1')}>Tutorial</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Casual')}>Casual</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Challenge')}>Challenge</button>
+        <button class="difficulty-button" onclick={() => setDifficulty('Expert')}>Expert</button>
       </div>
 
       <p>New puzzles daily</p>

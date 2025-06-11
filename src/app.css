@@ -65,7 +65,7 @@ body {
   height: 100%;
 }
 
-.button {
+button {
   border: none;
   padding: 0.5em 1em;
   border-radius: 4px;
@@ -76,16 +76,16 @@ body {
   font-family: inherit;
 }
 
-.button:disabled {
+button:disabled {
   cursor: unset;
   background: #222;
 }
 
-.button:disabled:hover {
+button:disabled:hover {
   background: #222;
 }
 
-.button:hover {
+button:hover {
   background: #444;
 }
 

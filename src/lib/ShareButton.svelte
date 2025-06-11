@@ -94,7 +94,7 @@
   });
 </script>
 
-<button class="button success-button share-button {shared ? 'shared' : ''} {sharing ? 'sharing' : ''}" bind:this={shareButton} onclick={share} onblur={() => sharing = false}>
+<button class="success-button share-button {shared ? 'shared' : ''} {sharing ? 'sharing' : ''}" bind:this={shareButton} onclick={share} onblur={() => sharing = false}>
   {#if sharing}
     <img class="succeeded" src={checkIcon} />
   {:else}
