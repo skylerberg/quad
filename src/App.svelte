@@ -211,6 +211,16 @@
       puzzle.registerListener(announceChanges);
     }
   })
+
+  let addToHomeScreen: null | (() => Promise<void>) = $state(null);
+  window.addEventListener('beforeinstallprompt', (event: any) => {
+    addToHomeScreen = async () => {
+      const result = await event.prompt();
+      if (result.outcome === 'accepted') {
+        addToHomeScreen = null;
+      }
+    };
+  })
 </script>
 
 {#if puzzle && difficulty}
@@ -219,6 +229,7 @@
     {difficulty}
     returnToMainMenu={() => setDifficulty(null)}
     {resetPuzzle}
+    {addToHomeScreen}
   />
 {/if}
 

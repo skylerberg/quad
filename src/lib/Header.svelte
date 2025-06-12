@@ -16,11 +16,13 @@
     resetPuzzle,
     difficulty,
     puzzle,
+    addToHomeScreen,
   }: {
     returnToMainMenu: () => void,
     resetPuzzle: () => void,
     difficulty: Difficulty,
     puzzle: Puzzle,
+    addToHomeScreen: null | (() => Promise<void>),
   } = $props();
 
   let menuButton: HTMLElement;
@@ -197,6 +199,9 @@
       <div bind:this={menu} class="menu">
         <button class="menu-item" onclick={() => returnToMainMenu()}>Switch Difficulty</button>
         <button class="menu-item" onclick={() => showDialog('reset-puzzle-dialog')}>Reset Puzzle</button>
+        {#if addToHomeScreen}
+          <button class="menu-item" onclick={() => addToHomeScreen()}>Install App</button>
+        {/if}
       </div>
     </div>
   </div>
