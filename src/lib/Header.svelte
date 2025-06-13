@@ -9,6 +9,7 @@
   import ExampleTile from './ExampleTile.svelte';
   import TileToken from './TileToken.svelte';
   import Title from './Title.svelte';
+  import About from './About.svelte';
   import type { Puzzle, Difficulty } from './puzzle.svelte';
 
   let {
@@ -202,6 +203,7 @@
         {#if addToHomeScreen}
           <button class="menu-item" onclick={() => addToHomeScreen()}>Install App</button>
         {/if}
+        <button class="menu-item" onclick={() => showDialog('about-dialog')}>About</button>
       </div>
     </div>
   </div>
@@ -291,7 +293,7 @@
   </form>
 </dialog>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking got it) -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking "cancel") -->
 <dialog id="reset-puzzle-dialog" onclick={handleDialogClick}>
   <h2>Reset Puzzle</h2>
   <p>Are you sure you want to reset this puzzle?</p>
@@ -301,6 +303,15 @@
     </form>
     <button onclick={runResetPuzzle} class="destructive">Reset Puzzle</button>
   </div>
+</dialog>
+
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions (same as clicking "close") -->
+<dialog id="about-dialog" onclick={handleDialogClick}>
+  <h2>About</h2>
+  <About />
+  <form method="dialog">
+    <button>Close</button>
+  </form>
 </dialog>
 
 <style>
