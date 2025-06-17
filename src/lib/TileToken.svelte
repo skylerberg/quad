@@ -17,7 +17,7 @@
   let textColor = $state('black');
   let symbolName = $state(suitSymbolToName(tile.suit, difficulty));
 
-  const releaseElements = false;
+  const releaseElements = true;
 
   if (tile.suit === blue) {
     if (releaseElements && difficulty === 'Challenge') {
@@ -41,7 +41,7 @@
   }
   else if (tile.suit === red) {  // Fire
     if (releaseElements && difficulty === 'Challenge') {
-      tileColor = 'rgb(255, 119, 52)';
+      tileColor = '#52260b';
     }
     else {
       tileColor = 'rgb(155, 95, 53)';
@@ -50,7 +50,8 @@
   }
   else if (tile.suit === white) {
     if (releaseElements && difficulty === 'Challenge') {
-      tileColor = '#353535';
+      //tileColor = '#353535';
+      tileColor = '#eee';
       textColor = 'black';
     }
     else {

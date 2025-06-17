@@ -44,7 +44,7 @@ export function suitSymbolToName(suit: Suit, difficulty: Difficulty): string {
   return 'tulip';
 }
 
-const releaseElements = false;
+const releaseElements = true;
 
 export function getSuitIcon(suit: Suit, difficulty: Difficulty): string {
   if (suit === red) {
