@@ -22,7 +22,7 @@
   --header-margin: 20px;
 
   --board-max-width: 500px;
-  --tile-width: min(max(8vmax, 10vmin), 18vw, calc(var(--board-max-width) / 5));
+  --tile-width: min(18vw, calc(var(--board-max-width) / 5));
   --board-width: calc(var(--tile-width) * 5);
 
   --border-color: #666;
@@ -31,6 +31,10 @@
   --success: #109030;
   --success-hover: #20a040;
   --success-filter: invert(39%) sepia(82%) saturate(615%) hue-rotate(86deg) brightness(91%) contrast(91%);
+}
+
+* {
+  touch-action: manipulation; /* Prevent iOS double tap to zoom */
 }
 
 .success-button {
