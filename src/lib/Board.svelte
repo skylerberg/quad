@@ -38,10 +38,15 @@
     {#each row as tile, colIndex}
       {#key tile}
         <div
-          class="space {tile ? "" : "empty"}"
+          class="space {!tile ? "empty" : ""}"
           data-row={rowIndex}
           data-col={colIndex}
           data-occupied={!!tile}
+          tabindex={!tile ? 0 : -1}
+          onclick={(e) => !tile && spaceClick(e, rowIndex, colIndex)}
+          onkeydown={(e) => !tile && keyHandler(e, rowIndex, colIndex)}
+          role={!tile ? "button" : ""}
+          aria-label={!tile ? "space" : ""}
         >
           {#if tile}
             <TileToken {tile} {puzzle} {difficulty}/>
