@@ -22,7 +22,7 @@
   --header-margin: 20px;
 
   --board-max-width: 500px;
-  --tile-width: min(18vw, calc(var(--board-max-width) / 5));
+  --tile-width: min(max(8vmax, 10vmin), 18vw, calc(var(--board-max-width) / 5));
   --board-width: calc(var(--tile-width) * 5);
 
   --border-color: #666;
