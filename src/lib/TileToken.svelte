@@ -21,8 +21,9 @@
 
   if (tile.suit === blue) {
     if (releaseElements && difficulty === 'Challenge') {
-      tileColor = 'rgb(177, 213, 255)';
-      textColor = 'black';
+      //tileColor = 'rgb(177, 213, 255)';
+      tileColor = '#9fcbff';
+      textColor = 'white';
     }
     else {
       tileColor = 'rgb(135, 195, 255)';
@@ -31,7 +32,8 @@
   }
   else if (tile.suit === green) {
     if (releaseElements && difficulty === 'Challenge') {
-      tileColor = '#a9ff91';
+      //tileColor = '#a9ff91';
+      tileColor = '#c7ffb8';
       textColor = 'black';
     }
     else {
@@ -41,7 +43,8 @@
   }
   else if (tile.suit === red) {  // Fire
     if (releaseElements && difficulty === 'Challenge') {
-      tileColor = '#52260b';
+      //tileColor = '#52260b';
+      tileColor = '#ffcd75';
     }
     else {
       tileColor = 'rgb(155, 95, 53)';
@@ -51,7 +54,8 @@
   else if (tile.suit === white) {
     if (releaseElements && difficulty === 'Challenge') {
       //tileColor = '#353535';
-      tileColor = '#eee';
+      //tileColor = '#eee';
+      tileColor = '#ebebeb';
       textColor = 'black';
     }
     else {
