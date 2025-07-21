@@ -247,9 +247,6 @@ export class Puzzle {
       if (tile) {
         this.boardcastChange({type: 'select', tile});
       }
-      else {
-        this.boardcastChange({type: 'deselect', tile: this.selectedTile});
-      }
       this.selectedTile = tile;
     }
   }
