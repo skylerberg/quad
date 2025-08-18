@@ -221,6 +221,28 @@
       }
     };
   })
+
+  const handleBodyClick = (event: MouseEvent | TouchEvent) => {
+    const tileBag = document.getElementById('tile-bag');
+    if (puzzle && tileBag) {
+      var tileBagRect = tileBag.getBoundingClientRect();
+      let eventY;
+      if (event instanceof MouseEvent) {
+        eventY = event.clientY;
+      }
+      else {
+        eventY = event.touches[0].clientY;
+      }
+      if (eventY > tileBagRect.top) {
+        // If we clicked at or below the tile bag, count it as a tile bag selection
+        event.stopPropagation();
+        puzzle.selectTileBag();
+      }
+    }
+  };
+
+  document.body.addEventListener('click', handleBodyClick);
+  document.body.addEventListener('touchstart', handleBodyClick);
 </script>
 
 {#if puzzle && difficulty}

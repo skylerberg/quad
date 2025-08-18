@@ -39,6 +39,7 @@
 </script>
 
 <div
+  id="tile-bag"
   class="tile-bag"
   onclick={handleClick}
   role="region"

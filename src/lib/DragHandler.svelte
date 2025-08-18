@@ -62,7 +62,6 @@
       spaceScores[row][col] += 10;
     }
 
-    console.log(spaceScores);
     let selectedSpace = undefined;
     let bestSpaceScore = 0;
     for (let row = 0; row < 4; row++) {
