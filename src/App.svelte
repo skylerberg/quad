@@ -242,7 +242,7 @@
   };
 
   document.body.addEventListener('click', handleBodyClick);
-  document.body.addEventListener('touchstart', handleBodyClick);
+  //document.body.addEventListener('touchstart', handleBodyClick);
 </script>
 
 {#if puzzle && difficulty}
@@ -277,6 +277,11 @@
       {/if}
       {#if difficulty === 'Tutorial3'}
         <button class="success-button" onclick={() => setDifficulty(null)}>All Done!</button>
+      {/if}
+      {#if false && difficulty !== 'Tutorial1' && difficulty !== 'Tutorial2' && difficulty !== 'Tutorial3'}
+        <p>
+          These puzzles only have 1 solution and you found it!
+        </p>
       {/if}
       {#if difficulty === 'Casual'}
         {#if !challengePuzzleSolved}
