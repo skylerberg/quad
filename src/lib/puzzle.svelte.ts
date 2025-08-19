@@ -287,7 +287,7 @@ export class Puzzle {
     }
   }
 
-  private findTile(tile: Tile): Space | 'bag' {
+  findTile(tile: Tile): Space | 'bag' {
     for (let [rowIndex, row] of this.board.entries()) {
       for (let [colIndex, space] of row.entries()) {
         if (tilesAreEqual(tile, space)) {

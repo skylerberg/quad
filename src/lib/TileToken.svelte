@@ -15,52 +15,76 @@
 
   let tileColor = $state('white');
   let textColor = $state('black');
+  let numberOffsets = $state('');
   let symbolName = $state(suitSymbolToName(tile.suit, difficulty));
 
   const releaseElements = true;
 
   if (tile.suit === blue) {
-    if (releaseElements && difficulty === 'Challenge') {
-      //tileColor = 'rgb(177, 213, 255)';
+    if (difficulty === 'Expert') {  // Star
+      textColor = 'black';
+      tileColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * 0); margin-right: calc(var(--tile-width) / 100 * 0);";
+    }
+    else if (difficulty === 'Challenge') {  // Water
       tileColor = '#9fcbff';
       textColor = 'white';
+      numberOffsets = "margin-top: calc(var(--tile-width) / 100 * 14); margin-right: calc(var(--tile-width) / 100 * -0);";
     }
     else {
       tileColor = 'rgb(135, 195, 255)';
       textColor = 'white';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * -7); margin-right: calc(var(--tile-width) / 100 * -1);";
     }
   }
   else if (tile.suit === green) {
-    if (releaseElements && difficulty === 'Challenge') {
-      //tileColor = '#a9ff91';
+    if (difficulty === 'Expert') {  // Earth
+      textColor = 'white';
+      tileColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * -5); margin-right: calc(var(--tile-width) / 100 * -4);";
+    }
+    else if (difficulty === 'Challenge') { // Leaf
       tileColor = '#c7ffb8';
-      textColor = 'black';
+      textColor = 'white';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * -5); margin-right: calc(var(--tile-width) / 100 * -2);";
     }
     else {
       tileColor = 'rgb(184, 255, 137)';
       textColor = 'white';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * 0); margin-right: calc(var(--tile-width) / 100 * 0);";
     }
   }
-  else if (tile.suit === red) {  // Fire
-    if (releaseElements && difficulty === 'Challenge') {
-      //tileColor = '#52260b';
+  else if (tile.suit === red) {
+    if (difficulty === 'Expert') {  // Sun
+      textColor = 'black';
+      tileColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * -2); margin-right: calc(var(--tile-width) / 100 * -1);";
+    }
+    else if (releaseElements && difficulty === 'Challenge') {  // Fire
       tileColor = '#ffcd75';
+      textColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * 6); margin-right: calc(var(--tile-width) / 100 * -5);";
     }
     else {
       tileColor = 'rgb(155, 95, 53)';
       textColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * 0); margin-right: calc(var(--tile-width) / 100 * -2);";
     }
   }
   else if (tile.suit === white) {
-    if (releaseElements && difficulty === 'Challenge') {
-      //tileColor = '#353535';
-      //tileColor = '#eee';
+    if (difficulty === 'Expert') {  // Moon
+      textColor = 'white';
+      tileColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * 0); margin-right: calc(var(--tile-width) / 100 * 12);";
+    }
+    else if (difficulty === 'Challenge') {
       tileColor = '#ebebeb';
       textColor = 'black';
     }
     else {
       tileColor = 'rgb(255, 230, 128)';
       textColor = 'black';
+      numberOffsets ="margin-top: calc(var(--tile-width) / 100 * -2); margin-right: calc(var(--tile-width) / 100 * 0);";
     }
   }
   if (tile.locked) {
@@ -75,11 +99,31 @@
 
   let selected = $derived((puzzle && tilesAreEqual(tile, puzzle.selectedTile)));
 
+  let tilePosition = puzzle?.findTile(tile);
+  let borderAdjustments = $state('');
+
+  if (tilePosition && tilePosition !== 'bag') {
+    if (tilePosition.row === 0 && tilePosition.col === 0) {
+      borderAdjustments = 'border-top-left-radius: var(--tile-border-radius)';
+    }
+    else if (tilePosition.row === 0 && tilePosition.col === 3) {
+      borderAdjustments = 'border-top-right-radius: var(--tile-border-radius)';
+    }
+    else if (tilePosition.row === 3 && tilePosition.col === 0) {
+      borderAdjustments = 'border-bottom-left-radius: var(--tile-border-radius)';
+    }
+    else if (tilePosition.row === 3 && tilePosition.col === 3) {
+      borderAdjustments = 'border-bottom-right-radius: var(--tile-border-radius)';
+    }
+  }
+
   const tileClasses = $derived(
     [
       'tile-token',
       tile.locked ? 'locked' : 'unlocked',
       selected ? 'selected' : '',
+      tilePosition === 'bag' ? '' : 'placed',
+      difficulty === 'Expert' ? 'expert' : '',
     ].join(' ')
   );
 </script>
@@ -96,11 +140,11 @@ the space or the tile bag that the token is in.
   <button
     class={tileClasses}
     data-tile={JSON.stringify(tile)}
-    style="background-image: url({getSuitIcon(tile.suit, difficulty)}); background-color: {tileColor}; color: {textColor}"
+    style="background-image: url({getSuitIcon(tile.suit, difficulty)}); background-color: {tileColor}; color: {textColor}; {borderAdjustments}"
     onkeydown={handleEnter}
     aria-label="{symbolName} {tile.rank} {tile.locked ? 'immovable' : ''} {selected ? 'selected' : ''}"
   >
-    <span aria-hidden="true">
+    <span aria-hidden="true" style={numberOffsets}>
       {#if !tutorialSettings.hideNumbers}
         {tile.rank}
       {/if}
@@ -128,6 +172,15 @@ the space or the tile bag that the token is in.
     background-position: center;
     background-repeat: no-repeat;
     filter: drop-shadow(5px 5px 2px black);
+  }
+
+  .tile-token.expert {
+    border: none;
+  }
+
+  .tile-token.expert.placed {
+    border-radius: 0px;
+    filter: none;
   }
 
   .tile-token.locked {
