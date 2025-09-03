@@ -98,6 +98,22 @@ const puzzles = [
   { goals: 'g44w2242bb4gbggwb4143wrrbrbr3233', hints: '01W412G213W122R1'},
   { goals: '2gg3rgwg4343231223231444gwwwbbbw', hints: '01G213R120W230B1'},
   { goals: '2131bbwb44144rwrb4433311ww3wwggg', hints: '00R201B310G321B2'},
+  { goals: 'rrrggr212212wgwwgwgw4121b4wr1344', hints: '11B412G231B333G4'},
+  { goals: '3gww3222rwrr3434bwbwrgggg4444313', hints: '00B110G121B231R3'},
+  { goals: 'bggg3143gwwwbb444222grrb31314114', hints: '01W410B212G331R1'},
+  { goals: '44424brwggrrbgbb33233gbg4222rgww', hints: '12G320R421R233G1'},
+  { goals: '4113bbbwwwgggg44grbr112142423333', hints: '01B403R410B113R2'},
+  { goals: '3332w2224441rw4r34gw4413bbbbgwgg', hints: '03R311R133W1'},
+  { goals: '44ww1113bbbrrg4gw2343332grggwwbw', hints: '01B103R410R211R3'},
+  { goals: 'brrrwbbw3344r11443333w4w1141rwwb', hints: '03R410B211W413G2'},
+  { goals: 'bggg1211wbbwb44421234234w3rwwwgg', hints: '03R311R220B133W4'},
+  { goals: 'w44rwgrg14112422w3wbwbbb1143ggwg', hints: '00B301R220R332G4'},
+  { goals: 'bggg3132gb33rrbr11334414bgbg4brr', hints: '11W122G330B432W2'},
+  { goals: '4434b4wbbgbr111212323442wgwwwg3g', hints: '00R313G222G332B1'},
+  { goals: 'gb444233wwwwgbggb21222334411rwbr', hints: '01B310B220G421B4'},
+  { goals: 'brwb33434w4ww1132223gbwbgg4g3444', hints: '12G220R122G433W3'},
+  { goals: 'wrrw3133wr13gggwrrwr3444wgg41131', hints: '03W222B231B132W3'},
+  { goals: 'g121bggg424224bb31214144rrgg4rwr', hints: '00W320G231B333W2'},
 ];
 
 export default puzzles;

@@ -100,6 +100,23 @@ const puzzles = [
   { goals: '44ww2223wbbbbg12g3bg14423334ggbr', hints: ''},
   { goals: '13144wwrww33g424br32gggg2133rbbb', hints: ''},
   { goals: '31134442rgrr4grgg244bw11gwww2411', hints: ''},
+  { goals: 'gbbgb4344gbw3323rr42wgrg21412321', hints: ''},
+  { goals: 'w4w4brwb14214brw4333rggg3rwr4422', hints: ''},
+  { goals: '4r24gwgg4112g4rr313344114brbbb4w', hints: ''},
+  { goals: 'rwww3wbbg3313444rgggr243wrbr4422', hints: ''},
+  { goals: 'brbww4wr4422r1221114gggb4bwbg314', hints: ''},
+  { goals: '4214rgbbgg4g2bb4rrgg33322244rr41', hints: ''},
+  { goals: 'wb13g44gwggw4133wbwb12224441rr4w', hints: ''},
+  { goals: 'rbrr2414gbggbb4wrgbb1144gg331133', hints: ''},
+  { goals: 'rbbbrb4r4422w2313143rwwwgw331212', hints: ''},
+  { goals: 'g442grrw1224bbggbbbw2441rw4w3334', hints: ''},
+  { goals: '2224g4wg1141gwrrbbgbwggww33g3141', hints: ''},
+  { goals: 'ww3414113334wbbwwrrw4r4rggb42432', hints: ''},
+  { goals: 'bgbb23333grr42444242gw42grgrr4gw', hints: ''},
+  { goals: '4222br42rrgrwwwg142433gw3134wgwg', hints: ''},
+  { goals: '21313ggg2142wgbw2442rb24wggwwrrr', hints: ''},
+  { goals: '33111gww4412bggg23331244b44wrrrb', hints: ''},
+  { goals: 'rrbb4r14r1313334w4ww4424bgbr3131', hints: ''},
 ];
 
 export default puzzles;
